@@ -6,7 +6,7 @@ import math
 class Bullet(pygame.sprite.Sprite):
 
     def __init__(self, x, y, direction):
-#olá
+
         super().__init__()
 
         # setting base attributes
