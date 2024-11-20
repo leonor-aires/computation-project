@@ -46,28 +46,44 @@ def execute_game():
         # Fill the background
         screen.blit(image, (0, 0))
 
+        corbel_font = pygame.font.SysFont("Corbel", 50)
+        quit_text = corbel_font.render("Quit", True, white)
+
         # Event Handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False  # Exit the loop
+                running = False
                 pygame.quit()
-        #Shooting
-        player.shoot(bullets)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # Botão esquerdo do mouse
+                    player.shoot(bullets)
+            # detecting if the user clicked on the quit button (750, 500 para 890, 560)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if 750 <= mouse[0] <= 890 and 500 <= mouse[1] <= 560:
+                    pygame.quit()
 
-        #Spawning the enemies
+
+
+        # Update e Draw
+        player_group.update()
+        bullets.update()
+        enemies.update(player)
+
+        # Spawning the enemies
         if enemy_spawn_timer <= 0:
             new_enemy = Enemy()
             enemies.add(new_enemy)
-            enemy_spawn_timer = 2 * fps #Every two seconds
+            enemy_spawn_timer = 10 * fps  # Spawn a cada dois segundos
 
-        #Check for collisions between enenies and bulltes
+        # Verificar colisões entre balas e inimigos
         for bullet in bullets:
             collided_enemies = pygame.sprite.spritecollide(bullet, enemies, False)
             for enemy in collided_enemies:
-                enemy.health -= 5 #Decrease health by 5
-                bullet.kill()
+                bullet_damage = 3  # Dano causado pela bala
+                enemy.health -= bullet_damage
+                bullet.kill()  # Remover a bala após o impacto
                 if enemy.health <= 0:
-                    enemy.kill() # Destroy the enemy
+                    enemy.kill()  # Remover o inimigo se a saúde chegar a 0
 
         # Check for collisions between player and enemy
 
@@ -83,7 +99,18 @@ def execute_game():
         # Drawing the objects
         player_group.draw(screen)
         enemies.draw(screen)
+
+        for enemy in enemies:
+            enemy.draw(screen)  # Inclui barra de vida
         for bullet in bullets:
             bullet.draw(screen)
 
+        # get the mouse information
+        mouse = pygame.mouse.get_pos()
+        # Quit button
+        pygame.draw.rect(screen, grey, [750, 500, 140, 60])
+        quit_rect = quit_text.get_rect(center=(750 + 140 // 2, 500 + 60 // 2))
+        screen.blit(quit_text, quit_rect)
+
         pygame.display.flip()
+

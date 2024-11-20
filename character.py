@@ -19,7 +19,7 @@ class Character(pygame.sprite.Sprite):
         self.rect.topleft = (x, y)
 
         # Gameplay variables
-        self.speed = 5
+        self.speed = 2
         self.health = 100
         self.bullet_cooldown = 0
 
@@ -63,6 +63,17 @@ class Character(pygame.sprite.Sprite):
         #If you're not
         self.bullet_cooldown -=1
 
+    def shoot(self, bullets_group):
+        """
+        Create a bullet in the direction of the mouse
+        """
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        dx = mouse_x - self.rect.centerx
+        dy = mouse_y - self.rect.centery
+        angle = math.atan2(dy, dx)  # Direction in radians
+
+        new_bullet = Bullet(self.rect.centerx, self.rect.centery, angle)
+        bullets_group.add(new_bullet)
 
 
 
