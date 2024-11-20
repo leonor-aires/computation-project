@@ -1,11 +1,13 @@
 from config import *
 import math
 import pygame
-from player import Player
+from character import Character
+from enemy import Enemy
+
 
 def execute_game():
     """
-     Main function to execute the game loop
+    Main function to execute the game loop
     """
     # Clock for controlling the frame rate
     clock = pygame.time.Clock()
@@ -15,41 +17,72 @@ def execute_game():
     pygame.display.set_caption("Endless Wilderness Explorer")
 
     # Player setup
-    player = Player()
-    # creating an empty group for the player
+    player = Character("character.png", 100, 100, width=120, height=120)
     player_group = pygame.sprite.Group()
-    # adding the player to the group
     player_group.add(player)
-    # creating an empty bullet group that will be given as input to the player.shoot() method
+
+    #background image
+    image = pygame.image.load("teste.jpg")
+    image_width, image_height = 1000, 600
+    image = pygame.transform.scale(image, (image_width, image_height))
+    #music
+    pygame.init()
+    pygame.mixer.music.load('teste.mp3')
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
+
+    #Initialize the bullet group
     bullets = pygame.sprite.Group()
 
+    #Initialize the enemy group
+    enemies =pygame.sprite.Group()
+    enemy_spawn_timer = 0
 
     running = True
     while running:
         # Control frame rate
         clock.tick(fps)
+
         # Fill the background
-        screen.fill(green)
+        screen.blit(image, (0, 0))
 
         # Event Handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                running = False  # Exit the loop
                 pygame.quit()
-
-        # automatically shoot bullets from the player:
+        #Shooting
         player.shoot(bullets)
 
-        # Update positions and visuals
-        # calling the .update() method of all the instances in the player group
-        player_group.update()
+        #Spawning the enemies
+        if enemy_spawn_timer <= 0:
+            new_enemy = Enemy()
+            enemies.add(new_enemy)
+            enemy_spawn_timer = 2 * fps #Every two seconds
 
-        # updating the bullets group
+        #Check for collisions between enenies and bulltes
+        for bullet in bullets:
+            collided_enemies = pygame.sprite.spritecollide(bullet, enemies, False)
+            for enemy in collided_enemies:
+                enemy.health -= 5 #Decrease health by 5
+                bullet.kill()
+                if enemy.health <= 0:
+                    enemy.kill() # Destroy the enemy
+
+        # Check for collisions between player and enemy
+
+
+        #Update the enemy spawn timer
+        enemy_spawn_timer -=1
+
+        # Update positions
+        player_group.update()
         bullets.update()
+        enemies.update(player)
 
         # Drawing the objects
         player_group.draw(screen)
-
-        # drawing the bullet sprites:
+        enemies.draw(screen)
         for bullet in bullets:
             bullet.draw(screen)
 
