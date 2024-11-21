@@ -3,9 +3,19 @@ import math
 import pygame
 from character import Character
 from enemy import Enemy
+from shed import shed
 
+def game_loop():
+    player = Character("character.png", 100, 100, width=120, height=120)
+    current_state = "main"
 
-def execute_game():
+    while True:
+        if current_state == "main":
+            current_state = execute_game(player)
+        elif current_state == "shed":
+            current_state = shed(player)
+
+def execute_game(player):
     """
     Main function to execute the game loop
     """
@@ -17,7 +27,6 @@ def execute_game():
     pygame.display.set_caption("Endless Wilderness Explorer")
 
     # Player setup
-    player = Character("character.png", 100, 100, width=120, height=120)
     player_group = pygame.sprite.Group()
     player_group.add(player)
 
@@ -76,6 +85,8 @@ def execute_game():
                 if enemy.health <= 0:
                     enemy.kill()  # Remover o inimigo se a saúde chegar a 0
 
+
+
         # Check for collisions between player and enemy
         for enemy in enemies:
             if pygame.sprite.collide_rect(player, enemy):
@@ -91,6 +102,11 @@ def execute_game():
         player_group.update()
         bullets.update()
         enemies.update(player)
+
+        # chackning if tghe user goes into the shed area
+        if player.rect.right >= width:
+            # change the game to state to shed
+            return "shed"
 
         # Drawing the objects
         player_group.draw(screen)

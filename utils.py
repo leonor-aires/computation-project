@@ -1,5 +1,6 @@
 import pygame
 
+from config import resolution, white, deep_black, dark_red
 
 
 # Function to draw a stick figure with a construction hat
@@ -41,3 +42,62 @@ def draw_normal_stick_figure(screen, x, y):
     # legs
     pygame.draw.line(screen, (255, 255, 255), (x, y + 60), (x - 20, y + 100), 2)  # Left leg
     pygame.draw.line(screen, (255, 255, 255), (x, y + 60), (x + 20, y + 100), 2)  # Right leg
+
+
+def under_construction():
+    # creating the screen at 720x720 pixels - placeholder
+    screen = pygame.display.set_mode(resolution)
+
+    # fonts
+    corbel_font = pygame.font.SysFont("Corbel", 50)
+    conversation_font = pygame.font.SysFont("Arial", 30)
+
+    # text
+    back_text = corbel_font.render("    back", True, white)
+    construction_text = corbel_font.render("Under Construction", True, white)
+
+    # positions for the stick figures
+    bob_x_position = 460
+    bob_y_position = 450
+
+    normal_x_position = 260
+    normal_y_position = 450
+
+    # main game loop
+    while True:
+        # mouse information
+        mouse = pygame.mouse.get_pos()
+
+        # check for events
+        for ev in pygame.event.get():
+            if ev.type == pygame.QUIT:
+                pygame.quit()
+            if ev.type == pygame.MOUSEBUTTONDOWN:
+                if 430 <= mouse[0] <= 570 and 540 <= mouse[1] <= 600:
+                    return
+
+        # background
+        screen.fill(deep_black)
+
+        # display 'UNDER CONSTRUCTION' text
+        construction_rect = construction_text.get_rect(center=(360, 300))
+        screen.blit(construction_text, construction_rect)
+
+        # draw a back button
+        pygame.draw.rect(screen, dark_red, [430, 540, 140, 60])
+        back_rect = back_text.get_rect(center=(430 + 140 // 2, 540 + 60 // 2))
+        screen.blit(back_text, back_rect)
+
+        # stick figures
+        draw_normal_stick_figure(screen, normal_x_position, normal_y_position)
+        draw_stick_figure_with_hat(screen, bob_x_position, bob_y_position)
+
+        # conversation
+        normal_speech = conversation_font.render("Can we fix it?", True, white)
+        bob_response = conversation_font.render("Probably not.", True, white)
+
+        screen.blit(normal_speech, (normal_x_position - 60, normal_y_position - 80))
+        screen.blit(bob_response, (bob_x_position - 60, bob_y_position - 80))
+
+        # Update the screen
+        pygame.display.update()
