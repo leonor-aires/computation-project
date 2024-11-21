@@ -20,8 +20,10 @@ class Character(pygame.sprite.Sprite):
 
         # Gameplay variables
         self.speed = 2
-        self.health = 100
+        self.max_health = 100
+        self.health = self.max_health
         self.bullet_cooldown = 0
+        self.damage_cooldown = 0
 
     def update(self):
         """
@@ -43,6 +45,9 @@ class Character(pygame.sprite.Sprite):
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             if self.rect.y < resolution[1] - self.rect.height:  # Prevent moving past the bottom edge
                 self.rect.y += self.speed
+        # Reduz o cooldown de dano
+        if self.damage_cooldown > 0:
+            self.damage_cooldown -= 1
 
     def shoot(self, bullets: pygame.sprite.Group):
         """
@@ -74,6 +79,24 @@ class Character(pygame.sprite.Sprite):
 
         new_bullet = Bullet(self.rect.centerx, self.rect.centery, angle)
         bullets_group.add(new_bullet)
+
+    def take_damage(self, damage):
+        """
+        Reduz a vida do jogador, considerando o cooldown
+        """
+        if self.damage_cooldown <= 0:  # Apenas recebe dano se o cooldown acabou
+            self.health -= damage
+            self.damage_cooldown = fps  # Cooldown de 1 segundo
+
+    def draw(self, screen):
+        # Desenhar o inimigo
+        screen.blit(self.image, self.rect)
+
+        # Desenhar barra de vida
+        health_bar_width = self.rect.width
+        health_ratio = self.health / self.max_health
+        pygame.draw.rect(screen, deep_black, (self.rect.x, self.rect.y - 10, health_bar_width, 5))
+        pygame.draw.rect(screen, green, (self.rect.x, self.rect.y - 10, health_bar_width * health_ratio, 5))
 
 
 

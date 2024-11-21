@@ -47,7 +47,6 @@ def execute_game():
         screen.blit(image, (0, 0))
 
         corbel_font = pygame.font.SysFont("Corbel", 50)
-        quit_text = corbel_font.render("Quit", True, white)
 
         # Event Handling
         for event in pygame.event.get():
@@ -57,17 +56,9 @@ def execute_game():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Botão esquerdo do mouse
                     player.shoot(bullets)
-            # detecting if the user clicked on the quit button (750, 500 para 890, 560)
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if 750 <= mouse[0] <= 890 and 500 <= mouse[1] <= 560:
-                    pygame.quit()
-
-
-
-        # Update e Draw
-        player_group.update()
-        bullets.update()
-        enemies.update(player)
+                    # Detectar clique no botão "Back"
+                if 430 <= mouse[0] <= 570 and 540 <= mouse[1] <= 600:
+                    running = False  # Sai do loop do jogo e volta à interface principal
 
         # Spawning the enemies
         if enemy_spawn_timer <= 0:
@@ -86,10 +77,15 @@ def execute_game():
                     enemy.kill()  # Remover o inimigo se a saúde chegar a 0
 
         # Check for collisions between player and enemy
-
+        for enemy in enemies:
+            if pygame.sprite.collide_rect(player, enemy):
+                player.take_damage(5)  # Dano de 5 por colisão
+                if player.health <= 0:
+                    print("Game Over!")
+                    running = False
 
         #Update the enemy spawn timer
-        enemy_spawn_timer -=1
+        enemy_spawn_timer -= 1
 
         # Update positions
         player_group.update()
@@ -104,13 +100,14 @@ def execute_game():
             enemy.draw(screen)  # Inclui barra de vida
         for bullet in bullets:
             bullet.draw(screen)
+        for player in player_group:
+            player.draw(screen)
 
-        # get the mouse information
-        mouse = pygame.mouse.get_pos()
-        # Quit button
-        pygame.draw.rect(screen, grey, [750, 500, 140, 60])
-        quit_rect = quit_text.get_rect(center=(750 + 140 // 2, 500 + 60 // 2))
-        screen.blit(quit_text, quit_rect)
+        mouse = pygame.mouse.get_pos()  # Obter posição do mouse
+        pygame.draw.rect(screen, dark_red, [430, 540, 140, 60])
+        back_text = corbel_font.render("Back", True, white)
+        back_rect = back_text.get_rect(center=(430 + 140 // 2, 540 + 60 // 2))
+        screen.blit(back_text, back_rect)
 
         pygame.display.flip()
 

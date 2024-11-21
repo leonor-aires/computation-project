@@ -230,6 +230,8 @@ def rules_():
 
 def wilderness_explorer():
     execute_game()
+    interface()
+
 
 
 
