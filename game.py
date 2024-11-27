@@ -7,7 +7,7 @@ from shed import shed
 from player import Player
 
 def game_loop():
-    character = Character(image="character.png", x=100, y=100)  # Provide valid arguments
+    character = Character(image="dragon.png", x=150, y=150)  # Provide valid arguments
     current_state = "main"
 
     while True:
@@ -21,7 +21,7 @@ def execute_game(character = None ):
     Main function to execute the game loop
     """
     if character is None:
-        character = Character(image="character.png", x=100, y=100)  # Provide valid arguments
+        character = Character(image="dragon.png", x=150, y=150)  # Provide valid arguments
 
     # Clock for controlling the frame rate
     clock = pygame.time.Clock()
