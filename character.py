@@ -5,14 +5,14 @@ from bullet import Bullet
 
 
 class Character(pygame.sprite.Sprite):
-    def __init__(self, image, x, y, width=None, height=None):
+    def __init__(self, image, x = 100, y = 100):
         """
         Initialize a Player instance
         """
         super().__init__()
         # Load and scale the image
-        self.image = pygame.image.load(image)
-        self.image = pygame.transform.scale(self.image, (width, height))
+        self.image = pygame.image.load("character.png")  # Load player sprite
+        self.image = pygame.transform.scale(self.image, (100, 100))
 
         # Set initial position
         self.rect = self.image.get_rect()

@@ -1,7 +1,8 @@
 from utils import *  # no need to import pygame because the import is in utils
-from character import * #import player
+from character import * # import player
 from game import execute_game, game_loop
 from utils import under_construction
+from story import start_game_with_story
 
 
 def interface():
@@ -63,7 +64,7 @@ def interface():
             # detecting if the user clicked on the wilderness explorer button (100, 150 para 700, 210):
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 if 200 <= mouse[0] <= 1000 and 150 <= mouse[1] <= 210:
-                    game_loop()
+                    start_game_with_story() # Call the story first
 
 
             # detecting if the user clicked on the credits button (750, 380 para 890, 440):

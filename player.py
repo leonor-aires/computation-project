@@ -11,8 +11,8 @@ class Player(pygame.sprite.Sprite):
         """
         super().__init__()
         # Drawing variables
-        self.image = pygame.Surface(player_size)
-        self.image.fill(blue)
+        self.image = pygame.image.load("character.png")  # Load player sprite
+        self.image = pygame.transform.scale(self.image, (50, 50))  # Resize image if necessary
         self.rect = self.image.get_rect()
         self.rect.center = (width // 2, height // 2)
 
@@ -41,6 +41,7 @@ class Player(pygame.sprite.Sprite):
 
     def shoot(self, bullets):
         """
+        Shoots bullets in multiple directions
         bullets --> pygame group where I will add bullets
         """
         # cooldown ==> how many frames I need to wait until I can shoot again
@@ -61,5 +62,11 @@ class Player(pygame.sprite.Sprite):
             self.bullet_cooldown = fps
 
         self.bullet_cooldown -= 1
+
+    def draw(self, screen):
+        """
+        Draw the player on the screen.
+        """
+        screen.blit(self.image, self.rect)
 
 

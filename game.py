@@ -4,21 +4,25 @@ import pygame
 from character import Character
 from enemy import Enemy
 from shed import shed
+from player import Player
 
 def game_loop():
-    player = Character("character.png", 100, 100, width=120, height=120)
+    character = Character(image="character.png", x=100, y=100)  # Provide valid arguments
     current_state = "main"
 
     while True:
         if current_state == "main":
-            current_state = execute_game(player)
+            current_state = execute_game(character)
         elif current_state == "shed":
-            current_state = shed(player)
+            current_state = shed(character)
 
-def execute_game(player):
+def execute_game(character = None ):
     """
     Main function to execute the game loop
     """
+    if character is None:
+        character = Character(image="character.png", x=100, y=100)  # Provide valid arguments
+
     # Clock for controlling the frame rate
     clock = pygame.time.Clock()
 
@@ -28,12 +32,11 @@ def execute_game(player):
 
     # Player setup
     player_group = pygame.sprite.Group()
-    player_group.add(player)
+    player_group.add(character)
 
     #background image
     image = pygame.image.load("teste.jpg")
-    image_width, image_height = 1000, 600
-    image = pygame.transform.scale(image, (image_width, image_height))
+    image = pygame.transform.scale(image, (1000, 600))
     #music
     pygame.init()
     pygame.mixer.music.load('teste.mp3')
@@ -64,7 +67,7 @@ def execute_game(player):
                 pygame.quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Botão esquerdo do mouse
-                    player.shoot(bullets)
+                    character.shoot(bullets)
                     # Detectar clique no botão "Back"
                 if 430 <= mouse[0] <= 570 and 540 <= mouse[1] <= 600:
                     running = False  # Sai do loop do jogo e volta à interface principal
@@ -89,9 +92,9 @@ def execute_game(player):
 
         # Check for collisions between player and enemy
         for enemy in enemies:
-            if pygame.sprite.collide_rect(player, enemy):
-                player.take_damage(5)  # Dano de 5 por colisão
-                if player.health <= 0:
+            if pygame.sprite.collide_rect(character, enemy):
+                character.take_damage(5)  # Dano de 5 por colisão
+                if character.health <= 0:
                     print("Game Over!")
                     running = False
 
@@ -101,10 +104,10 @@ def execute_game(player):
         # Update positions
         player_group.update()
         bullets.update()
-        enemies.update(player)
+        enemies.update(character)
 
         # chackning if tghe user goes into the shed area
-        if player.rect.right >= width:
+        if character.rect.right >= width:
             # change the game to state to shed
             return "shed"
 

@@ -32,10 +32,10 @@ class Enemy(pygame.sprite.Sprite):
         player (Player)
             The player to move towards
         """
-        #Calculation the direction in which the player is(angle)
+        # Calculation the direction in which the player is(angle)
         direction = math.atan2(player.rect.y - self.rect.y, player.rect.x - self.rect.x)
 
-        #Coordinate update
+        # Coordinate update
         self.rect.x += self.speed * math.cos(direction)
         self.rect.y += self.speed * math.sin(direction)
 
