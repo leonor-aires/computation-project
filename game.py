@@ -35,7 +35,7 @@ def execute_game(character = None ):
     player_group.add(character)
 
     #background image
-    image = pygame.image.load("teste.jpg")
+    image = pygame.image.load("battlefield.webp")
     image = pygame.transform.scale(image, (1000, 600))
     #music
     pygame.init()
