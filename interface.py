@@ -5,7 +5,7 @@ from utils import under_construction
 from story import start_game_with_story
 
 
-def interface():
+def interface(screen):
     # initiating pygame
     pygame.init()
     pygame.mixer.music.load('Music/music.mp3')
@@ -47,6 +47,7 @@ def interface():
             # quitting the game with the close button on the window (X)
             if ev.type == pygame.QUIT:
                 pygame.quit()
+                exit()
 
             # detecting if the user clicked on the quit button (750, 500 para 890, 560)
             if ev.type == pygame.MOUSEBUTTONDOWN:
@@ -66,7 +67,7 @@ def interface():
             # detecting if the user clicked on the wilderness explorer button (100, 150 para 700, 210):
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 if 200 <= mouse[0] <= 1000 and 150 <= mouse[1] <= 210:
-                    start_game_with_story() # Call the story first
+                    start_game_with_story(screen) # Call the story first
 
 
             # detecting if the user clicked on the credits button (750, 380 para 890, 440):
