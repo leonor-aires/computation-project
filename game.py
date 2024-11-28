@@ -15,6 +15,8 @@ def game_loop():
             current_state = execute_game(character)
         elif current_state == "shed":
             current_state = shed(character)
+        elif current_state == "break":
+            break
 
 def execute_game(character = None ):
     """
@@ -70,7 +72,7 @@ def execute_game(character = None ):
                     character.shoot(bullets)
                     # Detectar clique no botão "Back"
                 if 430 <= mouse[0] <= 570 and 540 <= mouse[1] <= 600:
-                    running = False  # Sai do loop do jogo e volta à interface principal
+                    return "break"
 
         # Spawning the enemies
         if enemy_spawn_timer <= 0:
