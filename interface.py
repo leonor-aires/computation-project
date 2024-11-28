@@ -134,9 +134,9 @@ def credits_():
     corbel_font = pygame.font.SysFont("Corbel", 50)
 
     # text
-    leonor = comicsans_font.render("Leonor Aires, ajrsantos@novaims.unl.pt", True, white)
+    leonor = comicsans_font.render("Leonor Aires, 20231654@novaims.unl.pt", True, white)
     constanca = comicsans_font.render("Constança Fernandes, 20231685@novaims.unl.pt", True, white)
-    marta = comicsans_font.render("Marta Soares, lrosenfeld@novaims.unl.pt", True, white)
+    marta = comicsans_font.render("Marta Soares, 20231640@novaims.unl.pt", True, white)
 
     # main game loop
     while True:
