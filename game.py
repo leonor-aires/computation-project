@@ -118,8 +118,7 @@ def execute_game(character = None ):
             if pygame.sprite.collide_rect(character, enemy):
                 character.take_damage(5)  # Dano de 5 por colisão
                 if character.health <= 0:
-                    print("Game Over!")
-                    running = False
+                    return game_over_screen(screen)
 
         #Update the enemy spawn timer
         enemy_spawn_timer -= 1
@@ -157,3 +156,45 @@ def execute_game(character = None ):
 
         pygame.display.flip()
 
+def game_over_screen(screen):
+    """
+    Função que exibe a tela de Game Over e permite ao jogador tentar novamente ou voltar.
+    """
+    corbel_font = pygame.font.SysFont("Corbel", 50)
+    screen.fill((0, 0, 0))  # Preenche a tela com a cor preta
+    game_over_text = corbel_font.render("Game Over", True, white)
+    game_over_rect = game_over_text.get_rect(center=(width // 2, height // 3))
+    screen.blit(game_over_text, game_over_rect)
+
+    # Desenhando o botão "Retry"
+    pygame.draw.rect(screen, green, [430, 650, 140, 60])
+    retry_text = corbel_font.render("Retry", True, white)
+    retry_rect = retry_text.get_rect(center=(430 + 140 // 2, 650 + 60 // 2))
+    screen.blit(retry_text, retry_rect)
+
+    # Desenhando o botão "Back"
+    pygame.draw.rect(screen, dark_red, [430, 540, 140, 60])
+    back_text = corbel_font.render("Back", True, white)
+    back_rect = back_text.get_rect(center=(430 + 140 // 2, 540 + 60 // 2))
+    screen.blit(back_text, back_rect)
+
+    pygame.display.flip()
+
+    # Esperando o clique do usuário
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                running = False
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse = pygame.mouse.get_pos()
+
+                # Verifica se o botão Retry foi pressionado
+                if 430 <= mouse[0] <= 570 and 650 <= mouse[1] <= 710:
+                    return "main"  # Reinicia o nível
+
+                # Verifica se o botão Back foi pressionado
+                if 430 <= mouse[0] <= 570 and 540 <= mouse[1] <= 600:
+                    return "break"  # Volta ao menu principal
