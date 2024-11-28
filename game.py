@@ -9,18 +9,18 @@ from powerups import *
 
 def game_loop(screen, character=None):
     if character is None:
-        character = Character(image="character images/dragon.png", x=150, y=150)  # Provide valid arguments
+        character = Character(image="character images/dragon.png", x=150, y=150)
         current_state = "main"
 
     while True:
         if current_state == "main":
-            current_state = execute_game(character)
+            current_state = execute_game(screen, character)
         elif current_state == "shed":
             current_state = shed(character)
         elif current_state == "break":
             break
 
-def execute_game(character = None ):
+def execute_game(screen, character = None ):
     """
     Main function to execute the game loop
     """

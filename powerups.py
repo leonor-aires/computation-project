@@ -36,6 +36,7 @@ class PowerUp(pygame.sprite.Sprite, ABC):
         """
         if self.collected:
             self.timer -= 1
+            print(f"[DEBUG] Timer for {self.__class__.__name__}: {self.timer}")  # Debug the timer
             if self.timer <= 0:
                 self.expire()
 
