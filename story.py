@@ -1,6 +1,6 @@
 import pygame
 from config import *
-from game import execute_game, game_loop
+from game import *
 from player import Player
 from character import Character
 
@@ -156,10 +156,10 @@ def display_story_with_buttons(screen):
     pygame.mixer.music.stop()
 
 
-def start_game_with_story():
+def start_game_with_story(screen):
     """
     Main function to start the game with a backstory, images, and transitions.
     """
     screen = pygame.display.set_mode(resolution)
     display_story_with_buttons(screen)
-    game_loop()  # Directly call the game loop after the story
+    game_loop(screen)  # Directly call the game loop after the story

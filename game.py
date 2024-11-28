@@ -5,23 +5,27 @@ from character import Character
 from enemy import Enemy
 from shed import shed
 from player import Player
+from powerups import *
 
-def game_loop():
-    character = Character(image="character images/dragon.png", x=150, y=150)  # Provide valid arguments
-    current_state = "main"
+def game_loop(screen, character=None):
+    if character is None:
+        character = Character(image="character images/dragon.png", x=150, y=150)  # Provide valid arguments
+        current_state = "main"
 
     while True:
         if current_state == "main":
             current_state = execute_game(character)
         elif current_state == "shed":
             current_state = shed(character)
+        elif current_state == "break":
+            break
 
 def execute_game(character = None ):
     """
     Main function to execute the game loop
     """
     if character is None:
-        character = Character(image="character images/dragon.png", x=150, y=150)  # Provide valid arguments
+        character = Character(image="character images/dragon.png", x=150, y=150)
 
     # Clock for controlling the frame rate
     clock = pygame.time.Clock()
@@ -34,21 +38,26 @@ def execute_game(character = None ):
     player_group = pygame.sprite.Group()
     player_group.add(character)
 
-    #background image
+    # Background image
     image = pygame.image.load("Battlefields/battlefield.webp")
     image = pygame.transform.scale(image, (1000, 600))
-    #music
+
+    # Music
     pygame.init()
     pygame.mixer.music.load('Music/teste.mp3')
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
 
-    #Initialize the bullet group
+    # Groups for game objects
     bullets = pygame.sprite.Group()
+    enemies = pygame.sprite.Group()
+    powerups = pygame.sprite.Group()
+    player_group = pygame.sprite.GroupSingle(character)
 
-    #Initialize the enemy group
-    enemies =pygame.sprite.Group()
-    enemy_spawn_timer = 0
+    # Game state
+    enemy_spawn_timer = 10 * fps
+    powerup_spawn_timer = 20 * fps  # Power-ups spawn every 20 seconds
+    max_powerups = 2  # Limit the number of active power-ups
 
     running = True
     while running:
@@ -60,17 +69,31 @@ def execute_game(character = None ):
 
         corbel_font = pygame.font.SysFont("Corbel", 50)
 
+        # Spawn power-ups
+        if len(powerups) < max_powerups and random.random() < 0.01:
+            x, y = random.randint(50, width - 50), random.randint(50, height - 50)
+            powerup = random.choice([InvincibilityPowerUp, DespawnerPowerUp])(x, y)
+            powerups.add(powerup)
+
         # Event Handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
+                exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Botão esquerdo do mouse
                     character.shoot(bullets)
                     # Detectar clique no botão "Back"
                 if 430 <= mouse[0] <= 570 and 540 <= mouse[1] <= 600:
-                    running = False  # Sai do loop do jogo e volta à interface principal
+                    return "break"
+
+         # Handle power-up collection
+        game_state = {'enemies': enemies, 'spawn_rate': enemy_spawn_timer}
+        for powerup in pygame.sprite.spritecollide(character, powerups, True):
+            powerup.collected = True
+            powerup.affect_player(character)
+            powerup.affect_game(game_state)
 
         # Spawning the enemies
         if enemy_spawn_timer <= 0:
@@ -95,8 +118,7 @@ def execute_game(character = None ):
             if pygame.sprite.collide_rect(character, enemy):
                 character.take_damage(5)  # Dano de 5 por colisão
                 if character.health <= 0:
-                    print("Game Over!")
-                    running = False
+                    return game_over_screen(screen)
 
         #Update the enemy spawn timer
         enemy_spawn_timer -= 1
@@ -105,6 +127,7 @@ def execute_game(character = None ):
         player_group.update()
         bullets.update()
         enemies.update(character)
+        powerups.update()  # Ensure power-up timers are processed
 
         # chackning if tghe user goes into the shed area
         if character.rect.right >= width:
@@ -114,6 +137,9 @@ def execute_game(character = None ):
         # Drawing the objects
         player_group.draw(screen)
         enemies.draw(screen)
+        bullets.draw(screen)
+        powerups.draw(screen)
+
 
         for enemy in enemies:
             enemy.draw(screen)  # Inclui barra de vida
@@ -130,3 +156,45 @@ def execute_game(character = None ):
 
         pygame.display.flip()
 
+def game_over_screen(screen):
+    """
+    Função que exibe a tela de Game Over e permite ao jogador tentar novamente ou voltar.
+    """
+    corbel_font = pygame.font.SysFont("Corbel", 50)
+    screen.fill((0, 0, 0))  # Preenche a tela com a cor preta
+    game_over_text = corbel_font.render("Game Over", True, white)
+    game_over_rect = game_over_text.get_rect(center=(width // 2, height // 3))
+    screen.blit(game_over_text, game_over_rect)
+
+    # Desenhando o botão "Retry"
+    pygame.draw.rect(screen, green, [430, 650, 140, 60])
+    retry_text = corbel_font.render("Retry", True, white)
+    retry_rect = retry_text.get_rect(center=(430 + 140 // 2, 650 + 60 // 2))
+    screen.blit(retry_text, retry_rect)
+
+    # Desenhando o botão "Back"
+    pygame.draw.rect(screen, dark_red, [430, 540, 140, 60])
+    back_text = corbel_font.render("Back", True, white)
+    back_rect = back_text.get_rect(center=(430 + 140 // 2, 540 + 60 // 2))
+    screen.blit(back_text, back_rect)
+
+    pygame.display.flip()
+
+    # Esperando o clique do usuário
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                running = False
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse = pygame.mouse.get_pos()
+
+                # Verifica se o botão Retry foi pressionado
+                if 430 <= mouse[0] <= 570 and 650 <= mouse[1] <= 710:
+                    return "main"  # Reinicia o nível
+
+                # Verifica se o botão Back foi pressionado
+                if 430 <= mouse[0] <= 570 and 540 <= mouse[1] <= 600:
+                    return "break"  # Volta ao menu principal
