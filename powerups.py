@@ -37,8 +37,13 @@ class PowerUp(pygame.sprite.Sprite, ABC):
         if self.collected:
             self.timer -= 1
             if self.timer <= 0:
-                self.kill()  # Remove the power-up
+                self.expire()
 
+    def expire(self):
+        """
+        Cleanup when the power-up's effect ends.
+        """
+        self.kill()  # Remove the power-up sprite
 
 class InvincibilityPowerUp(PowerUp):
     def __init__(self, x, y):
@@ -65,20 +70,15 @@ class InvincibilityPowerUp(PowerUp):
         """
         pass
 
-    def update(self):
+    def expire(self):
         """
-        Update the power-up's timer and deactivate when expired
+        Cleanup when invincibility ends.
         """
-        if self.collected:
-            self.timer -= 1  # Decrease the timer every frame
-            print(f"[DEBUG] Power-up timer: {self.timer}")  # Debugging
-            if self.timer <= 0:  # Timer expired
-                # Reset the player's state
-                if self.player:
-                    self.player.invincible = False
-                    self.player.image = self.player.original_image  # Restore original appearance
-                    print("[DEBUG] Invincibility ended.")
-                self.kill()  # Remove the power-up sprite
+        if self.player:
+            self.player.invincible = False
+            self.player.image = self.player.original_image  # Restore original appearance
+            print("[DEBUG] Invincibility ended.")
+        super().expire()
 
 
 class DespawnerPowerUp(PowerUp):
