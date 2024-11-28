@@ -14,7 +14,7 @@ yellow= (255,255,0)
 # SCREEN RESOLUTION
 resolution = (1000, 600)
 width, height = resolution[0], resolution[1] #for calcultation
-fps= 60
+fps= 60 # frames per second
 
 #SIZES
 player_size= (50,100)

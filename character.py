@@ -14,7 +14,6 @@ class Character(pygame.sprite.Sprite):
         self.image = pygame.image.load("characters images/dragon.png")  # Load player sprite
         self.image = pygame.transform.scale(self.image, (100, 100))
 
-
         # Set initial position
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
@@ -46,7 +45,7 @@ class Character(pygame.sprite.Sprite):
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             if self.rect.y < resolution[1] - self.rect.height:  # Prevent moving past the bottom edge
                 self.rect.y += self.speed
-        #Reduces the damage cooldown
+        # Reduz o cooldown de dano
         if self.damage_cooldown > 0:
             self.damage_cooldown -= 1
 
@@ -66,7 +65,7 @@ class Character(pygame.sprite.Sprite):
                 )
                 bullets.add(bullet)
             self.bullet_cooldown = fps #Frames until the next shot
-        #Even if player is not shooting bullets, the bullet_cooldown decreases by 1 every frame
+        #If you're not
         self.bullet_cooldown -=1
 
     def shoot(self, bullets_group):
@@ -83,21 +82,22 @@ class Character(pygame.sprite.Sprite):
 
     def take_damage(self, damage):
         """
-        Takes health from the player, considering the cooldown
+        Reduz a vida do jogador, considerando o cooldown
         """
-        if self.damage_cooldown <= 0:  # Receives damage, only if cooldown is over
+        if self.damage_cooldown <= 0:  # Apenas recebe dano se o cooldown acabou
             self.health -= damage
             self.damage_cooldown = fps  # Cooldown de 1 segundo
 
     def draw(self, screen):
-        """
-        Draw the enemy and draw the health bar
-        """
-        # Draw the enemy
+        # Desenhar o inimigo
         screen.blit(self.image, self.rect)
 
-        # Draw the health bar
+        # Desenhar barra de vida
         health_bar_width = self.rect.width
         health_ratio = self.health / self.max_health
         pygame.draw.rect(screen, deep_black, (self.rect.x, self.rect.y - 10, health_bar_width, 5))
         pygame.draw.rect(screen, green, (self.rect.x, self.rect.y - 10, health_bar_width * health_ratio, 5))
+
+
+
+
