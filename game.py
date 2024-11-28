@@ -121,11 +121,7 @@ def execute_game(character = None ):
                 if not character.invincible: # Only apply damage if the player is not invincible
                     character.take_damage(5)  # Damage of 5 per collision
                     if character.health <= 0:
-                        print("Game Over!")
-                        running = False
-                character.take_damage(5)  # Dano de 5 por colisão
-                if character.health <= 0:
-                    return game_over_screen(screen)
+                        return game_over_screen(screen)
 
         #Update spawn timer
         enemy_spawn_timer -= 1

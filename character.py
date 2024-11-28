@@ -83,11 +83,13 @@ class Character(pygame.sprite.Sprite):
 
     def take_damage(self, damage):
         """
-        Reduz a vida do jogador, considerando o cooldown
+        Reduce the player's health, considering invincibility and cooldown.
         """
-        if self.damage_cooldown <= 0:  # Apenas recebe dano se o cooldown acabou
+        if self.invincible:  # Do not apply damage if invincible
+            return
+        if self.damage_cooldown <= 0:  # Only take damage if cooldown has ended
             self.health -= damage
-            self.damage_cooldown = fps  # Cooldown de 1 segundo
+            self.damage_cooldown = fps  # Cooldown of 1 second
 
     def draw(self, screen):
         # Desenhar o inimigo
