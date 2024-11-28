@@ -35,11 +35,11 @@ def execute_game(character = None ):
     player_group.add(character)
 
     #background image
-    image = pygame.image.load("battlefield.webp")
+    image = pygame.image.load("Battlefields/battlefield.webp")
     image = pygame.transform.scale(image, (1000, 600))
     #music
     pygame.init()
-    pygame.mixer.music.load('teste.mp3')
+    pygame.mixer.music.load('Music/teste.mp3')
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
 

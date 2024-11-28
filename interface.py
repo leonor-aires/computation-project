@@ -8,7 +8,7 @@ from story import start_game_with_story
 def interface():
     # initiating pygame
     pygame.init()
-    pygame.mixer.music.load('music.mp3')
+    pygame.mixer.music.load('Music/music.mp3')
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
 
@@ -23,15 +23,17 @@ def interface():
     # first parameter is the text
     # second parameter is anti-analising, always True
     # third parameter is the color
-    wilderness_text = corbel_font.render("Wilderness Explorer", True, white)
+    #wilderness_text = corbel_font.render("Wilderness Explorer", True, white)
+    wilderness_text = corbel_font.render("Play", True, white)
     rules_text = corbel_font.render("Rules", True, white)
     options_text = corbel_font.render("Options", True, white)
     credits_text = corbel_font.render("Credits", True, white)
     quit_text = corbel_font.render("Quit", True, white)
-    title_text = comicsans_font.render("Computation III - Project", True, glowing_light_red)
+    #title_text = comicsans_font.render("Computation III - Project", True, glowing_light_red)
+    title_text = comicsans_font.render("Wilderness Explorer", True, glowing_light_red)
 
     # Load and scale the background image once
-    image = pygame.image.load("jump_scare.jpg")
+    image = pygame.image.load("backstory images/jump_scare.jpg")
     image_width, image_height = 1000, 600
     image = pygame.transform.scale(image, (image_width, image_height))
 
@@ -132,9 +134,9 @@ def credits_():
     corbel_font = pygame.font.SysFont("Corbel", 50)
 
     # text
-    augusto = comicsans_font.render("Augusto Santos, ajrsantos@novaims.unl.pt", True, white)
-    diogo = comicsans_font.render("Diogo Rasteiro, drasteiro@novaims.unl.pt", True, white)
-    liah = comicsans_font.render("Liah Rosenfeld, lrosenfeld@novaims.unl.pt", True, white)
+    leonor = comicsans_font.render("Leonor Aires, ajrsantos@novaims.unl.pt", True, white)
+    constanca = comicsans_font.render("Constança Fernandes, 20231685@novaims.unl.pt", True, white)
+    marta = comicsans_font.render("Marta Soares, lrosenfeld@novaims.unl.pt", True, white)
 
     # main game loop
     while True:
@@ -153,9 +155,9 @@ def credits_():
         screen.fill(deep_black)
 
         # display text
-        screen.blit(augusto, (0, 0))
-        screen.blit(diogo, (0, 25))
-        screen.blit(liah, (0, 50))
+        screen.blit(constanca, (250, 200))
+        screen.blit(leonor, (250, 225))
+        screen.blit(marta, (250, 250))
 
         # draw a back button [x, y, width, height]
         pygame.draw.rect(screen, dark_red, [430, 540, 140, 60])

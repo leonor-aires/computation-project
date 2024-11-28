@@ -15,6 +15,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
         #Positioning
+        # Set the position
         self.rect.x = random.randint(0, width - enemy_size)
         self.rect.y = random.randint(0, height - enemy_size)
 
@@ -22,8 +23,8 @@ class Enemy(pygame.sprite.Sprite):
         self.speed = random.uniform(1, 1.5)
 
         # Health
-        self.max_health = 10  # Definir a saúde máxima
-        self.health = self.max_health  # Saúde atual começa igual à máxima
+        self.max_health = 10  # Define maximum health
+        self.health = self.max_health  # Current health is equal to maximum health
 
     def update(self, player):
         """
@@ -32,7 +33,7 @@ class Enemy(pygame.sprite.Sprite):
         player (Player)
             The player to move towards
         """
-        # Calculation the direction in which the player is(angle)
+        # Calculates the direction in which the player is(angle)
         direction = math.atan2(player.rect.y - self.rect.y, player.rect.x - self.rect.x)
 
         # Coordinate update
@@ -43,10 +44,10 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y = int(self.rect.y)
 
     def draw(self, screen):
-        # Desenhar o inimigo
+        # Draw the enemy
         screen.blit(self.image, self.rect)
 
-        # Desenhar barra de vida
+        # Draw the health bar
         health_bar_width = self.rect.width
         health_ratio = self.health / self.max_health
         pygame.draw.rect(screen, deep_black, (self.rect.x, self.rect.y - 10, health_bar_width, 5))

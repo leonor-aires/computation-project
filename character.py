@@ -11,8 +11,9 @@ class Character(pygame.sprite.Sprite):
         """
         super().__init__()
         # Load and scale the image
-        self.image = pygame.image.load("dragon.png")  # Load player sprite
+        self.image = pygame.image.load("characters images/dragon.png")  # Load player sprite
         self.image = pygame.transform.scale(self.image, (100, 100))
+
 
         # Set initial position
         self.rect = self.image.get_rect()
@@ -100,7 +101,3 @@ class Character(pygame.sprite.Sprite):
         health_ratio = self.health / self.max_health
         pygame.draw.rect(screen, deep_black, (self.rect.x, self.rect.y - 10, health_bar_width, 5))
         pygame.draw.rect(screen, green, (self.rect.x, self.rect.y - 10, health_bar_width * health_ratio, 5))
-
-
-
-

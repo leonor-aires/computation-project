@@ -55,7 +55,7 @@ def display_story_with_buttons(screen):
     ]
 
     # Play background music
-    play_background_music("soundtrack_story.mp3")
+    play_background_music("Music/soundtrack_story.mp3")
 
     running = True
     slide_index = 0
