@@ -59,23 +59,22 @@ def display_story_with_buttons(screen):
 
     running = True
     slide_index = 0
+    previous_slide_index = None
+    displayed_text = "" # Initialize displayed text
 
     while running:
         screen.fill((0, 0, 0))  # Black background
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                return
+                running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 # Check if "Next" or "Play" button is clicked
                 if 820 <= mouse_pos[0] <= 920 and 540 <= mouse_pos[1] <= 580:
-                    if slide_index >= len(story_slides) - 1: # Last slide
-                        pygame.mixer.music.stop()
-                        running = False  # End story
-                        break
-                    else:
+                    if slide_index < len(story_slides) - 1:  # Not the last slide
                         slide_index += 1
+                    else:  # Last slide
+                        running = False  # Exit story loop and start the game
                 # Check if "Skip" button is clicked
                 if 20 <= mouse_pos[0] <= 120 and 540 <= mouse_pos[1] <= 580:
                     running = False  # End story
@@ -97,17 +96,17 @@ def display_story_with_buttons(screen):
                     if slide_index < 0:
                         slide_index = 0 # Stay on first slide
 
-        if slide_index < len(story_slides):
+        if slide_index < len(story_slides) - 1:
             # Load the current slide
             text, image_file = story_slides[slide_index]
             image = pygame.image.load(image_file)
-            image = pygame.transform.scale(image, (width, height))  # Scale to fit the screen
+            image = pygame.transform.scale(image, (1000, 600))  # Scale to fit the screen
 
             # Display the image
             screen.blit(image, (0, 0))
 
             # Render the text with a typewriter effect
-            if "displayed_text" not in locals() or slide_index != previous_slide_index:
+            if previous_slide_index != slide_index:
                 displayed_text = typewriter_effect(screen, text, font, (255, 255, 255), (50, height - 100), speed=30)
                 previous_slide_index = slide_index  # Track the current slide index
             else:
@@ -115,20 +114,10 @@ def display_story_with_buttons(screen):
                 text_rect = rendered_text.get_rect(center=(width // 2, height - 100))
                 screen.blit(rendered_text, text_rect)
 
-            # Add "Next" or "Play" button with hover effect
+             # Add "Next" or "Play" button
             mouse_pos = pygame.mouse.get_pos()
-            if slide_index == len(story_slides) - 1:  # Last slide
-                # Change "Next" button to "Play"
-                button_text = "Play"
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if 820 <= mouse_pos[0] <= 920 and 540 <= mouse_pos[1] <= 580:
-                        pygame.mixer.music.stop()  # Stop background music
-                        running = False  # Exit story loop and start the game
-            else:
-                # Regular "Next" button
-                button_text = "Next >"
-            button_color = (200, 200, 200) if 820 <= mouse_pos[0] <= 920 and 540 <= mouse_pos[1] <= 580 else (
-            150, 150, 150)
+            button_text = "Next >"
+            button_color = (200, 200, 200) if 820 <= mouse_pos[0] <= 920 and 540 <= mouse_pos[1] <= 580 else (150, 150, 150)
             pygame.draw.rect(screen, button_color, [820, 540, 100, 40])  # Button background
             button_label = button_font.render(button_text, True, (0, 0, 0))
             button_rect = button_label.get_rect(center=(870, 560))
@@ -145,6 +134,21 @@ def display_story_with_buttons(screen):
             hint_text = button_font.render("Press Enter to skip story", True, (255, 255, 255))
             hint_text_rect = hint_text.get_rect(center=(width // 2, height - 30))
             screen.blit(hint_text, hint_text_rect)
+
+        elif slide_index == len(story_slides) - 1:
+            # Load the current slide
+            text, image_file = story_slides[slide_index]
+            image = pygame.image.load(image_file)
+            image = pygame.transform.scale(image, (1000, 600))  # Scale to fit the screen
+
+            # Play button
+            button_text = "Play"
+            button_color = (200, 200, 200) if 820 <= mouse_pos[0] <= 920 and 540 <= mouse_pos[1] <= 580 else (
+            150, 150, 150)
+            pygame.draw.rect(screen, button_color, [820, 540, 100, 40])  # Button background
+            button_label = button_font.render(button_text, True, (0, 0, 0))
+            button_rect = button_label.get_rect(center=(870, 560))
+            screen.blit(button_label, button_rect)
 
         pygame.display.flip()
 

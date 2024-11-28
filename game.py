@@ -5,9 +5,10 @@ from character import Character
 from enemy import Enemy
 from shed import shed
 from player import Player
+from powerups import *
 
 def game_loop():
-    character = Character(image="dragon.png", x=150, y=150)  # Provide valid arguments
+    character = Character(image="dragon.png", x=150, y=150)
     current_state = "main"
 
     while True:
@@ -20,45 +21,60 @@ def execute_game(character = None ):
     """
     Main function to execute the game loop
     """
+    pygame.init()  # Ensure Pygame is initialized
+    print("[DEBUG] Executing game: Pygame initialized.")
+    screen = pygame.display.set_mode(resolution)  # Initialize the display
+    pygame.display.set_caption("Endless Wilderness Explorer")
+
     if character is None:
-        character = Character(image="dragon.png", x=150, y=150)  # Provide valid arguments
+        character = Character(image="dragon.png", x=150, y=150)
 
     # Clock for controlling the frame rate
     clock = pygame.time.Clock()
-
     # Screen setup
     screen = pygame.display.set_mode(resolution)
     pygame.display.set_caption("Endless Wilderness Explorer")
 
-    # Player setup
-    player_group = pygame.sprite.Group()
-    player_group.add(character)
+    # Initialize font
+    corbel_font = pygame.font.SysFont("Corbel", 50)
 
-    #background image
-    image = pygame.image.load("battlefield.webp")
-    image = pygame.transform.scale(image, (1000, 600))
-    #music
+    # Groups for game objects
+    bullets = pygame.sprite.Group()
+    enemies = pygame.sprite.Group()
+    powerups = pygame.sprite.Group()
+    player_group = pygame.sprite.GroupSingle(character)
+
+    # Background setup
+    background_image = pygame.image.load("battlefield.webp")
+    background_image = pygame.transform.scale(background_image, (1000, 600))
+
+    # Music
     pygame.init()
     pygame.mixer.music.load('teste.mp3')
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
 
-    #Initialize the bullet group
-    bullets = pygame.sprite.Group()
 
-    #Initialize the enemy group
-    enemies =pygame.sprite.Group()
-    enemy_spawn_timer = 0
-
+    # Game state
+    enemy_spawn_timer = 10 * fps  # Spawn every 10 seconds
+    powerup_spawn_timer = 20 * fps  # Power-ups spawn every 20 seconds
+    max_powerups = 1  # Limit the number of power-ups on screen
     running = True
+
     while running:
         # Control frame rate
         clock.tick(fps)
 
         # Fill the background
-        screen.blit(image, (0, 0))
+        screen.blit(background_image, (0, 0))
 
-        corbel_font = pygame.font.SysFont("Corbel", 50)
+        # Spawn power-ups, limited to max_powerups
+        if len(powerups) < max_powerups and random.random() < 0.01:
+            powerup_type = InvincibilityPowerUp
+            x, y = random.randint(50, width - 50), random.randint(50, height - 50)
+            powerup = powerup_type(x, y)
+            powerups.add(powerup)
+            powerup_spawn_timer = 20 * fps  # Reset spawn timer
 
         # Event Handling
         for event in pygame.event.get():
@@ -66,11 +82,21 @@ def execute_game(character = None ):
                 running = False
                 pygame.quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # Botão esquerdo do mouse
+                if event.button == 1:  # Left mouse button
                     character.shoot(bullets)
                     # Detectar clique no botão "Back"
                 if 430 <= mouse[0] <= 570 and 540 <= mouse[1] <= 600:
                     running = False  # Sai do loop do jogo e volta à interface principal
+
+        # Handle power-up collection
+        game_state = {'enemies': enemies, 'spawn_rate': enemy_spawn_timer}
+        for powerup in pygame.sprite.spritecollide(character, powerups, True):  # `character` is the player
+            powerup.collected = True
+            powerup.affect_player(character)
+            powerup.affect_game(game_state)
+
+        # Update spawn rate
+        enemy_spawn_timer = game_state['spawn_rate']
 
         # Spawning the enemies
         if enemy_spawn_timer <= 0:
@@ -98,13 +124,15 @@ def execute_game(character = None ):
                     print("Game Over!")
                     running = False
 
-        #Update the enemy spawn timer
-        enemy_spawn_timer -= 1
-
-        # Update positions
+        # Update game objects
         player_group.update()
         bullets.update()
         enemies.update(character)
+        powerups.update()
+
+        # Decrease spawm timers
+        powerup_spawn_timer -= 1
+        enemy_spawn_timer -= 1
 
         # chackning if tghe user goes into the shed area
         if character.rect.right >= width:
@@ -113,7 +141,9 @@ def execute_game(character = None ):
 
         # Drawing the objects
         player_group.draw(screen)
+        bullets.draw(screen)
         enemies.draw(screen)
+        powerups.draw(screen)
 
         for enemy in enemies:
             enemy.draw(screen)  # Inclui barra de vida
