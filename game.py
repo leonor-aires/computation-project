@@ -7,7 +7,7 @@ from shed import shed
 from player import Player
 
 def game_loop():
-    character = Character(image="dragon.png", x=150, y=150)  # Provide valid arguments
+    character = Character(image="character images/dragon.png", x=150, y=150)  # Provide valid arguments
     current_state = "main"
 
     while True:
@@ -21,7 +21,7 @@ def execute_game(character = None ):
     Main function to execute the game loop
     """
     if character is None:
-        character = Character(image="dragon.png", x=150, y=150)  # Provide valid arguments
+        character = Character(image="character images/dragon.png", x=150, y=150)  # Provide valid arguments
 
     # Clock for controlling the frame rate
     clock = pygame.time.Clock()
@@ -35,11 +35,11 @@ def execute_game(character = None ):
     player_group.add(character)
 
     #background image
-    image = pygame.image.load("battlefield.webp")
+    image = pygame.image.load("Battlefields/battlefield.webp")
     image = pygame.transform.scale(image, (1000, 600))
     #music
     pygame.init()
-    pygame.mixer.music.load('teste.mp3')
+    pygame.mixer.music.load('Music/teste.mp3')
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
 
