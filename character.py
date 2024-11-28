@@ -24,6 +24,7 @@ class Character(pygame.sprite.Sprite):
         self.health = self.max_health
         self.bullet_cooldown = 0
         self.damage_cooldown = 0
+        self.invincible = False  # Default invincibility status
 
     def update(self):
         """

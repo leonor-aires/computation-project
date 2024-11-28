@@ -77,8 +77,8 @@ class InvincibilityPowerUp(PowerUp):
         if self.player:
             self.player.invincible = False
             self.player.image = self.player.original_image  # Restore original appearance
-            print("[DEBUG] Invincibility ended.")
-        super().expire()
+            print("[DEBUG] Invincibility expired.")
+        super().expire()  # Call the base class expire logic
 
 
 class DespawnerPowerUp(PowerUp):

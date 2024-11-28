@@ -37,8 +37,8 @@ def execute_game(character = None ):
     player_group.add(character)
 
     # Background image
-    image = pygame.image.load("Battlefields/battlefield.webp")
-    image = pygame.transform.scale(image, (1000, 600))
+    background_image = pygame.image.load("Battlefields/battlefield.webp")
+    background_image = pygame.transform.scale(background_image, (1000, 600))
 
     # Music
     pygame.init()
@@ -55,7 +55,7 @@ def execute_game(character = None ):
     # Game state
     enemy_spawn_timer = 10 * fps
     powerup_spawn_timer = 20 * fps  # Power-ups spawn every 20 seconds
-    max_powerups = 2  # Limit the number of active power-ups
+    max_powerups = 1  # Limit the number of active power-ups
 
     running = True
     while running:
@@ -63,15 +63,17 @@ def execute_game(character = None ):
         clock.tick(fps)
 
         # Fill the background
-        screen.blit(image, (0, 0))
+        screen.blit(background_image, (0, 0))
 
         corbel_font = pygame.font.SysFont("Corbel", 50)
 
         # Spawn power-ups
         if len(powerups) < max_powerups and random.random() < 0.01:
+            powerup_type = InvincibilityPowerUp
             x, y = random.randint(50, width - 50), random.randint(50, height - 50)
-            powerup = random.choice([InvincibilityPowerUp, DespawnerPowerUp])(x, y)
+            powerup = powerup_type(x, y)
             powerups.add(powerup)
+            powerup_spawn_timer = 20 * fps
 
         # Event Handling
         for event in pygame.event.get():
@@ -114,13 +116,15 @@ def execute_game(character = None ):
         # Check for collisions between player and enemy
         for enemy in enemies:
             if pygame.sprite.collide_rect(character, enemy):
-                character.take_damage(5)  # Dano de 5 por colisão
-                if character.health <= 0:
-                    print("Game Over!")
-                    running = False
+                if not character.invincible: # Only apply damage if the player is not invincible
+                    character.take_damage(5)  # Damage of 5 per collision
+                    if character.health <= 0:
+                        print("Game Over!")
+                        running = False
 
-        #Update the enemy spawn timer
+        #Update spawn timer
         enemy_spawn_timer -= 1
+        powerup_spawn_timer -= 1
 
         # Update positions
         player_group.update()
