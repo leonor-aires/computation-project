@@ -1,13 +1,7 @@
-import pygame
-from interface import interface
+from interface import *
 
 def main():
-    pygame.init()  # Initialize Pygame systems
-    print("[DEBUG] Pygame initialized.")
-    try:
-        interface()  # Start the game interface
-    finally:
-        pygame.quit()  # Ensure Pygame quits when the program ends
+    interface()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

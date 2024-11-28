@@ -18,7 +18,7 @@ class Bullet(pygame.sprite.Sprite):
         self.direction = direction
 
         # Carregar a imagem (fire)
-        self.image = pygame.image.load('fire.png')
+        self.image = pygame.image.load('characters images/fire.png')
         self.image = pygame.transform.scale(self.image, (30, 30))
         self.rect = self.image.get_rect(center=(x, y))
 

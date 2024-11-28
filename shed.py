@@ -6,7 +6,7 @@ from utils import under_construction
 
 def shed(player):
     # set up of the background and screen
-    background = pygame.image.load("cave.webp")
+    background = pygame.image.load("Battlefields/cave.webp")
     background = pygame.transform.scale(background, resolution)
     screen= pygame.display.set_mode(resolution)
     clock = pygame.time.Clock()

@@ -13,7 +13,6 @@ class Character(pygame.sprite.Sprite):
         # Load and scale the image
         self.image = pygame.image.load("dragon.png")  # Load player sprite
         self.image = pygame.transform.scale(self.image, (100, 100))
-        self.original_color = self.image.copy()  # Save original appearance
 
         # Set initial position
         self.rect = self.image.get_rect()
@@ -23,7 +22,6 @@ class Character(pygame.sprite.Sprite):
         self.speed = 2
         self.max_health = 100
         self.health = self.max_health
-        self.invincible = False # Start not invincible
         self.bullet_cooldown = 0
         self.damage_cooldown = 0
 
@@ -31,12 +29,9 @@ class Character(pygame.sprite.Sprite):
         """
         Update the position of the player based on keyboard input
         """
-
-        if not pygame.get_init():  # Safeguard: Check if Pygame is initialized
-            print("[ERROR] Pygame video system not initialized.")
-
         # Detecting key presses for character movement
         keys = pygame.key.get_pressed()
+
         # Move the character based on key presses, ensuring the character doesn't move out of bounds
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             if self.rect.x > 0:  # Prevent moving past the left edge
@@ -87,14 +82,11 @@ class Character(pygame.sprite.Sprite):
 
     def take_damage(self, damage):
         """
-        Reduce health, considering cooldown, unless invincible
+        Reduz a vida do jogador, considerando o cooldown
         """
-        if self.invincible:
-            return  # Ignore damage if invincible
-
-        if self.damage_cooldown <= 0:  # Only take damage if cooldown has expired
+        if self.damage_cooldown <= 0:  # Apenas recebe dano se o cooldown acabou
             self.health -= damage
-            self.damage_cooldown = fps  # Cooldown for 1 second
+            self.damage_cooldown = fps  # Cooldown de 1 segundo
 
     def draw(self, screen):
         # Desenhar o inimigo
