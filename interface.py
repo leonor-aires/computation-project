@@ -53,6 +53,7 @@ def interface(screen):
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 if 750 <= mouse[0] <= 890 and 500 <= mouse[1] <= 560:
                     pygame.quit()
+                    exit()
 
             # detecting if the user clicked on options button (100, 500 para 240, 560):
             if ev.type == pygame.MOUSEBUTTONDOWN:
