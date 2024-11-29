@@ -3,6 +3,7 @@ from character import * # import player
 from game import execute_game, game_loop
 from utils import under_construction
 from story import start_game_with_story
+from Rules import show_rules
 
 
 def interface(screen):
@@ -18,6 +19,7 @@ def interface(screen):
     # fonts
     corbel_font = pygame.font.SysFont("Corbel", 50)
     comicsans_font = pygame.font.SysFont("Comic Sans MS", 50)
+    font = pygame.font.Font(None, 36)
 
     # text
     # first parameter is the text
@@ -36,6 +38,23 @@ def interface(screen):
     image = pygame.image.load("backstory images/jump_scare.jpg")
     image_width, image_height = 1000, 600
     image = pygame.transform.scale(image, (image_width, image_height))
+
+    # Placeholder images for Rules screen
+    images = {
+        "powerup1": pygame.image.load("Power-Up Images/invicibility.png"),
+        "powerup2": pygame.image.load("Power-Up Images/Despawner.png"),
+        "powerup3": pygame.image.load("Power-Up Images/deadly fire.png"),
+        "powerup4": pygame.image.load("Power-Up Images/crazyfire.png"),
+        "chest1": pygame.image.load("Chest Images/chest1.png"),
+        "chest2": pygame.image.load("Chest Images/chest2.png"),
+        "chest3": pygame.image.load("Chest Images/chest3.png"),
+        "chest4": pygame.image.load("Chest Images/chest4.png"),
+        #"movements": pygame.image.load("Chest Images/movementsblack.png")
+    }
+
+    # Optionally resize the images
+    for key in images.keys():
+        images[key] = pygame.transform.scale(images[key], (80, 80))  # Resize to X x Y pixels
 
     # Create a clock object to control the frame rate
     clock = pygame.time.Clock()
@@ -63,7 +82,7 @@ def interface(screen):
             # detecting if the user clicked on the rules button (100, 380 para 240, 440):
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 if 100 <= mouse[0] <= 240 and 380 <= mouse[1] <= 440:
-                    under_construction()
+                    show_rules(screen, font, images)
 
             # detecting if the user clicked on the wilderness explorer button (100, 150 para 700, 210):
             if ev.type == pygame.MOUSEBUTTONDOWN:
@@ -82,7 +101,7 @@ def interface(screen):
 
         # Bunch of things
 
-        # get the mouse infomration
+        # get the mouse information
         mouse = pygame.mouse.get_pos()  # locates where the mouse is
 
         # drawing the buttons
@@ -162,9 +181,9 @@ def credits_():
         screen.blit(marta, (250, 250))
 
         # draw a back button [x, y, width, height]
-        pygame.draw.rect(screen, dark_red, [430, 540, 140, 60])
+        pygame.draw.rect(screen, dark_red, [20, 20, 140, 60])
         back_text = corbel_font.render("    back", True, white)
-        back_rect = back_text.get_rect(center=(430 + 140 // 2, 540 + 60 // 2))
+        back_rect = back_text.get_rect(center=(20 + 140 // 2, 20 + 60 // 2))
         screen.blit(back_text, back_rect)
 
         # Update the screen
@@ -172,7 +191,7 @@ def credits_():
 
 
 def rules_():
-    print("Displaying rules...")
+    show_rules()
 
 
 def wilderness_explorer():
