@@ -4,6 +4,7 @@ from game import execute_game, game_loop
 from utils import under_construction
 from story import start_game_with_story
 from Rules import show_rules
+from options import show_options
 
 
 def interface(screen):
@@ -31,7 +32,6 @@ def interface(screen):
     options_text = corbel_font.render("Options", True, white)
     credits_text = corbel_font.render("Credits", True, white)
     quit_text = corbel_font.render("Quit", True, white)
-    #title_text = comicsans_font.render("Computation III - Project", True, glowing_light_red)
     title_text = comicsans_font.render("Wilderness Explorer", True, glowing_light_red)
 
     # Load and scale the background image once
@@ -49,7 +49,6 @@ def interface(screen):
         "chest2": pygame.image.load("Chest Images/chest2.png"),
         "chest3": pygame.image.load("Chest Images/chest3.png"),
         "chest4": pygame.image.load("Chest Images/chest4.png"),
-        #"movements": pygame.image.load("Chest Images/movementsblack.png")
     }
 
     # Optionally resize the images
@@ -60,7 +59,10 @@ def interface(screen):
     clock = pygame.time.Clock()
 
     # main game loop
+    running = True
     while True:
+        # Get the mouse position
+        mouse = pygame.mouse.get_pos()
         # event handling
         for ev in pygame.event.get():
             # quitting the game with the close button on the window (X)
@@ -77,7 +79,7 @@ def interface(screen):
             # detecting if the user clicked on options button (100, 500 para 240, 560):
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 if 100 <= mouse[0] <= 240 and 500 <= mouse[1] <= 560:
-                    under_construction()
+                    show_options(screen)
 
             # detecting if the user clicked on the rules button (100, 380 para 240, 440):
             if ev.type == pygame.MOUSEBUTTONDOWN:
@@ -89,7 +91,6 @@ def interface(screen):
                 if 200 <= mouse[0] <= 1000 and 150 <= mouse[1] <= 210:
                     start_game_with_story(screen) # Call the story first
 
-
             # detecting if the user clicked on the credits button (750, 380 para 890, 440):
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 if 750 <= mouse[0] <= 890 and 380 <= mouse[1] <= 440:
@@ -100,9 +101,6 @@ def interface(screen):
 
 
         # Bunch of things
-
-        # get the mouse information
-        mouse = pygame.mouse.get_pos()  # locates where the mouse is
 
         # drawing the buttons
 
@@ -147,9 +145,7 @@ def interface(screen):
 
 
 def credits_():
-
     screen = pygame.display.set_mode(resolution)
-
     # fonts
     comicsans_font = pygame.font.SysFont("Comic Sans MS", 25)
     corbel_font = pygame.font.SysFont("Corbel", 50)
