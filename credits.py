@@ -10,7 +10,7 @@ def credits_(screen):
     # text
     leonor = comicsans_font.render("Leonor Aires, 20231654@novaims.unl.pt", True, white)
     constanca = comicsans_font.render("Constança Fernandes, 20231685@novaims.unl.pt", True, white)
-    marta = comicsans_font.render("Marta Soares, 20231640@novaims.unl.pt", True, white)
+    marta = comicsans_font.render("Marta Soares, 20231650@novaims.unl.pt", True, white)
 
     running = True
     # main game loop
