@@ -10,7 +10,7 @@ def credits_(screen):
     # text
     leonor = comicsans_font.render("Leonor Aires, 20231654@novaims.unl.pt", True, white)
     constanca = comicsans_font.render("Constança Fernandes, 20231685@novaims.unl.pt", True, white)
-    marta = comicsans_font.render("Marta Soares, 20231650@novaims.unl.pt", True, white)
+    marta = comicsans_font.render("Marta Soares, 20231640@novaims.unl.pt", True, white)
 
     running = True
     # main game loop
@@ -38,7 +38,6 @@ def credits_(screen):
         screen.blit(marta, (250, 250))
 
         # draw a back button [x, y, width, height]
-        pygame.draw.rect(screen, dark_red, [20, 20, 140, 60])
         back_text = corbel_font.render("    back", True, white)
         back_rect = back_text.get_rect(center=(20 + 140 // 2, 20 + 60 // 2))
         screen.blit(back_text, back_rect)
