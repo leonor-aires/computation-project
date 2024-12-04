@@ -16,7 +16,7 @@ def show_rules(screen, font, images):
                     running = False
 
         # Background for Rules screen
-        screen.fill((0, 0, 0))  # Black background
+        screen.fill((30, 30, 30))  # Black background
 
         # Sizes
         title_font = pygame.font.Font(None, 90)
@@ -121,16 +121,6 @@ def show_rules(screen, font, images):
 
             # Blit the text onto the screen
             screen.blit(movement_text, text_rect)
-
-
-
-
-
-
-
-
-
-
 
         # Draw a back button [x, y, width, height]
         #pygame.draw.rect(screen, (255, 0, 0), [20, 20, 140, 60])  # Red back button
