@@ -23,10 +23,6 @@ def interface(screen):
     comicsans_font = pygame.font.SysFont("Comic Sans MS", 50)
     font = pygame.font.Font(None, 36)
 
-    # text
-    # first parameter is the text
-    # second parameter is anti-analising, always True
-    # third parameter is the color
     wilderness_text = corbel_font.render("Play", True, white)
     rules_text = corbel_font.render("Rules", True, white)
     options_text = corbel_font.render("Options", True, white)
@@ -93,6 +89,8 @@ def interface(screen):
         # Play button - apperance
         tile_rect = wilderness_text.get_rect(center=(200 + 600 // 2, 150 + 60 // 2))
         screen.blit(wilderness_text, tile_rect)
+        # get the mouse infomration
+        mouse = pygame.mouse.get_pos()  # locates where the mouse is
 
         # Draw the buttons
         wilderness_rect = wilderness_text.get_rect(center=(200 + 600 // 2, 150 + 60 // 2))
@@ -116,12 +114,6 @@ def interface(screen):
 
         # Limit the frame rate to 60 FPS
         clock.tick(60)
-
-        pass
-
-
-# Under construction screen
-
 
 def rules_():
     show_rules()

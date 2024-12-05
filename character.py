@@ -26,48 +26,49 @@ class Character(pygame.sprite.Sprite):
         self.damage_cooldown = 0
         self.invincible = False  # Default invincibility status
 
+        # Jumping variables
+        self.is_jumping = False
+        self.y_velocity = 0
+        self.gravity = 0.5  # Gravity strength
+        self.jump_height = -12  # Jump height (negative to make the character move up)
+
     def update(self):
         """
-        Update the position of the player based on keyboard input
+        Update the position of the character based on keyboard input and physics (gravity).
         """
         # Detecting key presses for character movement
         keys = pygame.key.get_pressed()
 
-        # Move the character based on key presses, ensuring the character doesn't move out of bounds
+        # Horizontal movement (left and right)
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            if self.rect.x > 0:  # Prevent moving past the left edge
-                self.rect.x -= self.speed
+            self.rect.x -= self.speed
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            if self.rect.x < resolution[0] - self.rect.width:  # Prevent moving past the right edge
-                self.rect.x += self.speed
+            self.rect.x += self.speed
+
+        # Jumping mechanism
         if keys[pygame.K_UP] or keys[pygame.K_w]:
-            if self.rect.y > 0:  # Prevent moving past the top edge
-                self.rect.y -= self.speed
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            if self.rect.y < resolution[1] - self.rect.height:  # Prevent moving past the bottom edge
-                self.rect.y += self.speed
-        # Reduz o cooldown de dano
-        if self.damage_cooldown > 0:
-            self.damage_cooldown -= 1
+            if not self.is_jumping:  # Only jump if not already jumping
+                self.is_jumping = True
+                self.y_velocity = self.jump_height  # Set the jump velocity
 
-    def shoot(self, bullets: pygame.sprite.Group):
-        """
-        Shoot bullet in 4 direction depending on the cooldown.
+        # Apply gravity
+        if self.is_jumping:
+            self.rect.y += self.y_velocity
+            self.y_velocity += self.gravity  # Gradually increase downward velocity
 
-        ARGS
-        ---
-        bullet (pygame.sprite.Group):
-            The bullet group that we will add the news ones to
-        """
-        if self.bullet_cooldown <= 0:
-            for angle in [0, math.pi/2, math.pi, 3*math.pi/2]:
-                bullet= Bullet(
-                    self.rect.center[0], self.rect.center[1], angle
-                )
-                bullets.add(bullet)
-            self.bullet_cooldown = fps #Frames until the next shot
-        #If you're not
-        self.bullet_cooldown -=1
+            # If the character hits the ground, stop jumping
+            if self.rect.bottom >= height:  # Check if the character hits the ground
+                self.rect.bottom = height  # Keep the character on the ground
+                self.is_jumping = False  # Stop jumping
+                self.y_velocity = 0  # Reset vertical velocity
+
+        # Prevent the character from going off the left edge
+        if self.rect.left < 0:
+            self.rect.left = 0
+
+        # Prevent the character from going off the right edge
+        if self.rect.right > width:
+            self.rect.right = width
 
     def shoot(self, bullets_group):
         """
