@@ -11,7 +11,7 @@ class Character(pygame.sprite.Sprite):
         """
         super().__init__()
         # Load and scale the image
-        self.image = pygame.image.load("characters images/dragon.png")  # Load player sprite
+        self.image = pygame.image.load("characters images/Tomátio.png")  # Load player sprite
         self.image = pygame.transform.scale(self.image, (100, 100))
 
         # Set initial position

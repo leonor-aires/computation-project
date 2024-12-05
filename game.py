@@ -9,7 +9,7 @@ from powerups import *
 
 def game_loop(screen, character=None):
     if character is None:
-        character = Character(image="character images/dragon.png", x=150, y=150)
+        character = Character(image="characters images/Tomátio.png", x=150, y=150)
         current_state = "main"
 
     while True:
@@ -25,7 +25,7 @@ def execute_game(screen, character = None ):
     Main function to execute the game loop
     """
     if character is None:
-        character = Character(image="character images/dragon.png", x=150, y=150)
+        character = Character(image="characters images/Tomátio.png", x=150, y=150)
 
     # Clock for controlling the frame rate
     clock = pygame.time.Clock()

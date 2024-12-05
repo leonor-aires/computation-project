@@ -91,7 +91,6 @@ def interface(screen):
         # Drawing the buttons
 
         # Play button - apperance
-        #pygame.draw.rect(screen, dark_red, [200, 150, 600, 60]) # red button
         tile_rect = wilderness_text.get_rect(center=(200 + 600 // 2, 150 + 60 // 2))
         screen.blit(wilderness_text, tile_rect)
 
