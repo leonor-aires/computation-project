@@ -45,7 +45,6 @@ def game_loop(screen, character=None):
         if current_state == "main":
             platforms = create_platforms(current_level)
             result = play_level(screen, character, current_level, platforms)
-
             if result == "next_level":
                 current_level += 1
                 character.health = character.max_health
