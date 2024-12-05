@@ -10,7 +10,7 @@ def shed(screen, player):
     clock = pygame.time.Clock()
 
     # Set player's position to the left of the screen
-    player.rect.left = 0
+    player.rect.left = 30
     player_group = pygame.sprite.Group()
     player_group.add(player)
 
@@ -37,7 +37,7 @@ def shed(screen, player):
             player.rect.left = 560
 
         # Allow the player to return to the main game
-        if player.rect.right >= width:  # Adjust position when returning
+        if player.rect.left <= 0:
             return "main"  # Return to the main game
 
         # Draw player
