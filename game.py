@@ -5,6 +5,7 @@ import pygame
 from shed import shed
 
 
+
 # Function to create platforms that change position in each level
 def create_platforms(level):
     platforms = []
