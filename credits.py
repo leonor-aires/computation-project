@@ -24,7 +24,6 @@ def credits_(screen):
                 pygame.quit()
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 # Clear the screen before exiting
-                screen.fill((0, 0, 0))  # Black background or use a default screen state
                 pygame.display.update()
                 if 20 <= mouse[0] <= 160 and 20 <= mouse[1] <= 80:
                     running = False
@@ -44,7 +43,3 @@ def credits_(screen):
 
         # Update the screen
         pygame.display.update()
-
-    #return
-    # Return to the main interface after exiting the loop
-    #interface(screen)

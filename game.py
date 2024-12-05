@@ -1,81 +1,113 @@
 from config import *
-import math
-import pygame
 from character import Character
 from enemy import Enemy
-from shed import shed
-from player import Player
-from powerups import *
+import pygame
+
+# Function to create platforms that change position in each level
+def create_platforms(level):
+    platforms = []
+    if level == 1:
+        # Level 1: Introdução, plataformas acessíveis e uma no canto superior direito
+        platforms = [
+            pygame.Rect(50, height - 50, 200, 10),  # Ground platform (esquerda)
+            pygame.Rect(300, height - 150, 250, 10),  # Plataforma média (centro-esquerda)
+            pygame.Rect(600, height - 250, 200, 10),  # Plataforma alta (centro-direita)
+            pygame.Rect(width - 250, height - 350, 150, 10),  # Plataforma no canto superior direito
+        ]
+    elif level == 2:
+        # Level 2: Plataformas mais espaçadas, desafio aumentado
+        platforms = [
+            pygame.Rect(100, height - 50, 200, 10),  # Ground platform (esquerda)
+            pygame.Rect(400, height - 150, 200, 10),  # Plataforma baixa (centro)
+            pygame.Rect(700, height - 250, 200, 10),  # Plataforma média (direita)
+            pygame.Rect(400, height - 350, 200, 10),  # Plataforma alta (centro-direita)
+            pygame.Rect(width - 200, height - 450, 150, 10),  # Plataforma no canto superior direito
+        ]
+    elif level == 3:
+        # Level 3: Layout mais desafiador, plataformas menores e mais distantes
+        platforms = [
+            pygame.Rect(50, height - 50, 200, 10),  # Ground platform (esquerda)
+            pygame.Rect(300, height - 200, 200, 10),  # Plataforma baixa (centro-esquerda)
+            pygame.Rect(600, height - 300, 200, 10),  # Plataforma média (centro-direita)
+            pygame.Rect(300, height - 400, 200, 10),  # Plataforma alta (esquerda)
+            pygame.Rect(width - 200, height - 500, 150, 10),  # Plataforma no canto superior direito
+        ]
+    return platforms
+
+
+
 
 def game_loop(screen, character=None):
+    """
+    Main loop that transitions between levels or other game states.
+    """
     if character is None:
-        character = Character(image="character images/dragon.png", x=150, y=150)
+        character = Character(image="characters images/Tomátio.png", x=150, y=150)
         current_state = "main"
+        character = Character(image="character images/dragon.png", x=150, y=150)
+    current_level = 1  # Start at level 1
 
     while True:
-        if current_state == "main":
-            current_state = execute_game(screen, character)
-        elif current_state == "shed":
-            current_state = shed(character)
-        elif current_state == "break":
-            break
+        # Create dynamic platforms for each level
+        platforms = create_platforms(current_level)
 
-def execute_game(screen, character = None ):
+        result = play_level(screen, character, current_level, platforms)
+        if result == "next_level":
+            current_level += 1
+            character.health = character.max_health  # Reset health when changing level
+        elif result == "retry":
+            # Reset health when changing level
+            character.health = character.max_health
+        elif result == "main_menu":
+            return  # Exit to the main menu
+
+
+def execute_game(screen, character=None):
     """
-    Main function to execute the game loop
+    Entry point for executing the game.
     """
+    game_loop(screen, character)
+
     if character is None:
-        character = Character(image="character images/dragon.png", x=150, y=150)
+        character = Character(image="characters images/Tomátio.png", x=150, y=150)
 
-    # Clock for controlling the frame rate
+def play_level(screen, character, level, platforms):
+    """
+    Core function to play a level with customizable parameters, including platforms.
+    """
     clock = pygame.time.Clock()
+    background_image = pygame.image.load("Battlefields/battlefield.webp.jpg")
+    background_image = pygame.transform.scale(background_image, resolution)
 
-    # Screen setup
-    screen = pygame.display.set_mode(resolution)
-    pygame.display.set_caption("Endless Wilderness Explorer")
-
-    # Player setup
-    player_group = pygame.sprite.Group()
-    player_group.add(character)
-
-    # Background image
-    background_image = pygame.image.load("Battlefields/battlefield.webp")
-    background_image = pygame.transform.scale(background_image, (1000, 600))
-
-    # Music
-    pygame.init()
-    pygame.mixer.music.load('Music/teste.mp3')
-    pygame.mixer.music.set_volume(0.5)
-    pygame.mixer.music.play(-1)
-
-    # Groups for game objects
     bullets = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
-    powerups = pygame.sprite.Group()
-    player_group = pygame.sprite.GroupSingle(character)
-
-    # Game state
-    enemy_spawn_timer = 10 * fps
-    powerup_spawn_timer = 20 * fps  # Power-ups spawn every 20 seconds
-    max_powerups = 1  # Limit the number of active power-ups
+    spawn_enemies(enemies, count=5 * level, health=10 * level)  # Increase the number of enemies according to the level
 
     running = True
+    level_complete = False  # Flag to check when the level is complete
     while running:
-        # Control frame rate
+        screen.blit(background_image, (0, 0))
         clock.tick(fps)
 
-        # Fill the background
-        screen.blit(background_image, (0, 0))
+        # Check if the character collided with any platform
+        on_platform = False
+        for platform in platforms:
+            if character.rect.colliderect(platform):
+                # Certifica-se de que o personagem está caindo antes de ajustar a posição
+                if character.y_velocity >= 0:
+                    character.rect.bottom = platform.top  # Mantém o personagem no topo da plataforma
+                    on_platform = True
+                    character.is_jumping = False  # Cancela o estado de salto
+                    character.y_velocity = 0  # Reseta a velocidade vertical
 
-        corbel_font = pygame.font.SysFont("Corbel", 50)
+        # Se não estiver em nenhuma plataforma e não estiver no chão, aplica gravidade
+        if not on_platform and character.rect.bottom < height:
+            character.rect.y += character.y_velocity
+            character.y_velocity += character.gravity
 
-        # Spawn power-ups
-        if len(powerups) < max_powerups and random.random() < 0.01:
-            powerup_type = InvincibilityPowerUp
-            x, y = random.randint(50, width - 50), random.randint(50, height - 50)
-            powerup = powerup_type(x, y)
-            powerups.add(powerup)
-            powerup_spawn_timer = 20 * fps
+        # Check if the character hit the top-right platform and killed all enemies
+        if character.rect.colliderect(platforms[-1]) and len(enemies) == 0:
+            level_complete = True
 
         # Event Handling
         for event in pygame.event.get():
@@ -84,121 +116,151 @@ def execute_game(screen, character = None ):
                 pygame.quit()
                 exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # Botão esquerdo do mouse
+                if event.button == 1:  # Left mouse button
                     character.shoot(bullets)
-                    # Detectar clique no botão "Back"
-                if 430 <= mouse[0] <= 570 and 540 <= mouse[1] <= 600:
-                    return "break"
 
-         # Handle power-up collection
-        game_state = {'enemies': enemies, 'spawn_rate': enemy_spawn_timer}
-        for powerup in pygame.sprite.spritecollide(character, powerups, True):
-            powerup.collected = True
-            powerup.affect_player(character)
-            powerup.affect_game(game_state)
-
-        # Spawning the enemies
-        if enemy_spawn_timer <= 0:
-            new_enemy = Enemy()
-            enemies.add(new_enemy)
-            enemy_spawn_timer = 10 * fps  # Spawn a cada dois segundos
-
-        # Verificar colisões entre balas e inimigos
-        for bullet in bullets:
-            collided_enemies = pygame.sprite.spritecollide(bullet, enemies, False)
-            for enemy in collided_enemies:
-                bullet_damage = 3  # Dano causado pela bala
-                enemy.health -= bullet_damage
-                bullet.kill()  # Remover a bala após o impacto
-                if enemy.health <= 0:
-                    enemy.kill()  # Remover o inimigo se a saúde chegar a 0
-
-
-
-        # Check for collisions between player and enemy
-        for enemy in enemies:
-            if pygame.sprite.collide_rect(character, enemy):
-                if not character.invincible: # Only apply damage if the player is not invincible
-                    character.take_damage(5)  # Damage of 5 per collision
-                    if character.health <= 0:
-                        return game_over_screen(screen)
-
-        #Update spawn timer
-        enemy_spawn_timer -= 1
-        powerup_spawn_timer -= 1
-
-        # Update positions
-        player_group.update()
+        # Update game objects
+        character.update()
         bullets.update()
         enemies.update(character)
-        powerups.update()  # Ensure power-up timers are processed
 
-        # chackning if tghe user goes into the shed area
-        if character.rect.right >= width:
-            # change the game to state to shed
-            return "shed"
+        # Handle collisions
+        handle_collisions(character, bullets, enemies)
 
-        # Drawing the objects
-        player_group.draw(screen)
-        enemies.draw(screen)
+        # Draw platforms
+        for platform in platforms:
+            pygame.draw.rect(screen, deep_black, platform)
+
+        # Draw objects (character, enemies, etc.)
         bullets.draw(screen)
-        powerups.draw(screen)
+        enemies.draw(screen)
+        character.draw(screen)
 
+        # Draw the UI (for example, health)
+        draw_ui(screen, character)
 
-        for enemy in enemies:
-            enemy.draw(screen)  # Inclui barra de vida
-        for bullet in bullets:
-            bullet.draw(screen)
-        for player in player_group:
-            player.draw(screen)
+        # Check if the level is completed
+        if level_complete:
+            return level_end_screen(screen, level)
 
-        mouse = pygame.mouse.get_pos()  # Obter posição do mouse
-        pygame.draw.rect(screen, dark_red, [430, 540, 140, 60])
-        back_text = corbel_font.render("Back", True, white)
-        back_rect = back_text.get_rect(center=(430 + 140 // 2, 540 + 60 // 2))
-        screen.blit(back_text, back_rect)
+        # Check if the character died
+        if character.health <= 0:
+            return game_over_screen(screen)
 
         pygame.display.flip()
 
-def game_over_screen(screen):
-    """
-    Função que exibe a tela de Game Over e permite ao jogador tentar novamente ou voltar.
-    """
-    corbel_font = pygame.font.SysFont("Corbel", 50)
-    screen.fill((0, 0, 0))  # Preenche a tela com a cor preta
-    game_over_text = corbel_font.render("Game Over", True, white)
-    game_over_rect = game_over_text.get_rect(center=(width // 2, height // 3))
-    screen.blit(game_over_text, game_over_rect)
 
-    # Desenhando o botão "Retry"
-    pygame.draw.rect(screen, green, [430, 650, 140, 60])
-    retry_text = corbel_font.render("Retry", True, white)
-    retry_rect = retry_text.get_rect(center=(430 + 140 // 2, 650 + 60 // 2))
-    screen.blit(retry_text, retry_rect)
+def level_end_screen(screen, level):
+    """
+    Displays the end of level screen with options for the player.
+    """
+    font = pygame.font.SysFont("Corbel", 50)
+    screen.fill((0, 0, 0))
 
-    # Desenhando o botão "Back"
-    pygame.draw.rect(screen, dark_red, [430, 540, 140, 60])
-    back_text = corbel_font.render("Back", True, white)
-    back_rect = back_text.get_rect(center=(430 + 140 // 2, 540 + 60 // 2))
-    screen.blit(back_text, back_rect)
+    level_end_text = font.render(f"End of Level {level}", True, white)
+    level_end_rect = level_end_text.get_rect(center=(width // 2, height // 3))
+    screen.blit(level_end_text, level_end_rect)
+
+    next_level_button = pygame.Rect(200, 400, 200, 60)
+    menu_button = pygame.Rect(600, 400, 200, 60)
+    pygame.draw.rect(screen, green, next_level_button)
+    pygame.draw.rect(screen, dark_red, menu_button)
+
+    next_level_text = font.render("Next Level", True, white)
+    menu_text = font.render("Main Menu", True, white)
+    screen.blit(next_level_text, next_level_button.move(50, 10).topleft)
+    screen.blit(menu_text, menu_button.move(20, 10).topleft)
 
     pygame.display.flip()
 
-    # Esperando o clique do usuário
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                running = False
-
+                exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
+                if next_level_button.collidepoint(mouse):
+                    return "next_level"
+                elif menu_button.collidepoint(mouse):
+                    return "main_menu"
 
-                # Verifica se o botão Retry foi pressionado
-                if 430 <= mouse[0] <= 570 and 650 <= mouse[1] <= 710:
-                    return "main"  # Reinicia o nível
 
-                # Verifica se o botão Back foi pressionado
-                if 430 <= mouse[0] <= 570 and 540 <= mouse[1] <= 600:
-                    return "break"  # Volta ao menu principal
+def game_over_screen(screen):
+    """
+    Displays the Game Over screen with options to retry or go back to the menu.
+    """
+    font = pygame.font.SysFont("Corbel", 50)
+    screen.fill((0, 0, 0))
+
+    game_over_text = font.render("Game Over", True, white)
+    game_over_rect = game_over_text.get_rect(center=(width // 2, height // 3))
+    screen.blit(game_over_text, game_over_rect)
+
+    retry_button = pygame.Rect(200, 400, 200, 60)
+    menu_button = pygame.Rect(600, 400, 200, 60)
+    pygame.draw.rect(screen, green, retry_button)
+    pygame.draw.rect(screen, dark_red, menu_button)
+
+    retry_text = font.render("Retry", True, white)
+    menu_text = font.render("Main Menu", True, white)
+    screen.blit(retry_text, retry_button.move(50, 10).topleft)
+    screen.blit(menu_text, menu_button.move(20, 10).topleft)
+
+    pygame.display.flip()
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse = pygame.mouse.get_pos()
+                if retry_button.collidepoint(mouse):
+                    return "retry"
+                elif menu_button.collidepoint(mouse):
+                    return "main_menu"
+
+
+def spawn_enemies(group, count, health):
+    """
+    Generates a number of enemies with the specified health.
+    """
+    for _ in range(count):
+        enemy = Enemy()
+        enemy.health = health
+        enemy.max_health = health
+        group.add(enemy)
+
+
+def handle_collisions(character, bullets, enemies):
+    """
+    Handles collisions between bullets and enemies, and between the character and enemies.
+    """
+    for bullet in bullets:
+        collided_enemies = pygame.sprite.spritecollide(bullet, enemies, False)
+        for enemy in collided_enemies:
+            enemy.health -= 5  # Damage caused by the bullet
+            bullet.kill()
+            if enemy.health <= 0:
+                enemy.kill()
+
+    for enemy in enemies:
+        if pygame.sprite.collide_rect(character, enemy):
+            character.take_damage(10)  # Damage taken by the character
+
+
+def draw_ui(screen, character):
+    """
+    Draws the UI elements such as health and level.
+    """
+    font = pygame.font.SysFont("Corbel", 30)
+    health_text = font.render(f"Health: {character.health}/{character.max_health}", True, green)
+    screen.blit(health_text, (10, 10))
+
+
+
+
+
