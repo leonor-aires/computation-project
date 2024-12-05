@@ -74,7 +74,6 @@ def play_level(screen, character, level, platforms):
     enemies = pygame.sprite.Group()
     spawn_enemies(enemies, platforms)  # Pass platforms to spawn enemies
     powerups = pygame.sprite.Group()
-    spawn_enemies(enemies, count=5 * level, health=10 * level)
 
     # Spawn one power-up on a random platform
     platform = random.choice(platforms)
@@ -121,14 +120,13 @@ def play_level(screen, character, level, platforms):
         bullets.update()
         enemies.update(character)
         powerups.update()
-        enemies.update()  # Enemies automatically stay on their platforms
+        enemies.update()
 
         # Handle power-up collection
         collected_powerups = pygame.sprite.spritecollide(character, powerups, True)
         for powerup in collected_powerups:
             powerup.affect_player(character)
 
-        # Handle collisions
         # Handle collisions
         handle_collisions(character, bullets, enemies)
 
@@ -142,7 +140,6 @@ def play_level(screen, character, level, platforms):
 
         # Draw all game objects
         bullets.draw(screen)
-
         powerups.draw(screen)
         for enemy in enemies:
             enemy.draw(screen)  # Use the enemy's draw method
@@ -177,6 +174,10 @@ def spawn_enemies(group, platforms):
 
 
 def handle_collisions(character, bullets, enemies):
+    """
+    Handle collisions between bullets and enemies, and between enemies and the player.
+    """
+    # Check for bullet collisions with enemies
     for bullet in bullets:
         collided_enemies = pygame.sprite.spritecollide(bullet, enemies, False)
         for enemy in collided_enemies:
@@ -187,7 +188,8 @@ def handle_collisions(character, bullets, enemies):
 
     for enemy in enemies:
         if pygame.sprite.collide_rect(character, enemy):
-            character.take_damage(10)
+            if not character.invincible:  # Prevent damage if the player is invincible
+                character.take_damage(10)  # Adjust damage amount as needed
 
 
 def draw_ui(screen, character):

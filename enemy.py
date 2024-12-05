@@ -32,9 +32,11 @@ class Enemy(pygame.sprite.Sprite):
         self.max_health = 10
         self.health = self.max_health
 
-    def update(self):
+    def update(self, character=None):
         """
         Update the enemy's horizontal position, restricting it to its assigned platform.
+        Args:
+            character (Character, optional): The player character, if needed.
         """
         # Move horizontally
         self.rect.x += self.speed
@@ -59,6 +61,6 @@ class Enemy(pygame.sprite.Sprite):
 
         # Draw health bar
         health_bar_width = self.rect.width
-        health_ratio = self.health / self.max_health
+        health_ratio = max(0, self.health / self.max_health) # Avoids negative health values
         pygame.draw.rect(screen, deep_black, (self.rect.x, self.rect.y - 10, health_bar_width, 5))
         pygame.draw.rect(screen, green, (self.rect.x, self.rect.y - 10, health_bar_width * health_ratio, 5))
