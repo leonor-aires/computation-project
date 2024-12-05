@@ -28,7 +28,7 @@ def interface(screen):
     options_text = corbel_font.render("Options", True, white)
     credits_text = corbel_font.render("Credits", True, white)
     quit_text = corbel_font.render("Quit", True, white)
-    title_text = comicsans_font.render("Wilderness Explorer", True, glowing_light_red)
+    title_text = comicsans_font.render("Tomátios' Escape", True, glowing_light_red)
 
     # Load and scale the background image once
     image = pygame.image.load("backstory images/jump_scare.jpg")
