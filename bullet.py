@@ -27,12 +27,11 @@ class Bullet(pygame.sprite.Sprite):
         Update the bullet's position and check if it goes offscreen.
         :return:
         """
-        #Coordinate update
-        self.rect.x += int(self.speed * math.cos(self.direction))
-        self.rect.y += int(self.speed * math.sin(self.direction))
+        # Update only the horizontal coordinate
+        self.rect.x += int(self.speed * math.copysign(1, math.cos(self.direction)))
 
-        #Coordinate update
-        if (self.rect.x < 0) or (self.rect.x > width) or (self.rect.y < 0) or (self.rect.y > height):
+        # Remove the bullet if it goes offscreen
+        if self.rect.x < 0 or self.rect.x > width:
             self.kill()
 
     def draw(self, screen: pygame.Surface):
