@@ -95,10 +95,10 @@ class Character(pygame.sprite.Sprite):
             self.damage_cooldown = fps  # Cooldown of 1 second
 
     def draw(self, screen):
-        # Desenhar o inimigo
+        # Desenha o personagem
         screen.blit(self.image, self.rect)
 
-        # Desenhar barra de vida
+        # Desenha barra de vida acima do personagem
         health_bar_width = self.rect.width
         health_ratio = self.health / self.max_health
         pygame.draw.rect(screen, deep_black, (self.rect.x, self.rect.y - 10, health_bar_width, 5))

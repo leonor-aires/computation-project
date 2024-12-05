@@ -4,7 +4,6 @@ import pygame
 from character import Character
 from enemy import Enemy
 from shed import shed
-from player import Player
 from powerups import *
 
 def game_loop(screen, character=None):

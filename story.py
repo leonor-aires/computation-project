@@ -1,7 +1,6 @@
 import pygame
 from config import *
 from game import *
-from player import Player
 from character import Character
 
 def typewriter_effect(screen, text, font, color, position, speed=25):
