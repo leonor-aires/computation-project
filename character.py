@@ -70,6 +70,8 @@ class Character(pygame.sprite.Sprite):
         if self.rect.right > width:
             self.rect.right = width
 
+        if self.damage_cooldown > 0:
+            self.damage_cooldown -= 1
     def shoot(self, bullets_group):
         """
         Create a bullet in the direction of the mouse

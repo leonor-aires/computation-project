@@ -55,6 +55,9 @@ def game_loop(screen, character=None):
         if result == "next_level":
             current_level += 1
             character.health = character.max_health  # Reset health when changing level
+        elif result == "retry":
+            # Reset health when changing level
+            character.health = character.max_health
         elif result == "main_menu":
             return  # Exit to the main menu
 
