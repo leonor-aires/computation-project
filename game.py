@@ -11,25 +11,26 @@ def create_platforms(level):
     if level == 1:
         platforms = [
             pygame.Rect(50, height - 50, 200, 10),  # Ground platform (esquerda)
-            pygame.Rect(300, height - 150, 250, 10),  # Plataforma média (centro-esquerda)
-            pygame.Rect(600, height - 250, 200, 10),  # Plataforma alta (centro-direita)
-            pygame.Rect(width - 250, height - 350, 150, 10),  # Plataforma no canto superior direito
+            pygame.Rect(300, height - 200, 200, 10),  # Plataforma média (centro-esquerda)
+            pygame.Rect(600, height - 100, 200, 10),
+            pygame.Rect(600, height - 400, 200, 10),
+            pygame.Rect(width - 150, 100, 150, 10),  # Plataforma no canto superior direito
         ]
     elif level == 2:
         platforms = [
-            pygame.Rect(100, height - 50, 200, 10),  # Ground platform (esquerda)
-            pygame.Rect(400, height - 150, 200, 10),  # Plataforma baixa (centro)
-            pygame.Rect(700, height - 250, 200, 10),  # Plataforma média (direita)
-            pygame.Rect(400, height - 350, 200, 10),  # Plataforma alta (centro-direita)
-            pygame.Rect(width - 200, height - 450, 150, 10),  # Plataforma no canto superior direito
+            pygame.Rect(50, height - 50, 200, 10),  # Ground platform (esquerda)
+            pygame.Rect(400, height - 200, 200, 10),  # Plataforma baixa (centro)
+            pygame.Rect(700, height - 300, 200, 10),  # Plataforma média (direita)
+            pygame.Rect(300, height - 350, 200, 10),  # Plataforma alta (esquerda)
+            pygame.Rect(width - 150, 100, 150, 10),  # Plataforma no canto superior direito
         ]
     elif level == 3:
         platforms = [
-            pygame.Rect(50, height - 50, 200, 10),  # Ground platform (esquerda)
-            pygame.Rect(300, height - 200, 200, 10),  # Plataforma baixa (centro-esquerda)
-            pygame.Rect(600, height - 300, 200, 10),  # Plataforma média (centro-direita)
-            pygame.Rect(300, height - 400, 200, 10),  # Plataforma alta (esquerda)
-            pygame.Rect(width - 200, height - 500, 150, 10),  # Plataforma no canto superior direito
+            pygame.Rect(50, height - 50, 150, 10),  # Ground platform (esquerda)
+            pygame.Rect(250, height - 100, 150, 10),  # Plataforma média baixa (centro-esquerda)
+            pygame.Rect(500, height - 200, 150, 10),  # Plataforma média alta (centro)
+            pygame.Rect(750, height - 300, 150, 10),  # Plataforma alta (direita)
+            pygame.Rect(width - 200, 100, 150, 10),  # Plataforma no canto superior direito
         ]
     return platforms
 
@@ -64,12 +65,12 @@ def execute_game(screen, character=None):
 
 def play_level(screen, character, level, platforms):
     clock = pygame.time.Clock()
-    background_image = pygame.image.load("Battlefields/battlefield.webp.jpg")
+    background_image = pygame.image.load("Battlefields/battlefield.webp")
     background_image = pygame.transform.scale(background_image, resolution)
 
     bullets = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
-    spawn_enemies(enemies, count=5 * level, health=10 * level)
+    spawn_enemies(enemies, platforms)  # Pass platforms to spawn enemies
 
     running = True
     level_complete = False
@@ -103,22 +104,29 @@ def play_level(screen, character, level, platforms):
                 if event.button == 1:
                     character.shoot(bullets)
 
+        # Update game objects
         character.update()
         bullets.update()
-        enemies.update(character)
+        enemies.update()  # Enemies automatically stay on their platforms
 
+        # Handle collisions
         handle_collisions(character, bullets, enemies)
 
+        # Draw platforms
         for platform in platforms:
             pygame.draw.rect(screen, deep_black, platform)
 
+        # Check if character moves to the shed
         if character.rect.right >= width and character.rect.bottom >= height - 50:
             return "shed"
 
+        # Draw all game objects
         bullets.draw(screen)
-        enemies.draw(screen)
+        for enemy in enemies:
+            enemy.draw(screen)  # Use the enemy's draw method
         character.draw(screen)
 
+        # Draw UI
         draw_ui(screen, character)
 
         if level_complete:
@@ -130,11 +138,16 @@ def play_level(screen, character, level, platforms):
         pygame.display.flip()
 
 
-def spawn_enemies(group, count, health):
-    for _ in range(count):
-        enemy = Enemy()
-        enemy.health = health
-        enemy.max_health = health
+def spawn_enemies(group, platforms):
+    """
+    Spawns one enemy per platform.
+
+    Args:
+        group (pygame.sprite.Group): Group to which the enemies are added.
+        platforms (list): List of platforms (pygame.Rect).
+    """
+    for platform in platforms:
+        enemy = Enemy(platform)  # Create an enemy restricted to the platform
         group.add(enemy)
 
 
