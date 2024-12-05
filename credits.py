@@ -4,13 +4,18 @@ from config import resolution, white, deep_black, dark_red
 def credits_(screen):
     #screen = pygame.display.set_mode(resolution)
     # fonts
-    comicsans_font = pygame.font.SysFont("Comic Sans MS", 25)
-    corbel_font = pygame.font.SysFont("Corbel", 50)
+    comicsans_font = pygame.font.SysFont("Comic Sans MS", 15)
+    corbel_font = pygame.font.SysFont("Corbel", 50, bold=True)
+
+    background_image = pygame.image.load("backstory images/credits image.webp")
+    background_image = pygame.transform.scale(background_image, resolution)  # Scale the image to match the screen resolution
 
     # text
-    leonor = comicsans_font.render("Leonor Aires, 20231654@novaims.unl.pt", True, white)
-    constanca = comicsans_font.render("Constança Fernandes, 20231685@novaims.unl.pt", True, white)
-    marta = comicsans_font.render("Marta Soares, 20231640@novaims.unl.pt", True, white)
+    leonor = comicsans_font.render("Leonor Aires", True, deep_black)
+    constanca = comicsans_font.render("Constança Fernandes", True, deep_black)
+    marta = comicsans_font.render("Marta Soares", True, deep_black)
+    #leonor:20231654@novaims.unl.pt / constanca: 20231685@novaims.unl.pt / marta:20231640@novaims.unl.pt
+
 
     running = True
     # main game loop
@@ -29,15 +34,15 @@ def credits_(screen):
                     running = False
 
         # background
-        screen.fill(deep_black)
+        screen.blit(background_image, (0, 0))
 
         # display text
-        screen.blit(constanca, (250, 200))
-        screen.blit(leonor, (250, 225))
-        screen.blit(marta, (250, 250))
+        screen.blit(constanca, (465, 105))
+        screen.blit(leonor, (465, 130))
+        screen.blit(marta, (465, 155))
 
         # draw a back button [x, y, width, height]
-        back_text = corbel_font.render("    back", True, white)
+        back_text = corbel_font.render("    back", True, deep_black)
         back_rect = back_text.get_rect(center=(20 + 140 // 2, 20 + 60 // 2))
         screen.blit(back_text, back_rect)
 

@@ -5,6 +5,7 @@ import pygame
 from shed import shed
 
 
+
 # Function to create platforms that change position in each level
 def create_platforms(level):
     platforms = []
@@ -65,7 +66,7 @@ def execute_game(screen, character=None):
 
 def play_level(screen, character, level, platforms):
     clock = pygame.time.Clock()
-    background_image = pygame.image.load("Battlefields/battlefield.webp.jpg")
+    background_image = pygame.image.load("Battlefields/battlefield.webp")
     background_image = pygame.transform.scale(background_image, resolution)
 
     bullets = pygame.sprite.Group()

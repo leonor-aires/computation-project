@@ -70,6 +70,8 @@ def show_options(screen):
         # Fonts for text
         title_font = pygame.font.Font(None, 90)
         explain_font = pygame.font.Font(None, 30)
+        bold_explain_font = pygame.font.Font(None, 50)  # Bold font for "Back" text
+        bold_explain_font.set_bold(True)
 
         # Draw title
         title_text = title_font.render("Options", True, white)
@@ -102,7 +104,7 @@ def show_options(screen):
         screen.blit(overlay_surface, (0, 0))
 
         # Draw a "Back" button
-        back_text = explain_font.render("Back", True, (255, 255, 255))
+        back_text = bold_explain_font.render("Back", True, (255, 255, 255))
         back_rect = back_text.get_rect(center=(20 + 140 // 2, 20 + 60 // 2))
         screen.blit(back_text, back_rect)
 
