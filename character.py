@@ -48,7 +48,7 @@ class Character(pygame.sprite.Sprite):
             self.rect.x += self.speed
 
         # Jumping mechanism
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
+        if keys[pygame.K_SPACE]:  # Check if the spacebar is pressed
             if not self.is_jumping:  # Only jump if not already jumping
                 self.is_jumping = True
                 self.y_velocity = self.jump_height  # Set the jump velocity
