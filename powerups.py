@@ -62,9 +62,10 @@ class InvincibilityPowerUp(PowerUp):
         self.player = player # Save reference
         self.timer = self.duration # Set the timer
         player.invincible = True
+        player.invincibility_timer = self.duration
         player.original_color = player.image.copy() # Save the original appearance
         player.image.fill((0, 255, 0)) # Change color to green
-        print(f"[DEBUG] Invincibility activated. Timer: {self.timer}")
+        print(f"[DEBUG] Invincibility activated. Timer: {player.invincibility_timer / fps}")
 
     def affect_game(self, game_state):
         """
@@ -78,7 +79,7 @@ class InvincibilityPowerUp(PowerUp):
         """
         if self.player:
             self.player.invincible = False
-            self.player.image = self.player.original_image  # Restore original appearance
+            self.player.image = self.player.original_color  # Restore original appearance
             print("[DEBUG] Invincibility expired.")
         super().expire()  # Call the base class expire logic
 

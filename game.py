@@ -1,8 +1,9 @@
-from config import *
 from character import Character
 from enemy import Enemy
 import pygame
 from shed import shed
+import random
+from powerups import *
 
 
 # Function to create platforms that change position in each level
@@ -65,12 +66,18 @@ def execute_game(screen, character=None):
 
 def play_level(screen, character, level, platforms):
     clock = pygame.time.Clock()
-    background_image = pygame.image.load("Battlefields/battlefield.webp.jpg")
+    background_image = pygame.image.load("Battlefields/battlefield.webp")
     background_image = pygame.transform.scale(background_image, resolution)
 
     bullets = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
+    powerups = pygame.sprite.Group()
     spawn_enemies(enemies, count=5 * level, health=10 * level)
+
+    # Spawn one power-up on a random platform
+    platform = random.choice(platforms)
+    powerup = InvincibilityPowerUp(platform.centerx, platform.top - 15)  # Position above the platform
+    powerups.add(powerup)
 
     running = True
     level_complete = False
@@ -88,28 +95,40 @@ def play_level(screen, character, level, platforms):
                     character.is_jumping = False
                     character.y_velocity = 0
 
+        # Se não estiver em nenhuma plataforma e não estiver no chão, aplica gravidade
         if not on_platform and character.rect.bottom < height:
             character.rect.y += character.y_velocity
             character.y_velocity += character.gravity
 
+        # Check if the character hit the top-right platform and killed all enemies
         if character.rect.colliderect(platforms[-1]) and len(enemies) == 0:
             level_complete = True
 
+        # Event Handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
                 exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
+                if event.button == 1:  # Left mouse button
                     character.shoot(bullets)
 
+        # Update game objects
         character.update()
         bullets.update()
         enemies.update(character)
+        powerups.update()
 
+        # Handle power-up collection
+        collected_powerups = pygame.sprite.spritecollide(character, powerups, True)
+        for powerup in collected_powerups:
+            powerup.affect_player(character)
+
+        # Handle collisions
         handle_collisions(character, bullets, enemies)
 
+        # Draw platforms
         for platform in platforms:
             pygame.draw.rect(screen, deep_black, platform)
 
@@ -118,13 +137,17 @@ def play_level(screen, character, level, platforms):
 
         bullets.draw(screen)
         enemies.draw(screen)
+        powerups.draw(screen)
         character.draw(screen)
 
+        # Draw the UI (for example, health)
         draw_ui(screen, character)
 
+        # Check if the level is completed
         if level_complete:
             return level_end_screen(screen, level)
 
+        # Check if the character died
         if character.health <= 0:
             return game_over_screen(screen)
 
@@ -160,6 +183,9 @@ def draw_ui(screen, character):
 
 
 def level_end_screen(screen, level):
+    """
+    Displays the end of level screen with options for the player.
+    """
     font = pygame.font.SysFont("Corbel", 50)
     screen.fill((0, 0, 0))
 
@@ -193,6 +219,9 @@ def level_end_screen(screen, level):
 
 
 def game_over_screen(screen):
+    """
+    Displays the Game Over screen with options to retry or go back to the menu.
+    """
     font = pygame.font.SysFont("Corbel", 50)
     screen.fill((0, 0, 0))
 

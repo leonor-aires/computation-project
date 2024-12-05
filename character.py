@@ -13,6 +13,7 @@ class Character(pygame.sprite.Sprite):
         # Load and scale the image
         self.image = pygame.image.load("characters images/Tomátio.png")  # Load player sprite
         self.image = pygame.transform.scale(self.image, (100, 100))
+        self.original_color = self.image.copy()  # Save original appearance
 
         # Set initial position
         self.rect = self.image.get_rect()
@@ -23,8 +24,9 @@ class Character(pygame.sprite.Sprite):
         self.max_health = 100
         self.health = self.max_health
         self.bullet_cooldown = 0
-        self.damage_cooldown = 0
+        self.damage_cooldown = 0 # Cooldown timer for taking damage
         self.invincible = False  # Default invincibility status
+        self.invincibility_timer = 0 # Initialize the invincibility timer
 
         # Jumping variables
         self.is_jumping = False
@@ -72,6 +74,15 @@ class Character(pygame.sprite.Sprite):
 
         if self.damage_cooldown > 0:
             self.damage_cooldown -= 1
+
+        # Handle invincibility
+        if self.invincible:
+            self.invincibility_timer -= 1
+            if self.invincibility_timer <= 0:
+                self.invincible = False
+                self.image = self.original_color  # Restore original sprite
+                print("[DEBUG] Invincibility expired!")
+
     def shoot(self, bullets_group):
         """
         Create a bullet in the direction of the mouse
@@ -88,11 +99,13 @@ class Character(pygame.sprite.Sprite):
         """
         Reduce the player's health, considering invincibility and cooldown.
         """
-        if self.invincible:  # Do not apply damage if invincible
+        if self.invincible:  # Skip damage if invincible
             return
-        if self.damage_cooldown <= 0:  # Only take damage if cooldown has ended
+
+        if self.damage_cooldown <= 0:  # Only take damage if cooldown is inactive
             self.health -= damage
-            self.damage_cooldown = fps  # Cooldown of 1 second
+            self.damage_cooldown = 60  # Set cooldown (1 second at 60 FPS)
+            print(f"[DEBUG] Character took damage: {damage}. Health: {self.health}")
 
     def draw(self, screen):
         # Desenha o personagem
