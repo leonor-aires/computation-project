@@ -44,6 +44,7 @@ class PowerUp(pygame.sprite.Sprite, ABC):
         """
         Cleanup when the power-up's effect ends.
         """
+        print(f"[DEBUG] {self.__class__.__name__} expired.")
         self.kill()  # Remove the power-up sprite
 
 class InvincibilityPowerUp(PowerUp):
