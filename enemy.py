@@ -14,8 +14,9 @@ class Enemy(pygame.sprite.Sprite):
             platform (pygame.Rect): The platform the enemy will be restricted to.
         """
         super().__init__()
-        self.image = pygame.Surface((enemy_size, enemy_size))
-        self.image.fill(red)
+        # Load the enemy image
+        self.original_image = pygame.image.load("characters images/Enemy.png").convert_alpha()
+        self.image = pygame.transform.scale(self.original_image,(enemy_size * 2.5, enemy_size * 2.5))
         self.rect = self.image.get_rect()
 
         # Platform association

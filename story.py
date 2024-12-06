@@ -3,17 +3,60 @@ from config import *
 from game import *
 from character import Character
 
-def typewriter_effect(screen, text, font, color, position, speed=25):
+def typewriter_effect_wrapped(screen, text, font, color, rect, speed=25):
     """
-    Display text one letter at a time on the screen.
+    Display text letter by letter with word wrapping inside a rectangle.
+    When the text is fully displayed, show a semi-transparent rectangle.
     """
-    displayed_text = ""
-    for char in text:
-        displayed_text += char
-        rendered_text = font.render(displayed_text, True, color)
-        screen.blit(rendered_text, position)
-        pygame.display.flip()
-        pygame.time.delay(speed)
+    words = text.split()
+    lines = []
+    current_line = ""
+
+    # Build lines that fit within the width of the rectangle
+    for word in words:
+        test_line = current_line + word + " "
+        line_width, _ = font.size(test_line)
+        if line_width > rect.width:
+            lines.append(current_line)
+            current_line = word + " "
+        else:
+            current_line = test_line
+    lines.append(current_line)  # Add the last line
+
+    # Display text letter by letter
+    y = rect.top
+    displayed_text = "" # Reset displayed text
+    screen_copy = screen.copy()  # Copy the screen before typing starts
+    for line in lines:
+        current_line_text = ""  # Track the current line being typed
+        for char in line:
+            current_line_text += char
+            displayed_text += char
+            screen.blit(screen_copy, (0, 0))  # Restore background
+            # Render all text typed so far
+            current_y = y
+            for displayed_line in displayed_text.splitlines():
+                rendered_line = font.render(displayed_line, True, color)
+                screen.blit(rendered_line, (rect.left, current_y))
+                current_y += font.get_linesize()
+            pygame.display.flip()
+            pygame.time.delay(speed)
+        displayed_text += "\n"  # Move to the next line
+        y += font.get_linesize()
+
+    # Draw semi-transparent rectangle after all text is displayed
+    transparent_rect = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
+    transparent_rect.fill((0, 0, 0, 150))  # Semi-transparent black
+    screen.blit(transparent_rect, (rect.left, rect.top))
+
+    # Re-render full text over the rectangle
+    y = rect.top
+    for line in lines:
+        rendered_line = font.render(line, True, color)
+        screen.blit(rendered_line, (rect.left, y))
+        y += font.get_linesize()
+
+    pygame.display.flip()
     return displayed_text  # Return the full text to keep it visible
 
 def play_background_music(music_file):
@@ -35,22 +78,15 @@ def display_story_with_buttons(screen):
 
     # Define the story text and corresponding image files
     story_slides = [
-        ("Long ago, dragons roamed the skies, acting as ancient guardians of the natural world.",
-         "backstory images/slide 1.jpeg"),
-        ("They maintained the delicate balance of nature, ensuring harmony across the land.",
-         "backstory images/slide 2.jpeg"),
-        ("But as humans expanded, their greed for power and resources knew no bounds.", "backstory images/slide 3.jpeg"),
-        ("Led by a ruthless king, they began hunting the dragons, seeking their magical powers.",
-         "backstory images/slide 4.jpeg"),
-        ("One by one, the dragons fell, their magic stolen to fuel the king’s dark ambitions.",
-         "backstory images/slide 5.jpeg"),
-        ("Now, only one dragon remains: Vermax, the last of the ancient guardians.", "backstory images/slide 6.jpeg"),
-        ("The humans have fortified their stronghold, draining the last remnants of dragon magic.",
-         "backstory images/slide 8.jpeg"),
-        ("But Vermax will stop at nothing to end their tyranny and bring harmony back to the world.",
-         "backstory images/slide 9.jpeg"),
-        ("Your quest begins now. Unleash your fury, reclaim the magic, and save the world!",
-         "backstory images/slide 10.jpeg"),
+        ("", "backstory images/title slide.png"),
+        ("Tomatio grew up on a peaceful farm with other tomatoes, enjoying the warm sun and gentle breeze",
+         "backstory images/Slide 2 .png"),
+        ("One day, Tomatio was taken to the factory where tomatoes are turned into ketchup. But Tomatio wasn’t ready to give up his life so easily!",
+         "backstory images/Slide 3.webp"),
+        ("In the factory, Tomatio discovered that the ketchup bottles had come to life and wanted him to join them. But Tomatio decided to fight back!",
+         "backstory images/Slide 4.webp"),
+        ("Tomatio must jump, dodge, and fight to make his way out of the factory. Will he escape, or will he become ketchup?",
+         "backstory images/Slide 5.webp"),
     ]
 
     # Play background music
@@ -104,16 +140,23 @@ def display_story_with_buttons(screen):
             # Display the image
             screen.blit(image, (0, 0))
 
-            # Render the text with a typewriter effect
-            if previous_slide_index != slide_index:
-                displayed_text = typewriter_effect(screen, text, font, (255, 255, 255), (50, height - 100), speed=30)
-                previous_slide_index = slide_index  # Track the current slide index
+            # First slide: Skip rectangle and text rendering
+            if slide_index == 0:
+                pass  # Nothing extra needed for the first slide
             else:
-                rendered_text = font.render(displayed_text, True, (255, 255, 255))
-                text_rect = rendered_text.get_rect(center=(width // 2, height - 100))
-                screen.blit(rendered_text, text_rect)
+                # Render the text with a typewriter effect
+                text_rect = pygame.Rect(50, height - 120, 900, 100)  # Adjusted position (slightly lower)
+                if previous_slide_index != slide_index:
+                    displayed_text = typewriter_effect_wrapped(screen, text, font, (255, 255, 255), text_rect, speed=30)
+                    previous_slide_index = slide_index  # Track the current slide index
+                else:
+                    # Keep rectangle and fully displayed text visible
+                    transparent_rect = pygame.Surface((text_rect.width, text_rect.height), pygame.SRCALPHA)
+                    transparent_rect.fill((0, 0, 0, 150))  # Semi-transparent rectangle
+                    screen.blit(transparent_rect, (text_rect.left, text_rect.top))
+                    render_wrapped_text(screen, displayed_text, font, (255, 255, 255), text_rect)
 
-             # Add "Next" or "Play" button
+            # Add "Next" or "Play" button
             mouse_pos = pygame.mouse.get_pos()
             button_text = "Next >"
             button_color = (200, 200, 200) if 820 <= mouse_pos[0] <= 920 and 540 <= mouse_pos[1] <= 580 else (150, 150, 150)
@@ -140,6 +183,21 @@ def display_story_with_buttons(screen):
             image = pygame.image.load(image_file)
             image = pygame.transform.scale(image, (1000, 600))  # Scale to fit the screen
 
+            # Display the image
+            screen.blit(image, (0, 0))
+
+            # Display the text with typewriter effect inside limits
+            text_rect = pygame.Rect(50, height - 120, 900, 100)  # Position lower on the screen
+            if previous_slide_index != slide_index:
+                displayed_text = typewriter_effect_wrapped(screen, text, font, (255, 255, 255), text_rect, speed=30)
+                previous_slide_index = slide_index
+            else:
+                # Keep rectangle and fully displayed text visible
+                transparent_rect = pygame.Surface((text_rect.width, text_rect.height), pygame.SRCALPHA)
+                transparent_rect.fill((0, 0, 0, 150))
+                screen.blit(transparent_rect, (text_rect.left, text_rect.top))
+                render_wrapped_text(screen, displayed_text, font, (255, 255, 255), text_rect)
+
             # Play button
             button_text = "Play"
             button_color = (200, 200, 200) if 820 <= mouse_pos[0] <= 920 and 540 <= mouse_pos[1] <= 580 else (
@@ -154,6 +212,31 @@ def display_story_with_buttons(screen):
     # Stop background music
     pygame.mixer.music.stop()
 
+# Function to wrap text so that it stays within a specific rectangle
+def render_wrapped_text(screen, text, font, color, rect):
+    """
+    Render text with word wrapping inside a rectangle.
+    """
+    words = text.split()
+    lines = []
+    current_line = ""
+
+    for word in words:
+        test_line = current_line + word + " "
+        line_width, _ = font.size(test_line)
+        if line_width > rect.width:
+            lines.append(current_line)
+            current_line = word + " "
+        else:
+            current_line = test_line
+    lines.append(current_line)
+
+    # Draw each line
+    y = rect.top
+    for line in lines:
+        rendered_line = font.render(line, True, color)
+        screen.blit(rendered_line, (rect.left, y))
+        y += font.get_linesize()
 
 def start_game_with_story(screen):
     """
