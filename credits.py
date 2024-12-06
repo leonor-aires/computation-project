@@ -7,7 +7,7 @@ def credits_(screen):
     comicsans_font = pygame.font.SysFont("Comic Sans MS", 15)
     corbel_font = pygame.font.SysFont("Corbel", 50, bold=True)
 
-    background_image = pygame.image.load("backstory images/credits image.webp")
+    background_image = pygame.image.load("backstory images/credits image.png")
     background_image = pygame.transform.scale(background_image, resolution)  # Scale the image to match the screen resolution
 
     # text
