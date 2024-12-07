@@ -87,7 +87,7 @@ def execute_game(screen, character=None):
 
 def play_level(screen, character, level, platforms):
     clock = pygame.time.Clock()
-    background_image = pygame.image.load("Battlefields/battlefield.webp")
+    background_image = pygame.image.load("backgrounds/game.webp")
     background_image = pygame.transform.scale(background_image, resolution)
 
     bullets = pygame.sprite.Group()

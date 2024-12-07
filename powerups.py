@@ -50,10 +50,13 @@ class PowerUp(pygame.sprite.Sprite, ABC):
 class InvincibilityPowerUp(PowerUp):
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.image = pygame.Surface((30, 30))  # Visual representation
-        self.image.fill(blue)  # Blue color for invincibility
-        self.rect = self.image.get_rect(center=(x, y))
+        self.image = pygame.image.load("characters images/Shield 1.png") # Visual representation
+        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.rect = self.image.get_rect(center=(x, y - 10))
+
         self.player = None # Store a reference to the player
+        self.invincible_image = pygame.image.load("characters images/Invincible tomatio .png")  # Load the invincible player image
+        self.invincible_image = pygame.transform.scale(self.invincible_image, (120, 120))  # Scale the player image
 
     def affect_player(self, player):
         """
@@ -63,8 +66,11 @@ class InvincibilityPowerUp(PowerUp):
         self.timer = self.duration # Set the timer
         player.invincible = True
         player.invincibility_timer = self.duration
-        player.original_color = player.image.copy() # Save the original appearance
-        player.image.fill((0, 255, 0)) # Change color to green
+
+        # Save original player appearance and replace with the invincible image
+        player.original_image = player.image  # Save the original image
+        player.image = self.invincible_image  # Replace with invincible image
+
         print(f"[DEBUG] Invincibility activated. Timer: {player.invincibility_timer / fps}")
 
     def affect_game(self, game_state):
@@ -79,7 +85,7 @@ class InvincibilityPowerUp(PowerUp):
         """
         if self.player:
             self.player.invincible = False
-            self.player.image = self.player.original_color  # Restore original appearance
+            self.player.image = self.player.original_image  # Restore original appearance
             print("[DEBUG] Invincibility expired.")
         super().expire()  # Call the base class expire logic
 

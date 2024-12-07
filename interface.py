@@ -23,15 +23,15 @@ def interface(screen):
     comicsans_font = pygame.font.SysFont("Comic Sans MS", 50)
     font = pygame.font.Font(None, 36)
 
-    wilderness_text = corbel_font.render("Play", True, white)
-    rules_text = corbel_font.render("Rules", True, white)
-    options_text = corbel_font.render("Options", True, white)
-    credits_text = corbel_font.render("Credits", True, white)
-    quit_text = corbel_font.render("Quit", True, white)
+    wilderness_text = corbel_font.render("Play", True, deep_black)
+    rules_text = corbel_font.render("Rules", True, deep_black)
+    options_text = corbel_font.render("Options", True, deep_black)
+    credits_text = corbel_font.render("Credits", True, deep_black)
+    quit_text = corbel_font.render("Quit", True, deep_black)
     title_text = comicsans_font.render("Tomátios' Escape", True, glowing_light_red)
 
     # Load and scale the background image once
-    image = pygame.image.load("backstory images/jump_scare.jpg")
+    image = pygame.image.load("backgrounds/main page.png")
     image_width, image_height = 1000, 600
     image = pygame.transform.scale(image, (image_width, image_height))
 
