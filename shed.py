@@ -5,7 +5,7 @@ from shop import shop
 
 def shed(screen, player):
     # Load and scale the background
-    background = pygame.image.load("Battlefields/cave.webp")
+    background = pygame.image.load("backgrounds/cave.webp")
     background = pygame.transform.scale(background, resolution)
     clock = pygame.time.Clock()
 
