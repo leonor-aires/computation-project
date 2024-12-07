@@ -79,7 +79,7 @@ def display_story_with_buttons(screen):
     # Define the story text and corresponding image files
     story_slides = [
         ("", "backstory images/title slide 2.png"),
-        ("Tomatio grew up on a peaceful farm with other tomatoes, enjoying the warm sun and gentle breeze",
+        ("Tomatio grew up on a peaceful farm with other tomatoes, enjoying the warm sun and gentle breeze.",
          "backstory images/Slide 2 .png"),
         ("One day, Tomatio was taken to the factory where tomatoes are turned into ketchup. But Tomatio wasn’t ready to give up his life so easily!",
          "backstory images/Slide 3.webp"),
