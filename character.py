@@ -12,7 +12,7 @@ class Character(pygame.sprite.Sprite):
         super().__init__()
         # Load and scale the image
         self.image = pygame.image.load("characters images/Tomátio.png")  # Load player sprite
-        self.image = pygame.transform.scale(self.image, (100, 100))
+        self.image = pygame.transform.scale(self.image, (80, 80))
         self.original_color = self.image.copy()  # Save original appearance
 
         # Set initial position
@@ -27,6 +27,7 @@ class Character(pygame.sprite.Sprite):
         self.damage_cooldown = 0 # Cooldown timer for taking damage
         self.invincible = False  # Default invincibility status
         self.invincibility_timer = 0 # Initialize the invincibility timer
+
 
         # Jumping variables
         self.is_jumping = False

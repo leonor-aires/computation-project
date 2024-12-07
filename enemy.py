@@ -16,7 +16,7 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__()
         # Load the enemy image
         self.original_image = pygame.image.load("characters images/Enemy.png").convert_alpha()
-        self.image = pygame.transform.scale(self.original_image,(enemy_size * 2.5, enemy_size * 2.5))
+        self.image = pygame.transform.scale(self.original_image,(80, 80))
         self.rect = self.image.get_rect()
 
         # Platform association

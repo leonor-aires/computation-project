@@ -12,27 +12,37 @@ def create_platforms(level):
     platforms = []
     if level == 1:
         platforms = [
-            pygame.Rect(50, height - 50, 200, 10),  # Ground platform (esquerda)
-            pygame.Rect(300, height - 200, 200, 10),  # Plataforma média (centro-esquerda)
+            pygame.Rect(50, height - 50, 200, 10),
+            pygame.Rect(200, height - 200, 200, 10),
+            pygame.Rect(350, height - 300, 200, 10),
             pygame.Rect(600, height - 100, 200, 10),
             pygame.Rect(600, height - 400, 200, 10),
-            pygame.Rect(width - 150, 100, 150, 10),  # Plataforma no canto superior direito
+            pygame.Rect(width - 150, 100, 150, 10),
         ]
     elif level == 2:
         platforms = [
-            pygame.Rect(50, height - 50, 200, 10),  # Ground platform (esquerda)
-            pygame.Rect(400, height - 200, 200, 10),  # Plataforma baixa (centro)
-            pygame.Rect(700, height - 300, 200, 10),  # Plataforma média (direita)
-            pygame.Rect(300, height - 350, 200, 10),  # Plataforma alta (esquerda)
-            pygame.Rect(width - 150, 100, 150, 10),  # Plataforma no canto superior direito
+            pygame.Rect(50, height - 50, 200, 10),
+            pygame.Rect(400, height - 200, 200, 10),
+            pygame.Rect(700, height - 300, 200, 10),
+            pygame.Rect(300, height - 350, 200, 10),
+            pygame.Rect(width - 150, 100, 150, 10),
         ]
     elif level == 3:
         platforms = [
-            pygame.Rect(50, height - 50, 200, 10),  # Ground platform (esquerda)
-            pygame.Rect(300, height - 200, 200, 10),  # Plataforma média (centro-esquerda)
+            pygame.Rect(50, height - 50, 200, 10),
+            pygame.Rect(300, height - 200, 200, 10),
+            pygame.Rect(600, height - 300, 200, 10),
+            pygame.Rect(600, height - 400, 200, 10),
+            pygame.Rect(width - 150, 100, 150, 10),
+        ]
+    elif level == 4:
+        platforms = [
+            pygame.Rect(50, height - 50, 200, 10),
+            pygame.Rect(200, height - 200, 200, 10),
+            pygame.Rect(350, height - 300, 200, 10),
             pygame.Rect(600, height - 100, 200, 10),
             pygame.Rect(600, height - 400, 200, 10),
-            pygame.Rect(width - 150, 100, 150, 10),  # Plataforma no canto superior direito
+            pygame.Rect(width - 150, 100, 150, 10),
         ]
     return platforms
 
@@ -43,13 +53,19 @@ def game_loop(screen, character=None):
 
     current_level = 1
     current_state = "main"
+    last_level = 4
 
     while True:
         if current_state == "main":
             platforms = create_platforms(current_level)
             result = play_level(screen, character, current_level, platforms)
             if result == "next_level":
-                current_level += 1
+                if current_level < last_level:
+                    current_level += 1
+                    character.health = character.max_health
+                else:
+                    # Last level completed
+                    current_state = "last_level"
                 character.health = character.max_health
             elif result == "retry":
                 character.health = character.max_health
@@ -61,6 +77,10 @@ def game_loop(screen, character=None):
                 return
         elif current_state == "shed":
             current_state = shed(screen, character)
+        elif current_state == "last_level":
+            result = last_level_screen(screen)
+            if result == "main_menu":
+                return
 
 
 def execute_game(screen, character=None):
@@ -281,4 +301,33 @@ def game_over_screen(screen):
                 if retry_button.collidepoint(mouse):
                     return "retry"
                 elif menu_button.collidepoint(mouse):
+                    return "main_menu"
+
+def last_level_screen(screen):
+    """
+    Displays the screen shown when the last level is completed.
+    """
+    font = pygame.font.SysFont("Corbel", 50)
+    screen.fill((0, 0, 0))  # Black background
+
+    message_text = font.render("MAmazing work! More adventures coming soon!", True, white)
+    message_rect = message_text.get_rect(center=(width // 2, height // 3))
+    screen.blit(message_text, message_rect)
+
+    menu_button = pygame.Rect(400, 400, 260, 60)
+    pygame.draw.rect(screen, dark_red, menu_button)
+
+    menu_text = font.render("Main Menu", True, white)
+    screen.blit(menu_text, menu_button.move(20, 10).topleft)
+
+    pygame.display.flip()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse = pygame.mouse.get_pos()
+                if menu_button.collidepoint(mouse):
                     return "main_menu"
