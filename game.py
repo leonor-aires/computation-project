@@ -1,13 +1,12 @@
-from config import *
-from character import Character
-from enemy import Enemy
 import pygame
-from shed import shed
 import random
-from powerups import *
+from config import *  # Basic game settings (such as colors, resolution)
+from character import Character  # Main character class
+from enemy import Enemy  # Enemy class
+from shed import shed  # Shop system (shed)
+from powerups import *  # Power-ups used in the game
 
-
-# Function to create platforms that change position in each level
+# Function to create platforms for each level
 def create_platforms(level):
     platforms = []
     if level == 1:
@@ -64,9 +63,8 @@ def game_loop(screen, character=None):
                     current_level += 1
                     character.health = character.max_health
                 else:
-                    # Last level completed
+                    # Final level completed
                     current_state = "last_level"
-                character.health = character.max_health
             elif result == "retry":
                 character.health = character.max_health
             elif result == "shed":
@@ -94,12 +92,12 @@ def play_level(screen, character, level, platforms):
 
     bullets = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
-    spawn_enemies(enemies, platforms)  # Pass platforms to spawn enemies
+    spawn_enemies(enemies, platforms)
     powerups = pygame.sprite.Group()
 
-    # Spawn one power-up on a random platform
+    # Add a power-up to a random platform
     platform = random.choice(platforms)
-    powerup = InvincibilityPowerUp(platform.centerx, platform.top - 15)  # Position above the platform
+    powerup = InvincibilityPowerUp(platform.centerx, platform.top - 15)
     powerups.add(powerup)
 
     running = True
@@ -108,7 +106,7 @@ def play_level(screen, character, level, platforms):
         screen.blit(background_image, (0, 0))
         clock.tick(fps)
 
-        # Check if the character collided with any platform
+        # Check collisions with platforms
         on_platform = False
         for platform in platforms:
             if character.rect.colliderect(platform):
@@ -118,73 +116,59 @@ def play_level(screen, character, level, platforms):
                     character.is_jumping = False
                     character.y_velocity = 0
 
-        # Se não estiver em nenhuma plataforma e não estiver no chão, aplica gravidade
         if not on_platform and character.rect.bottom < height:
             character.rect.y += character.y_velocity
             character.y_velocity += character.gravity
 
-        # Check if the character hit the top-right platform and killed all enemies
+        # Check level completion
         if (character.rect.right >= platforms[-1].right and
                 character.rect.bottom == platforms[-1].top and
                 len(enemies) == 0):
             level_complete = True
 
-        # Event Handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
                 exit()
-
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button
                     character.shoot(bullets)
                     # Detect click on the "Back" button
-                    if 430 <= mouse[0] <= 570 and 540 <= mouse[1] <= 600:
-                        return "break"
+                if 430 <= mouse[0] <= 570 and 540 <= mouse[1] <= 600:
+                    return "break"
 
-        # Update game objects
         character.update()
         bullets.update()
         enemies.update(character)
         powerups.update()
-        enemies.update()
 
-        # Handle power-up collection
+        # Collecting power-ups
         collected_powerups = pygame.sprite.spritecollide(character, powerups, True)
         for powerup in collected_powerups:
             powerup.affect_player(character)
 
-        # Handle collisions
         handle_collisions(character, bullets, enemies)
 
-        # Draw platforms
         for platform in platforms:
             pygame.draw.rect(screen, deep_black, platform)
 
-        # Check if character moves to the shed
         if character.rect.right >= width and character.rect.bottom >= height - 50:
             return "shed"
 
-        # Draw all game objects
         bullets.draw(screen)
         powerups.draw(screen)
         for enemy in enemies:
-            enemy.draw(screen)  # Use the enemy's draw method
+            enemy.draw(screen)
         character.draw(screen)
 
-
-        # Draw the UI (for example, health)
         draw_ui(screen, character)
 
-        # Check if the level is completed
         if level_complete:
-            return level_end_screen(screen, level)
+            return level_end_screen(screen, level, character)
 
-        # Check if the character died
         if character.health <= 0:
             return game_over_screen(screen)
-
         corbel_font = pygame.font.SysFont("Corbel", 50)
         mouse = pygame.mouse.get_pos()
         pygame.draw.rect(screen, dark_red, [430, 540, 140, 60])
@@ -195,49 +179,39 @@ def play_level(screen, character, level, platforms):
 
 
 def spawn_enemies(group, platforms):
-    """
-    Spawns one enemy per platform.
-
-    Args:
-        group (pygame.sprite.Group): Group to which the enemies are added.
-        platforms (list): List of platforms (pygame.Rect).
-    """
     for platform in platforms:
-        enemy = Enemy(platform)  # Create an enemy restricted to the platform
+        enemy = Enemy(platform)
         group.add(enemy)
 
 
 def handle_collisions(character, bullets, enemies):
-    """
-    Handle collisions between bullets and enemies, and between enemies and the player.
-    """
-    # Check for bullet collisions with enemies
     for bullet in bullets:
         collided_enemies = pygame.sprite.spritecollide(bullet, enemies, False)
         for enemy in collided_enemies:
             enemy.health -= 5
             bullet.kill()
             if enemy.health <= 0:
+                character.earn_coins(5)  # Earn coins for defeated enemies
                 enemy.kill()
 
     for enemy in enemies:
         if pygame.sprite.collide_rect(character, enemy):
-            if not character.invincible:  # Prevent damage if the player is invincible
-                character.take_damage(10)  # Adjust damage amount as needed
+            if not character.invincible:
+                character.take_damage(10)
 
 
 def draw_ui(screen, character):
     font = pygame.font.SysFont("Corbel", 30)
     health_text = font.render(f"Health: {character.health}/{character.max_health}", True, green)
     screen.blit(health_text, (10, 10))
+    coin_text = font.render(f"Coins: {character.coins}", True, yellow)
+    screen.blit(coin_text, (10, 40))
 
 
-def level_end_screen(screen, level):
-    """
-    Displays the end of level screen with options for the player.
-    """
+def level_end_screen(screen, level, character):
     font = pygame.font.SysFont("Corbel", 50)
     screen.fill((0, 0, 0))
+    character.earn_coins(level * 10)
 
     level_end_text = font.render(f"End of Level {level}", True, white)
     level_end_rect = level_end_text.get_rect(center=(width // 2, height // 3))
@@ -269,9 +243,6 @@ def level_end_screen(screen, level):
 
 
 def game_over_screen(screen):
-    """
-    Displays the Game Over screen with options to retry or go back to the menu.
-    """
     font = pygame.font.SysFont("Corbel", 50)
     screen.fill((0, 0, 0))
 
@@ -303,14 +274,12 @@ def game_over_screen(screen):
                 elif menu_button.collidepoint(mouse):
                     return "main_menu"
 
-def last_level_screen(screen):
-    """
-    Displays the screen shown when the last level is completed.
-    """
-    font = pygame.font.SysFont("Corbel", 50)
-    screen.fill((0, 0, 0))  # Black background
 
-    message_text = font.render("MAmazing work! More adventures coming soon!", True, white)
+def last_level_screen(screen):
+    font = pygame.font.SysFont("Corbel", 50)
+    screen.fill((0, 0, 0))
+
+    message_text = font.render("Amazing work! More adventures coming soon!", True, white)
     message_rect = message_text.get_rect(center=(width // 2, height // 3))
     screen.blit(message_text, message_rect)
 

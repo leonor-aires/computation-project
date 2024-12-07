@@ -27,6 +27,7 @@ class Character(pygame.sprite.Sprite):
         self.damage_cooldown = 0 # Cooldown timer for taking damage
         self.invincible = False  # Default invincibility status
         self.invincibility_timer = 0 # Initialize the invincibility timer
+        self.coins = 0
 
 
         # Jumping variables
@@ -107,6 +108,9 @@ class Character(pygame.sprite.Sprite):
             self.health -= damage
             self.damage_cooldown = 60  # Set cooldown (1 second at 60 FPS)
             print(f"[DEBUG] Character took damage: {damage}. Health: {self.health}")
+
+    def earn_coins(self, amount):
+        self.coins += amount
 
     def draw(self, screen):
         # Desenha o personagem
