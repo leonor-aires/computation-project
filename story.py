@@ -199,6 +199,7 @@ def display_story_with_buttons(screen):
                 render_wrapped_text(screen, displayed_text, font, (255, 255, 255), text_rect)
 
             # Play button
+            mouse_pos = pygame.mouse.get_pos()
             button_text = "Play"
             button_color = (200, 200, 200) if 820 <= mouse_pos[0] <= 920 and 540 <= mouse_pos[1] <= 580 else (
             150, 150, 150)
