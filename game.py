@@ -135,7 +135,7 @@ def play_level(screen, character, level, platforms):
                 if event.button == 1:  # Left mouse button
                     character.shoot(bullets)
                     # Detect click on the "Back" button
-                if 430 <= mouse[0] <= 570 and 540 <= mouse[1] <= 600:
+                if 10 <= mouse[0] <= 110 and 100 <= mouse[1] <= 155:
                     return "break"
 
         character.update()
@@ -171,9 +171,9 @@ def play_level(screen, character, level, platforms):
             return game_over_screen(screen)
         corbel_font = pygame.font.SysFont("Corbel", 50)
         mouse = pygame.mouse.get_pos()
-        pygame.draw.rect(screen, dark_red, [430, 540, 140, 60])
+        pygame.draw.rect(screen, dark_red, [10, 100, 100, 55])
         back_text = corbel_font.render("Back", True, white)
-        back_rect = back_text.get_rect(center=(430 + 140 // 2, 540 + 60 // 2))
+        back_rect = pygame.Rect(15, 100, 100, 46)  # Position the butto
         screen.blit(back_text, back_rect)
         pygame.display.flip()
 
