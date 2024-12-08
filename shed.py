@@ -9,10 +9,6 @@ def shed(screen, player):
     background = pygame.transform.scale(background, resolution)
     clock = pygame.time.Clock()
 
-    # Set player's initial position in the shed
-    player.rect.left = 30
-    player_group = pygame.sprite.Group(player)
-
     # Define the shop interaction area
     shop_area = pygame.Rect(300, height - 100, 100, 100)
 
@@ -27,12 +23,12 @@ def shed(screen, player):
                 pygame.quit()
                 exit()
 
-        # Update player movement and position
+        # Ensure the player is the same instance
         player.update()
 
         # Check if the player enters the shop area
         if shop_area.colliderect(player.rect):
-            shop(screen, player)
+            shop(screen, player)  # Pass the same `player` object
             player.rect.left = 50  # Reset player's position after shopping
             player.rect.top = height - 150  # Adjust as needed for aesthetics
 
@@ -41,6 +37,7 @@ def shed(screen, player):
             return "main"  # Return to the main game state
 
         # Draw player and shop area
+        player_group = pygame.sprite.Group(player)
         player_group.draw(screen)
         pygame.draw.rect(screen, (255, 0, 0), shop_area, 2)  # Optional: Visualize shop area
 

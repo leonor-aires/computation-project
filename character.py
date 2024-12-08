@@ -28,6 +28,7 @@ class Character(pygame.sprite.Sprite):
         self.invincible = False  # Default invincibility status
         self.invincibility_timer = 0 # Initialize the invincibility timer
         self.coins = 0
+        self.weapon = "default"  # Default weapon type
 
 
         # Jumping variables
@@ -94,7 +95,8 @@ class Character(pygame.sprite.Sprite):
         dy = mouse_y - self.rect.centery
         angle = math.atan2(dy, dx)  # Direction in radians
 
-        new_bullet = Bullet(self.rect.centerx, self.rect.centery, angle)
+        # Create a new bullet with the current weapon type
+        new_bullet = Bullet(self.rect.centerx, self.rect.centery, angle, weapon_type=self.weapon)
         bullets_group.add(new_bullet)
 
     def take_damage(self, damage):

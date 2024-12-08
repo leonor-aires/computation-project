@@ -8,8 +8,11 @@ def shop(screen, character):
 
     # Define shop items
     shop_items = [
-        {"name": "Health Potion", "cost": 20, "action": lambda: setattr(character, 'health', character.max_health)},
+        {"name": "Health Potion", "cost": 20,
+         "action": lambda: setattr(character, 'health', min(character.max_health, character.max_health))},
         {"name": "Speed Boost", "cost": 50, "action": lambda: setattr(character, 'speed', character.speed + 1)},
+        {"name": "Explosive Bullets", "cost": 100, "action": lambda: setattr(character, 'weapon', 'explosive')},
+        {"name": "Lightning Bullets", "cost": 150, "action": lambda: setattr(character, 'weapon', 'lightning')},
     ]
 
     # Fonts for text
@@ -56,9 +59,6 @@ def shop(screen, character):
                         if character.coins >= item["cost"]:
                             character.coins -= item["cost"]
                             item["action"]()  # Apply the item's effect
-                        else:
-                            print("Not enough coins!")  # Debug or feedback for insufficient funds
-
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    running = False  # Exit the shop with ESC key
+                            print(f"[DEBUG] Purchased {item['name']}")
+                        else: # Debug or feedback for insufficient funds
+                            print("[DEBUG] Not enough coins!")
