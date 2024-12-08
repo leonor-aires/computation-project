@@ -17,6 +17,8 @@ class Bullet(pygame.sprite.Sprite):
         self.speed = 2
         self.direction = direction
         self.weapon_type = weapon_type
+        self.start_x = x
+        self.start_y = y
 
         # Load different bullet images based on weapon type
         if self.weapon_type == "explosive":
@@ -37,9 +39,17 @@ class Bullet(pygame.sprite.Sprite):
         # Update only the horizontal coordinate
         self.rect.x += int(self.speed * math.copysign(1, math.cos(self.direction)))
 
-        # Remove the bullet if it goes offscreen
-        if self.rect.x < 0 or self.rect.x > width:
+        # Remove the bullet if it goes offscreen or exceeds a certain range
+        if self.rect.x < 0 or self.rect.x > width or self.exceeds_range():
             self.kill()
+
+    def exceeds_range(self):
+        """
+        Check if the bullet exceeds a certain range from its starting position.
+        """
+        # Calculate the distance from the starting position
+        distance = math.sqrt((self.rect.x - self.start_x) ** 2 + (self.rect.y - self.start_y) ** 2)
+        return distance > 150  # Arbitrary range limit, adjust as needed
 
     def draw(self, screen: pygame.Surface):
         """

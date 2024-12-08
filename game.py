@@ -266,7 +266,7 @@ def handle_collisions(character, bullets, enemies):
 
 
 def draw_ui(screen, character):
-    font = pygame.font.SysFont("Corbel", 30)
+    font = pygame.font.SysFont("Corbel", 30, bold=True)
     health_text = font.render(f"Health: {character.health}/{character.max_health}", True, green)
     screen.blit(health_text, (10, 10))
     coin_text = font.render(f"Coins: {character.coins}", True, yellow)
@@ -274,7 +274,7 @@ def draw_ui(screen, character):
 
 
 def level_end_screen(screen, level, character):
-    font = pygame.font.SysFont("Corbel", 50)
+    font = pygame.font.SysFont("Corbel", 50, bold=True)
     screen.fill((0, 0, 0))
     character.earn_coins(level * 10)
 
@@ -308,23 +308,32 @@ def level_end_screen(screen, level, character):
 
 
 def game_over_screen(screen):
-    font = pygame.font.SysFont("Corbel", 50)
-    screen.fill((0, 0, 0))
-
-    game_over_text = font.render("Game Over", True, white)
+    # Load background image
+    background_image = pygame.image.load("backgrounds/game.webp")
+    background_image = pygame.transform.scale(background_image, resolution)
+    screen.blit(background_image, (0, 0))  # Draw the background image
+    # UI elements
+    font = pygame.font.SysFont("Corbel", 50, bold=True)
+    # Game Over Text
+    game_over_text = font.render("Game Over", True, deep_black)
     game_over_rect = game_over_text.get_rect(center=(width // 2, height // 3))
     screen.blit(game_over_text, game_over_rect)
 
+    # Button Styling
+    def draw_button(rect, text, color):
+        pygame.draw.rect(screen, color, rect, border_radius=10)  # Rounded corners
+        text_surf = font.render(text, True, white)
+        text_rect = text_surf.get_rect(center=rect.center)
+        screen.blit(text_surf, text_rect)
+
+    # Buttons
     retry_button = pygame.Rect(200, 400, 200, 60)
     menu_button = pygame.Rect(600, 400, 260, 60)
-    pygame.draw.rect(screen, green, retry_button)
-    pygame.draw.rect(screen, dark_red, menu_button)
 
-    retry_text = font.render("Retry", True, white)
-    menu_text = font.render("Main Menu", True, white)
-    screen.blit(retry_text, retry_button.move(50, 10).topleft)
-    screen.blit(menu_text, menu_button.move(20, 10).topleft)
+    draw_button(retry_button, "Retry", green)  # Green button for retry
+    draw_button(menu_button, "Main Menu", dark_red)  # Dark red button for main menu
 
+    # Update display
     pygame.display.flip()
 
     while True:
