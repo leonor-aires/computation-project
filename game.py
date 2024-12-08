@@ -48,7 +48,7 @@ def create_platforms(level):
 
 def game_loop(screen, character=None):
     if character is None:
-        character = Character(image="characters images/Tomátio.png", x=150, y=150)
+        character = Character(image="characters images/Tomátio.png", x=10, y=height - 50)  # Start at bottom-left corner
 
     current_level = 1
     current_state = "main"
@@ -62,6 +62,7 @@ def game_loop(screen, character=None):
                 if current_level < last_level:
                     current_level += 1
                     character.health = character.max_health
+                    character.rect.topleft = (10, height - 50)
                 else:
                     # Final level completed
                     current_state = "last_level"
