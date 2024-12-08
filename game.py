@@ -9,39 +9,96 @@ from powerups import *  # Power-ups used in the game
 # Function to create platforms for each level
 def create_platforms(level):
     platforms = []
+    last_platform = pygame.Rect(width - 150, 100, 150, 10)  # Always the final platform
+
     if level == 1:
         platforms = [
             pygame.Rect(50, height - 50, 200, 10),
-            pygame.Rect(200, height - 200, 200, 10),
-            pygame.Rect(350, height - 300, 200, 10),
-            pygame.Rect(600, height - 100, 200, 10),
-            pygame.Rect(600, height - 400, 200, 10),
-            pygame.Rect(width - 150, 100, 150, 10),
+            pygame.Rect(300, height - 150, 200, 10),
+            pygame.Rect(600, height - 250, 200, 10),
+            pygame.Rect(850, height - 350, 200, 10),
+            last_platform,
         ]
     elif level == 2:
         platforms = [
             pygame.Rect(50, height - 50, 200, 10),
-            pygame.Rect(400, height - 200, 200, 10),
-            pygame.Rect(700, height - 300, 200, 10),
-            pygame.Rect(300, height - 350, 200, 10),
-            pygame.Rect(width - 150, 100, 150, 10),
+            pygame.Rect(250, height - 100, 200, 10),
+            pygame.Rect(500, height - 200, 200, 10),
+            pygame.Rect(750, height - 300, 200, 10),
+            pygame.Rect(500, height - 400, 200, 10),
+            last_platform,
         ]
     elif level == 3:
         platforms = [
             pygame.Rect(50, height - 50, 200, 10),
-            pygame.Rect(300, height - 200, 200, 10),
-            pygame.Rect(600, height - 300, 200, 10),
-            pygame.Rect(600, height - 400, 200, 10),
-            pygame.Rect(width - 150, 100, 150, 10),
+            pygame.Rect(200, height - 120, 200, 10),
+            pygame.Rect(450, height - 220, 200, 10),
+            pygame.Rect(700, height - 320, 200, 10),
+            pygame.Rect(800, height - 420, 200, 10),
+            last_platform,
         ]
     elif level == 4:
         platforms = [
             pygame.Rect(50, height - 50, 200, 10),
-            pygame.Rect(200, height - 200, 200, 10),
-            pygame.Rect(350, height - 300, 200, 10),
-            pygame.Rect(600, height - 100, 200, 10),
-            pygame.Rect(600, height - 400, 200, 10),
-            pygame.Rect(width - 150, 100, 150, 10),
+            pygame.Rect(200, height - 100, 200, 10),
+            pygame.Rect(400, height - 180, 200, 10),
+            pygame.Rect(600, height - 280, 200, 10),
+            pygame.Rect(800, height - 380, 200, 10),
+            last_platform,
+        ]
+    elif level == 5:
+        platforms = [
+            pygame.Rect(50, height - 50, 200, 10),
+            pygame.Rect(200, height - 100, 200, 10),
+            pygame.Rect(400, height - 180, 200, 10),
+            pygame.Rect(600, height - 280, 200, 10),
+            last_platform,
+        ]
+    elif level == 6:
+        platforms = [
+            pygame.Rect(50, height - 50, 200, 10),
+            pygame.Rect(250, height - 120, 200, 10),
+            pygame.Rect(450, height - 220, 200, 10),
+            pygame.Rect(650, height - 320, 200, 10),
+            pygame.Rect(850, height - 420, 200, 10),
+            last_platform,
+        ]
+    elif level == 7:
+        platforms = [
+            pygame.Rect(50, height - 50, 200, 10),
+            pygame.Rect(150, height - 100, 200, 10),
+            pygame.Rect(350, height - 200, 200, 10),
+            pygame.Rect(550, height - 300, 200, 10),
+            pygame.Rect(750, height - 400, 200, 10),
+            last_platform,
+        ]
+    elif level == 8:
+        platforms = [
+            pygame.Rect(50, height - 50, 200, 10),
+            pygame.Rect(200, height - 150, 200, 10),
+            pygame.Rect(400, height - 250, 200, 10),
+            pygame.Rect(600, height - 350, 200, 10),
+            pygame.Rect(800, height - 450, 200, 10),
+            last_platform,
+        ]
+    elif level == 9:
+        platforms = [
+            pygame.Rect(50, height - 50, 200, 10),
+            pygame.Rect(150, height - 100, 200, 10),
+            pygame.Rect(300, height - 150, 200, 10),
+            pygame.Rect(500, height - 250, 200, 10),
+            pygame.Rect(700, height - 350, 200, 10),
+            pygame.Rect(800, height - 450, 200, 10),
+            last_platform,
+        ]
+    elif level == 10:
+        platforms = [
+            pygame.Rect(50, height - 50, 200, 10),
+            pygame.Rect(150, height - 100, 200, 10),
+            pygame.Rect(300, height - 200, 200, 10),
+            pygame.Rect(500, height - 300, 200, 10),
+            pygame.Rect(700, height - 400, 200, 10),
+            last_platform,
         ]
     return platforms
 
@@ -52,22 +109,25 @@ def game_loop(screen, character=None):
 
     current_level = 1
     current_state = "main"
-    last_level = 4
+    last_level = 10  # Define the last level
 
     while True:
         if current_state == "main":
             platforms = create_platforms(current_level)
             result = play_level(screen, character, current_level, platforms)
+
             if result == "next_level":
                 if current_level < last_level:
                     current_level += 1
                     character.health = character.max_health
-                    character.rect.topleft = (10, height - 50)
+                    character.rect.topleft = (10, height - 50)  # Reset character position
                 else:
                     # Final level completed
                     current_state = "last_level"
+
             elif result == "retry":
                 character.health = character.max_health
+                character.rect.topleft = (10, height - 50)  # Reset position on retry
             elif result == "shed":
                 current_state = "shed"
             elif result == "break":
@@ -77,6 +137,9 @@ def game_loop(screen, character=None):
         elif current_state == "shed":
             current_state = shed(screen, character)
         elif current_state == "last_level":
+            if current_level > last_level:
+                # All levels completed, transition to a final screen or main menu
+                return "all_levels_completed"
             result = last_level_screen(screen)
             if result == "main_menu":
                 return
@@ -170,11 +233,12 @@ def play_level(screen, character, level, platforms):
 
         if character.health <= 0:
             return game_over_screen(screen)
+
         corbel_font = pygame.font.SysFont("Corbel", 50)
         mouse = pygame.mouse.get_pos()
         pygame.draw.rect(screen, dark_red, [10, 100, 100, 55])
         back_text = corbel_font.render("Back", True, white)
-        back_rect = pygame.Rect(15, 100, 100, 46)  # Position the butto
+        back_rect = pygame.Rect(15, 100, 100, 46)  # Position the button
         screen.blit(back_text, back_rect)
         pygame.display.flip()
 
