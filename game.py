@@ -161,7 +161,7 @@ def play_level(screen, character, level, platforms):
 
     # Add a random power-up to a random platform
     platform = random.choice(platforms)
-    powerup = TomatoCoinPowerUp
+    powerup = random.choice([InvincibilityPowerUp, TomatoCoinPowerUp])
     print(f"[DEBUG] Selected Power-Up: {powerup.__name__}")
     powerup_instance = powerup(platform.centerx, platform.top - 15)
     powerups.add(powerup_instance)
