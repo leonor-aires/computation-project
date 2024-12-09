@@ -159,10 +159,13 @@ def play_level(screen, character, level, platforms):
     spawn_enemies(enemies, platforms)
     powerups = pygame.sprite.Group()
 
-    # Add a power-up to a random platform
+    # Add a random power-up to a random platform
     platform = random.choice(platforms)
-    powerup = InvincibilityPowerUp(platform.centerx, platform.top - 15)
-    powerups.add(powerup)
+    powerup = TomatoCoinPowerUp
+    print(f"[DEBUG] Selected Power-Up: {powerup.__name__}")
+    powerup_instance = powerup(platform.centerx, platform.top - 15)
+    powerups.add(powerup_instance)
+    print(f"[DEBUG] Power-Up Spawned: {powerup.__name__} at ({platform.centerx}, {platform.top - 15})")
 
     running = True
     level_complete = False
@@ -256,7 +259,8 @@ def handle_collisions(character, bullets, enemies):
             enemy.health -= 5
             bullet.kill()
             if enemy.health <= 0:
-                character.earn_coins(5)  # Earn coins for defeated enemies
+                # Apply coin multiplier when earning coins
+                character.earn_coins(character.coin_reward)  # Earn coins for defeated enemies
                 enemy.kill()
 
     for enemy in enemies:

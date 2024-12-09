@@ -28,6 +28,9 @@ class Character(pygame.sprite.Sprite):
         self.invincible = False  # Default invincibility status
         self.invincibility_timer = 0 # Initialize the invincibility timer
         self.coins = 0
+        self.coin_reward = 5
+        self.coin_powerup_active = False# Default reward per enemy
+        self.coin_powerup_timer = 0  # Initialize the Tomato Coin timer
         self.weapon = "default"  # Default weapon type
 
 
@@ -86,6 +89,14 @@ class Character(pygame.sprite.Sprite):
                 self.image = self.original_color  # Restore original sprite
                 print("[DEBUG] Invincibility expired!")
 
+        # Handle Tomato Coin power-up timer
+        if self.coin_powerup_active:
+            self.coin_powerup_timer -= 1
+            if self.coin_powerup_timer <= 0:
+                self.coin_powerup_active = False
+                self.coin_reward = 5  # Reset to default reward
+                print("[DEBUG] Tomato Coin Power-Up expired.")
+
     def shoot(self, bullets_group):
         """
         Create a bullet in the direction of the mouse
@@ -112,7 +123,12 @@ class Character(pygame.sprite.Sprite):
             print(f"[DEBUG] Character took damage: {damage}. Health: {self.health}")
 
     def earn_coins(self, amount):
-        self.coins += amount
+        """
+        Add coins to the player's total
+        """
+        earned_amount = amount
+        self.coins += earned_amount
+        print(f"[DEBUG] Coins Earned: {earned_amount}. Total Coins: {self.coins}")
 
     def draw(self, screen):
         # Desenha o personagem

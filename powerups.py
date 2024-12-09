@@ -52,7 +52,7 @@ class InvincibilityPowerUp(PowerUp):
         super().__init__(x, y)
         self.image = pygame.image.load("characters images/Shield 1.png") # Visual representation
         self.image = pygame.transform.scale(self.image, (50, 50))
-        self.rect = self.image.get_rect(center=(x, y - 10))
+        self.rect = self.image.get_rect(center=(x, y - 15))
 
         self.player = None # Store a reference to the player
         self.invincible_image = pygame.image.load("characters images/Invincible tomatio .png")  # Load the invincible player image
@@ -88,6 +88,43 @@ class InvincibilityPowerUp(PowerUp):
             self.player.image = self.player.original_image  # Restore original appearance
             print("[DEBUG] Invincibility expired.")
         super().expire()  # Call the base class expire logic
+
+class TomatoCoinPowerUp(PowerUp):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        # Load the Tomato Coin image
+        self.image = pygame.Surface((50, 50), pygame.SRCALPHA)  # Create a transparent surface
+        pygame.draw.circle(self.image, (255, 0, 0), (25, 25), 25)  # Draw a red circle (like a tomato)
+        self.rect = self.image.get_rect(center=(x, y - 10))
+        self.player = None
+        self.duration = 5 * fps
+
+    def affect_player(self, player):
+        """
+        Temporarily set the coin reward to 10.
+        """
+
+        self.player = player
+        self.timer = self.duration
+        player.coin_powerup_active = True # Track activation
+        player.coin_powerup_timer = self.duration
+        player.coin_reward = 10  # Set coin reward to 10 coins
+        print(f"[DEBUG] Tomato Coin Power-Up activated! Duration: {self.timer / fps} seconds")
+
+    def affect_game(self, game_state):
+        """
+        No direct effect on the game state.
+        """
+        pass  # Required to satisfy the abstract class requirement
+
+    def expire(self):
+        """
+        Reset the coin multiplier effect.
+        """
+        if self.player:
+            self.player.coin_reward = False # Mark as expired
+            print("[DEBUG] Coin multiplier expired.")
+        super().expire()
 
 
 class DespawnerPowerUp(PowerUp):
