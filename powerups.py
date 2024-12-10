@@ -71,7 +71,11 @@ class InvincibilityPowerUp(PowerUp):
         player.original_image = player.image  # Save the original image
         player.image = self.invincible_image  # Replace with invincible image
 
+        # Save the original y-position of the rect and move the player higher
+        player.original_y = player.rect.y  # Store the original position
+        player.rect.y -= 15  # Move the rect up by 15 pixels
         print(f"[DEBUG] Invincibility activated. Timer: {player.invincibility_timer / fps}")
+
 
     def affect_game(self, game_state):
         """
@@ -79,22 +83,30 @@ class InvincibilityPowerUp(PowerUp):
         """
         pass
 
+
     def expire(self):
         """
         Cleanup when invincibility ends.
         """
         if self.player:
             self.player.invincible = False
-            self.player.image = self.player.original_image  # Restore original appearance
-            print("[DEBUG] Invincibility expired.")
+            self.player.image = self.player.original_image
+            self.player.image_offset_y  = 0
+
+            # Reset the rect.y to the original stored position
+            self.player.rect.y = self.player.original_y  # Restore the original position
+            print("[DEBUG] Invincibility expired. Position reset.")
+
+
         super().expire()  # Call the base class expire logic
+
 
 class TomatoCoinPowerUp(PowerUp):
     def __init__(self, x, y):
         super().__init__(x, y)
         # Load the Tomato Coin image
-        self.image = pygame.Surface((50, 50), pygame.SRCALPHA)  # Create a transparent surface
-        pygame.draw.circle(self.image, (255, 0, 0), (25, 25), 25)  # Draw a red circle (like a tomato)
+        self.image = pygame.image.load("characters images/Tomato coin.png")  # Visual representation
+        self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect(center=(x, y - 10))
         self.player = None
         self.duration = 5 * fps

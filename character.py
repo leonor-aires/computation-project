@@ -131,15 +131,19 @@ class Character(pygame.sprite.Sprite):
         print(f"[DEBUG] Coins Earned: {earned_amount}. Total Coins: {self.coins}")
 
     def draw(self, screen):
-        # Desenha o personagem
-        screen.blit(self.image, self.rect)
+        """
+        Draw the character and its health bar, supporting optional image offsets.
+        """
+        # Apply an optional image offset for invincibility
+        offset_y = getattr(self, "image_offset_y", 0)  # Default to 0 if not set
 
-        # Desenha barra de vida acima do personagem
+        # Draw the character with the offset applied
+        screen.blit(self.image, (self.rect.x, self.rect.y + offset_y))
+
+        # Draw the health bar above the character
         health_bar_width = self.rect.width
         health_ratio = self.health / self.max_health
         pygame.draw.rect(screen, deep_black, (self.rect.x, self.rect.y - 10, health_bar_width, 5))
         pygame.draw.rect(screen, green, (self.rect.x, self.rect.y - 10, health_bar_width * health_ratio, 5))
-
-
 
 
