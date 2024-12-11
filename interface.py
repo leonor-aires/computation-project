@@ -6,6 +6,7 @@ from story import start_game_with_story
 from Rules import show_rules
 from options import show_options
 from credits import credits_
+from config import light_grey, grey
 
 
 def interface(screen):
@@ -20,15 +21,14 @@ def interface(screen):
 
     # fonts
     corbel_font = pygame.font.SysFont("Corbel", 50)
-    comicsans_font = pygame.font.SysFont("Comic Sans MS", 50)
-    font = pygame.font.Font(None, 36)
+    #comicsans_font = pygame.font.SysFont("Comic Sans MS", 50)
+    #font = pygame.font.Font(None, 36)
 
-    wilderness_text = corbel_font.render("Play", True, deep_black)
-    rules_text = corbel_font.render("Rules", True, deep_black)
-    options_text = corbel_font.render("Options", True, deep_black)
-    credits_text = corbel_font.render("Credits", True, deep_black)
-    quit_text = corbel_font.render("Quit", True, deep_black)
-    title_text = comicsans_font.render("Tomátios' Escape", True, glowing_light_red)
+    play_text = corbel_font.render("Play", True, white)
+    rules_text = corbel_font.render("Rules", True, white)
+    options_text = corbel_font.render("Options", True, white)
+    credits_text = corbel_font.render("Credits", True, white)
+    quit_text = corbel_font.render("Quit", True, white)
 
     # Load and scale the background image once
     image = pygame.image.load("backgrounds/main page.png")
@@ -55,7 +55,7 @@ def interface(screen):
     clock = pygame.time.Clock()
 
     # main game loop
-    running = True
+    #running = True
     while True:
         # Get the mouse position
         mouse = pygame.mouse.get_pos()
@@ -69,45 +69,61 @@ def interface(screen):
 
             # Detect clicks on buttons
             if ev.type == pygame.MOUSEBUTTONDOWN:
-                if 200 <= mouse[0] <= 800 and 150 <= mouse[1] <= 210:  # Play button
+                if 200 <= mouse[0] <= 800 and 470 <= mouse[1] <= 550:  # Play button
                     start_game_with_story(screen)  # Start game with story
-                elif 100 <= mouse[0] <= 240 and 380 <= mouse[1] <= 440:  # Rules button
+                elif 50 <= mouse[0] <= 150 and 60 <= mouse[1] <= 120:  # Rules button
                     show_rules(screen, corbel_font, {})
-                elif 100 <= mouse[0] <= 240 and 500 <= mouse[1] <= 560:  # Options button
+                elif 210 <= mouse[0] <= 390 and 60 <= mouse[1] <= 120:  # Options button
                     show_options(screen)  # Open options menu
-                elif 750 <= mouse[0] <= 890 and 380 <= mouse[1] <= 440:  # Credits button
+                elif 610 <= mouse[0] <= 770 and 60 <= mouse[1] <= 120:  # Credits button
                     credits_(screen)  # Placeholder function for credits
-                elif 750 <= mouse[0] <= 890 and 500 <= mouse[1] <= 560:  # Quit button
+                elif 850 <= mouse[0] <= 950 and 60 <= mouse[1] <= 120:  # Quit button
                     pygame.quit()
                     exit()
 
         # Draw the background image
         screen.blit(image, (0, 0))
 
-        # Drawing the buttons
+        # Drawing the buttons with hover effect
+        play_hover = 200 <= mouse[0] <= 800 and 470 <= mouse[1] <= 550
+        rules_hover = 50 <= mouse[0] <= 160 and 60 <= mouse[1] <= 100
+        options_hover = 210 <= mouse[0] <= 390 and 60 <= mouse[1] <= 100
+        credits_hover = 610 <= mouse[0] <= 770 and 60 <= mouse[1] <= 100
+        quit_hover = 850 <= mouse[0] <= 950 and 60 <= mouse[1] <= 100
 
-        # Play button - apperance
-        tile_rect = wilderness_text.get_rect(center=(200 + 600 // 2, 150 + 60 // 2))
-        screen.blit(wilderness_text, tile_rect)
-        # get the mouse infomration
+        # Define Hover Colors
+        hover_colors = light_grey
+        default_color = grey
+        hover_color_play = glowing_light_red
+
+        # Draw buttons with hover effect
+        pygame.draw.rect(screen, hover_color_play if play_hover else dark_red, pygame.Rect(200, 470, 600, 60), border_radius=10)
+        pygame.draw.rect(screen, hover_colors if rules_hover else default_color, pygame.Rect(40, 60, 120, 60), border_radius=10)
+        pygame.draw.rect(screen, hover_colors if options_hover else default_color, pygame.Rect(210, 60, 180, 60), border_radius=10)
+        pygame.draw.rect(screen, hover_colors if credits_hover else default_color, pygame.Rect(610, 60, 160, 60), border_radius=10)
+        pygame.draw.rect(screen, hover_colors if quit_hover else default_color, pygame.Rect(850, 60, 100, 60), border_radius=10)
+
+        # Drawing the buttons
+        # Play button-appearance
+        tile_rect = play_text.get_rect(center=(500, 500))
+        screen.blit(play_text, tile_rect)
+        # get the mouse information
         mouse = pygame.mouse.get_pos()  # locates where the mouse is
 
+
         # Draw the buttons
-        wilderness_rect = wilderness_text.get_rect(center=(200 + 600 // 2, 150 + 60 // 2))
-        rules_rect = rules_text.get_rect(center=(100 + 140 // 2, 380 + 60 // 2))
-        options_rect = options_text.get_rect(center=(100 + 140 // 2, 500 + 60 // 2))
-        credits_rect = credits_text.get_rect(center=(750 + 140 // 2, 380 + 60 // 2))
-        quit_rect = quit_text.get_rect(center=(750 + 140 // 2, 500 + 60 // 2))
+        wilderness_rect = play_text.get_rect(center=(500, 500))
+        rules_rect = rules_text.get_rect(center=(100, 90))
+        options_rect = options_text.get_rect(center=(300, 90))
+        credits_rect = credits_text.get_rect(center=(690, 90))
+        quit_rect = quit_text.get_rect(center=(900, 90))
 
         # Display the buttons
-        screen.blit(wilderness_text, wilderness_rect)
+        screen.blit(play_text, wilderness_rect)
         screen.blit(rules_text, rules_rect)
         screen.blit(options_text, options_rect)
         screen.blit(credits_text, credits_rect)
         screen.blit(quit_text, quit_rect)
-
-        # Title
-        screen.blit(title_text, (250, 20))
 
         # at the end
         pygame.display.update()

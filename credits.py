@@ -1,10 +1,9 @@
 import pygame
-from config import resolution, white, deep_black, dark_red
+from config import resolution, white, deep_black, dark_red, grey, light_grey
 
 def credits_(screen):
-    #screen = pygame.display.set_mode(resolution)
     # fonts
-    comicsans_font = pygame.font.SysFont("Comic Sans MS", 15)
+    comicsans_font = pygame.font.SysFont("Comic Sans MS", 40)
     corbel_font = pygame.font.SysFont("Corbel", 50, bold=True)
 
     background_image = pygame.image.load("backstory images/credits image.png")
@@ -37,9 +36,15 @@ def credits_(screen):
         screen.blit(background_image, (0, 0))
 
         # display text
-        screen.blit(constanca, (465, 105))
-        screen.blit(leonor, (465, 130))
-        screen.blit(marta, (465, 155))
+        screen.blit(constanca, (335, 25))
+        screen.blit(leonor, (335, 75))
+        screen.blit(marta,(335, 125))
+
+        back_hover = 20 <= mouse[0] <= 160 and 20 <= mouse[1] <= 80
+        button_color = light_grey if back_hover else grey  # Change color on hover
+
+        pygame.draw.rect(screen, button_color, pygame.Rect(20, 20, 140, 60), border_radius=10)  # Rectangle for the button
+        # pygame.draw.rect(screen,deep_black,pygame.Rect(20,20,140,60),width=2,border_radius=10)#Border
 
         # draw a back button [x, y, width, height]
         back_text = corbel_font.render("    back", True, deep_black)
