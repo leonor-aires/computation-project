@@ -5,6 +5,7 @@ from character import Character  # Main character class
 from enemy import Enemy  # Enemy class
 from shed import shed  # Shop system (shed)
 from powerups import *  # Power-ups used in the game
+from chest import Chest, spawn_chests
 
 # Function to create platforms for each level
 def create_platforms(level):
@@ -156,7 +157,9 @@ def play_level(screen, character, level, platforms):
 
     bullets = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
+    chests = pygame.sprite.Group()
     spawn_enemies(enemies, platforms)
+    spawn_chests(chests, platforms)
     powerups = pygame.sprite.Group()
 
     # Add a random power-up to a random platform
@@ -208,7 +211,13 @@ def play_level(screen, character, level, platforms):
         character.update()
         bullets.update()
         enemies.update(character)
+        chests.update()
         powerups.update()
+
+        # Check collisions with chests
+        collected_chests = pygame.sprite.spritecollide(character, chests, True)
+        for chest in collected_chests:
+            chest.interact(character)
 
         # Collecting power-ups
         collected_powerups = pygame.sprite.spritecollide(character, powerups, True)
@@ -228,6 +237,7 @@ def play_level(screen, character, level, platforms):
         for enemy in enemies:
             enemy.draw(screen)
         character.draw(screen)
+        chests.draw(screen)
 
         draw_ui(screen, character)
 
