@@ -27,6 +27,8 @@ class Bullet(pygame.sprite.Sprite):
             self.image = pygame.image.load('characters images/lightning_bullet.png')
         else:
             self.image = pygame.image.load('characters images/fire.png')
+        if self.weapon_type == "egg":
+            self.image = pygame.image.load('characters images/egg.png')
 
         self.image = pygame.transform.scale(self.image, (30, 30))
         self.rect = self.image.get_rect(center=(x, y))

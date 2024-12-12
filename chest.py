@@ -1,6 +1,8 @@
 import pygame
 import random
 from game import *
+from character import Character
+
 # Define a class for the chest
 class Chest(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -15,43 +17,73 @@ class Chest(pygame.sprite.Sprite):
 
 # Function to spawn chests
 def spawn_chests(group, platforms):
-    if random.random() < 1.0:  # 10% chance to spawn a chest
+    if random.random() < 0.5:  # Always spawn a chest
         platform = random.choice(platforms)
         chest = Chest(platform.centerx, platform.top - 25)
         group.add(chest)
+
+def health_boost(character):
+    character.health = min(character.max_health, character.max_health)
+
+def extra_coins(character):
+    character.earn_coins(100)
+
+def speed_boost(character):
+    character.speed += 1
+
+def diamonds(character):
+    character.diamond_count += 50
+
 
 # Function to open the chest and handle options
 def open_chest(character):
     """Handles the interaction when the player opens a chest."""
     screen = pygame.display.get_surface()
     font = pygame.font.SysFont("Corbel", 40, bold=True)
+    #mouse = pygame.mouse.get_pos()  # Get the current mouse position
 
     # Options for the chest
     options = [
-        {"name": "Weapon Upgrade", "effect": lambda char: char.upgrade_weapon()},
-        {"name": "Health Boost", "effect": lambda char: setattr(char, "health", min(char.max_health, char.health + 20))},
-        {"name": "Extra Coins", "effect": lambda char: char.earn_coins(50)},
+        {"name": "Health Boost", "effect": health_boost},
+        {"name": "100$", "effect": extra_coins},
+        {"name": "Speed Boost", "effect": speed_boost},
+        {"name": "50 diamonds", "effect": diamonds},
     ]
 
     # Randomize three options to present
     presented_options = random.sample(options, 3)
 
     # Chest UI
-    screen.fill((30, 30, 30))
-    chest_text = font.render("Choose a Reward!", True, (255, 255, 255))
+    background_image = pygame.image.load("backgrounds/factory.webp")
+    background_image = pygame.transform.scale(background_image, resolution)
+    screen.blit(background_image, (0, 0))
+    chest_text = font.render("Choose a Reward!", True, deep_black)
     chest_text_rect = chest_text.get_rect(center=(width // 2, height // 4))
     screen.blit(chest_text, chest_text_rect)
 
     # Draw buttons for each option
     button_rects = []
-    for i, option in enumerate(presented_options):
-        button_rect = pygame.Rect(200 + i * 300, height // 2, 200, 60)
-        pygame.draw.rect(screen, (100, 100, 255), button_rect)
+    button_width, button_height = 300, 60
+    button_margin = 30
 
-        button_text = font.render(option["name"], True, (255, 255, 255))
+    # Calculate starting X position to center the buttons
+    total_button_width = 3 * button_width + 2 * button_margin  # Total width of all buttons
+    start_x = (width - total_button_width) // 2  # Centering X position
+
+    for i in range(3):
+        option = presented_options[i]
+        # Define button position and size
+        button_rect = pygame.Rect(start_x + i * (button_width + button_margin), height // 2, button_width,button_height)
+
+        # Draw the button with rounded corners (no hover effect)
+        pygame.draw.rect(screen, purple, button_rect, border_radius=15)  # Button with rounded corners
+
+        # Add button text
+        button_text = font.render(option["name"], True, white)
         text_rect = button_text.get_rect(center=button_rect.center)
         screen.blit(button_text, text_rect)
 
+        # Store the button rect and its effect for later use
         button_rects.append((button_rect, option["effect"]))
 
     pygame.display.flip()

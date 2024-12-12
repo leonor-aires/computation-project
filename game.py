@@ -122,6 +122,7 @@ def game_loop(screen, character=None):
                     current_level += 1
                     character.health = character.max_health
                     character.rect.topleft = (10, height - 50)  # Reset character position
+                    character.current_level +=1
                 else:
                     # Final level completed
                     current_state = "last_level"
@@ -172,6 +173,7 @@ def play_level(screen, character, level, platforms):
 
     running = True
     level_complete = False
+
     while running:
         screen.blit(background_image, (0, 0))
         clock.tick(fps)
@@ -247,7 +249,7 @@ def play_level(screen, character, level, platforms):
         if character.health <= 0:
             return game_over_screen(screen)
 
-        corbel_font = pygame.font.SysFont("Corbel", 50, bold=True)
+        corbel_font = pygame.font.SysFont("Corbel", 40, bold=True)
         mouse = pygame.mouse.get_pos()
         #button styling
         def draw_button(rect, text, color):
@@ -257,7 +259,7 @@ def play_level(screen, character, level, platforms):
             screen.blit(text_surf, text_rect)
 
 
-        back_rect = pygame.Rect(15, 100, 120, 50)  # Position the button
+        back_rect = pygame.Rect(15, 130, 120, 50)  # Position the button
         draw_button(back_rect, "Back", dark_red)  # Green button for retry
 
         pygame.display.flip()
@@ -286,12 +288,6 @@ def handle_collisions(character, bullets, enemies):
                 character.take_damage(10)
 
 
-def draw_ui(screen, character):
-    font = pygame.font.SysFont("Corbel", 30, bold=True)
-    health_text = font.render(f"Health: {character.health}/{character.max_health}", True, green)
-    screen.blit(health_text, (10, 10))
-    coin_text = font.render(f"Coins: {character.coins}", True, yellow)
-    screen.blit(coin_text, (10, 40))
 
 
 def level_end_screen(screen, level, character):
@@ -410,3 +406,13 @@ def last_level_screen(screen):
                 mouse = pygame.mouse.get_pos()
                 if menu_button.collidepoint(mouse):
                     return "main_menu"
+def draw_ui(screen, character):
+    font = pygame.font.SysFont("Corbel", 30, bold=True)
+    health_text = font.render(f"Health: {character.health}/{character.max_health}", True, green)
+    screen.blit(health_text, (10, 10))
+    coin_text = font.render(f"Coins: {character.coins}", True, yellow)
+    screen.blit(coin_text, (10, 40))
+    diamond_text = font.render(f"Diamonds: {character.diamond_count}", True, blue)
+    screen.blit(diamond_text, (10, 70))
+    level_text = font.render(f"Level: {character.current_level}", True, deep_black)
+    screen.blit(level_text, (10, 100))

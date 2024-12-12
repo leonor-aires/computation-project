@@ -32,7 +32,8 @@ class Character(pygame.sprite.Sprite):
         self.coin_powerup_active = False# Default reward per enemy
         self.coin_powerup_timer = 0  # Initialize the Tomato Coin timer
         self.weapon = "default"  # Default weapon type
-
+        self.current_level = 1  # Initialize level
+        self.diamond_count = 0
 
         # Jumping variables
         self.is_jumping = False

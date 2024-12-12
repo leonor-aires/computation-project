@@ -1,57 +1,114 @@
 import pygame
 from config import *
+from character import Character
+from bullet import Bullet
+
+
+def apply_explosive_bullets(character):
+    """
+    Apply an explosive bullet to the character.
+
+    Args:
+    character (object): The character who will be applied the explosive bullet.
+
+    Returns:
+    None
+    """
+    character.weapon = 'explosive'
+
+def apply_lightning_bullets(character):
+    """
+    Apply a lightning bullets to the character.
+
+    Args:
+    character (object): The character who will be applied the lightning bullets.
+
+    Returns:
+    None
+    """
+    character.weapon = 'lightning'
+
+def apply_fridge_style(character):
+    """
+    Change the character and  the bullet design
+
+    Args:
+    character (object): The character who will be applied the fridge style.
+
+    Returns:
+    None
+        """
+    character.image = pygame.image.load("characters images/fridge_style.png")
+    character.image = pygame.transform.scale(character.image, (100, 100))
+    character.rect = character.image.get_rect(topleft=(character.rect.x, character.rect.y))
+    character.weapon = "egg"  # Set the weapon type for gameplay bullets
 
 
 def shop(screen, character):
+    """
+    Display and manage the shop. Allows the character to purchase items.
+
+    Args:
+    screen (pygame.Surface): The Pygame screen to draw the shop on.
+    character (object): The character accessing the shop
+
+    Returns:
+    None
+    """
     pygame.init()
-    font = pygame.font.SysFont("Corbel", 40)
+    font = pygame.font.SysFont("Corbel", 40,  bold = True)
     title_font = pygame.font.SysFont("Corbel", 60, bold=True)
     clock = pygame.time.Clock()
 
     # Define shop items
     shop_items = [
-        {"name": "Health Potion", "cost": 20,
-         "action": lambda: setattr(character, 'health', min(character.max_health, character.max_health))},
-        {"name": "Speed Boost", "cost": 50, "action": lambda: setattr(character, 'speed', character.speed + 1)},
-        {"name": "Explosive Bullets", "cost": 100, "action": lambda: setattr(character, 'weapon', 'explosive')},
-        {"name": "Lightning Bullets", "cost": 150, "action": lambda: setattr(character, 'weapon', 'lightning')},
+        {"name": "Explosive Bullets", "cost": 100, "currency": "coins", "action": apply_explosive_bullets},
+        {"name": "Lightning Bullets", "cost": 150, "currency": "coins", "action": apply_lightning_bullets},
+        {"name": "Fridge Style", "cost": 150, "currency": "diamonds", "action": apply_fridge_style},
     ]
 
     # Colors
     card_color = (70, 70, 120)  # Card background
     card_highlight = (90, 140, 200)  # Highlight for hover
-    back_color = (180, 50, 50)
+    back_color = dark_red
     back_hover = (220, 70, 70)
 
     # Back button setup
     back_text = font.render("Back", True, white)
     back_rect = pygame.Rect(450, 550, 100, 46)  # Position the button
 
-    # Initialize message display variables
-    feedback_message = ""
-    message_timer = 0  # Timer for message duration (in frames)
+    # Message setup
+    purchase_message = ""
+    message_displayed = False
 
     # Running flag
     running = True
 
     while running:
-        screen.fill(deep_black)
-        mouse = pygame.mouse.get_pos()  # Get mouse position
+        screen.fill((0, 0, 0))  # Clear the screen with a black background
+        mouse = pygame.mouse.get_pos()  # Get the current mouse position
 
         # Render title
-        title_text = title_font.render("SHOP", True, yellow)
+        title_text = title_font.render("SHOP", True, (255, 255, 0))
         screen.blit(title_text, (430, 20))
 
         # Render shop items
-        for i, item in enumerate(shop_items):
+        i = 0  # Initialize index manually
+        for item in shop_items:
             card_rect = pygame.Rect(100, 100 + i * 110, 800, 90)
+            # Highlight the card if hovered over
             if card_rect.collidepoint(mouse):
                 pygame.draw.rect(screen, card_highlight, card_rect, border_radius=10)
             else:
                 pygame.draw.rect(screen, card_color, card_rect, border_radius=10)
 
-            item_text = font.render(f"{item['name']} - {item['cost']} coins", True, white)
+            # Determine the currency type (coins or diamonds)
+            currency_type = "coins" if item["currency"] == "coins" else "diamonds"
+            # Render item text with name, cost, and currency
+            item_text = font.render(f"{item['name']} - {item['cost']} {currency_type}", True, white)
             screen.blit(item_text, (120, 120 + i * 110))  # Render item text with spacing
+
+            i += 1  # Increment index manually
 
         # Render back button
         if back_rect.collidepoint(mouse):
@@ -61,15 +118,23 @@ def shop(screen, character):
         back_text_rect = back_text.get_rect(center=back_rect.center)
         screen.blit(back_text, back_text_rect)
 
-        # Show feedback message if any
-        if message_timer > 0:
-            feedback_text = font.render(feedback_message, True, white)
-            feedback_text_rect = feedback_text.get_rect(center=(500, 75))
-            screen.blit(feedback_text, feedback_text_rect)
-            message_timer -= 1  # Decrease timer
+        # Show purchase message if any
+        if message_displayed:
+            pygame.draw.rect(screen, green, (100, 300, 800, 100), border_radius=10)
+            purchase_text = font.render(purchase_message, True, white)
+            purchase_text_rect = purchase_text.get_rect(center=(500, 350))
+            screen.blit(purchase_text, purchase_text_rect)
 
-        pygame.display.flip()  # Update the screen
-        clock.tick(fps)  # Maintain frame rate
+        # Render coins
+        coin_text = font.render(f"Coins: {character.coins}", True, yellow)
+        screen.blit(coin_text, (10, 550))  # Ensure coins are rendered continuously
+
+        # Render diamantes
+        diamond_text = font.render(f"Diamonds: {character.diamond_count}", True, blue)  # Cor azul clara
+        screen.blit(diamond_text, (750, 550))
+
+        pygame.display.flip()  # Update the display
+        clock.tick(60)  # Maintain a frame rate of 60 FPS
 
         # Handle events
         for event in pygame.event.get():
@@ -86,11 +151,25 @@ def shop(screen, character):
                 for i, item in enumerate(shop_items):
                     item_rect = pygame.Rect(100, 100 + i * 110, 800, 90)
                     if item_rect.collidepoint(mouse):
-                        if character.coins >= item["cost"]:
-                            character.coins -= item["cost"]
-                            item["action"]()  # Apply the item's effect
-                            feedback_message = f"Purchased {item['name']}!"
-                            message_timer = 120  # Display message for 120 frames (~2 seconds at 60 FPS)
-                        else:
-                            feedback_message = "Not enough coins!"
-                            message_timer = 120  # Display message for 120 frames (~2 seconds at 60 FPS)
+                        if item["currency"] == "coins":
+                            if character.coins >= item["cost"]:
+                                character.coins -= item["cost"]
+                                item["action"](character)  # Apply the item's effect
+                                purchase_message = f"Purchased {item['name']}!"
+                                message_displayed = True
+                            else:
+                                purchase_message = "Not enough coins!"
+                                message_displayed = True
+                        elif item["currency"] == "diamonds":
+                            if character.diamond_count >= item["cost"]:
+                                character.diamond_count -= item["cost"]
+                                item["action"](character)  # Apply the item's effect
+                                purchase_message = f"Purchased {item['name']}!"
+                                message_displayed = True
+                            else:
+                                purchase_message = "Not enough diamonds!"
+                                message_displayed = True
+
+
+
+

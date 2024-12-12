@@ -11,6 +11,8 @@ green = (0,255,0)
 blue= (0,0,255)
 yellow= (255,255,0)
 light_grey = (220, 220, 220)
+purple= (50, 50, 150)
+light_purple=((100, 100, 255))
 
 # SCREEN RESOLUTION
 resolution = (1000, 600)
