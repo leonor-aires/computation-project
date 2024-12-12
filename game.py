@@ -247,12 +247,19 @@ def play_level(screen, character, level, platforms):
         if character.health <= 0:
             return game_over_screen(screen)
 
-        corbel_font = pygame.font.SysFont("Corbel", 50)
+        corbel_font = pygame.font.SysFont("Corbel", 50, bold=True)
         mouse = pygame.mouse.get_pos()
-        pygame.draw.rect(screen, dark_red, [10, 100, 100, 55])
-        back_text = corbel_font.render("Back", True, white)
-        back_rect = pygame.Rect(15, 100, 100, 46)  # Position the button
-        screen.blit(back_text, back_rect)
+        #button styling
+        def draw_button(rect, text, color):
+            pygame.draw.rect(screen, color, rect, border_radius=10)  # Rounded corners
+            text_surf = corbel_font.render(text, True, white)
+            text_rect = text_surf.get_rect(center=rect.center)
+            screen.blit(text_surf, text_rect)
+
+
+        back_rect = pygame.Rect(15, 100, 120, 50)  # Position the button
+        draw_button(back_rect, "Back", dark_red)  # Green button for retry
+
         pygame.display.flip()
 
 
@@ -288,23 +295,30 @@ def draw_ui(screen, character):
 
 
 def level_end_screen(screen, level, character):
+    # Load background image
+    background_image = pygame.image.load("backgrounds/game.webp")
+    background_image = pygame.transform.scale(background_image, resolution)
+    screen.blit(background_image, (0, 0))  # Draw the background image
+
     font = pygame.font.SysFont("Corbel", 50, bold=True)
-    screen.fill((0, 0, 0))
     character.earn_coins(level * 10)
 
-    level_end_text = font.render(f"End of Level {level}", True, white)
+    level_end_text = font.render(f"End of Level {level}", True, deep_black)
     level_end_rect = level_end_text.get_rect(center=(width // 2, height // 3))
     screen.blit(level_end_text, level_end_rect)
 
-    next_level_button = pygame.Rect(250, 400, 260, 60)
-    menu_button = pygame.Rect(600, 400, 260, 60)
-    pygame.draw.rect(screen, green, next_level_button)
-    pygame.draw.rect(screen, dark_red, menu_button)
+    # Button Styling
+    def draw_button(rect, text, color):
+        pygame.draw.rect(screen, color, rect, border_radius=10)  # Rounded corners
+        text_surf = font.render(text, True, white)
+        text_rect = text_surf.get_rect(center=rect.center)
+        screen.blit(text_surf, text_rect)
 
-    next_level_text = font.render("Next Level", True, white)
-    menu_text = font.render("Main Menu", True, white)
-    screen.blit(next_level_text, next_level_button.move(40, 10).topleft)
-    screen.blit(menu_text, menu_button.move(20, 10).topleft)
+    next_level_button = pygame.Rect(150, 400, 260, 60)
+    menu_button = pygame.Rect(600, 400, 260, 60)
+
+    draw_button(next_level_button, "Next Level", dark_red)  # Green button for retry
+    draw_button(menu_button, "Main Menu", dark_red)  # Dark red button for main menu
 
     pygame.display.flip()
 
@@ -364,18 +378,26 @@ def game_over_screen(screen):
 
 
 def last_level_screen(screen):
-    font = pygame.font.SysFont("Corbel", 50)
-    screen.fill((0, 0, 0))
+    # Load background image
+    background_image = pygame.image.load("backgrounds/game.webp")
+    background_image = pygame.transform.scale(background_image, resolution)
+    screen.blit(background_image, (0, 0))  # Draw the background image
+    #Font that will be use in the text
+    font = pygame.font.SysFont("Corbel", 50, bold=True)
 
-    message_text = font.render("Amazing work! More adventures coming soon!", True, white)
+    message_text = font.render("Amazing work! More adventures coming soon!", True, deep_black)
     message_rect = message_text.get_rect(center=(width // 2, height // 3))
     screen.blit(message_text, message_rect)
 
-    menu_button = pygame.Rect(400, 400, 260, 60)
-    pygame.draw.rect(screen, dark_red, menu_button)
+    # Button Styling
+    def draw_button(rect, text, color):
+        pygame.draw.rect(screen, color, rect, border_radius=10)  # Rounded corners
+        text_surf = font.render(text, True, white)
+        text_rect = text_surf.get_rect(center=rect.center)
+        screen.blit(text_surf, text_rect)
 
-    menu_text = font.render("Main Menu", True, white)
-    screen.blit(menu_text, menu_button.move(20, 10).topleft)
+    menu_button = pygame.Rect(3500, 400, 260, 60)
+    draw_button(menu_button, "Main Menu", dark_red)  # Dark red button for main menu
 
     pygame.display.flip()
 
