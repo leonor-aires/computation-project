@@ -4,19 +4,20 @@ from character import Character
 from bullet import Bullet
 
 
-def apply_explosive_bullets(character):
+def apply_Ketchup_Kannon(character):
     """
-    Apply an explosive bullet to the character.
+    Apply a Ketchup Kannon to the character.
 
     Args:
-    character (object): The character who will be applied the explosive bullet.
+    character (object): The character who will be applied the Ketchup Kannon.
 
     Returns:
     None
     """
-    character.weapon = 'explosive'
+    character.weapon = 'Ketchup Kannon'
+    character.bullet_damage = 6
 
-def apply_lightning_bullets(character):
+def apply_Knife_of_Justice(character):
     """
     Apply a lightning bullets to the character.
 
@@ -26,7 +27,8 @@ def apply_lightning_bullets(character):
     Returns:
     None
     """
-    character.weapon = 'lightning'
+    character.weapon = 'Knife of Justice'
+    character.bullet_damage = 10
 
 def apply_fridge_style(character):
     """
@@ -43,6 +45,18 @@ def apply_fridge_style(character):
     character.rect = character.image.get_rect(topleft=(character.rect.x, character.rect.y))
     character.weapon = "egg"  # Set the weapon type for gameplay bullets
 
+def apply_Tomato_slice(character):
+    """
+    Apply a Tomato slice to the character.
+
+    Args:
+    character (object): The character who will be applied the Tomato slice.
+
+    Returns:
+    None
+    """
+    character.weapon = 'Tomato Slice'
+    character.bullet_damage = 4
 
 def shop(screen, character):
     """
@@ -62,8 +76,9 @@ def shop(screen, character):
 
     # Define shop items
     shop_items = [
-        {"name": "Explosive Bullets", "cost": 100, "currency": "coins", "action": apply_explosive_bullets},
-        {"name": "Lightning Bullets", "cost": 150, "currency": "coins", "action": apply_lightning_bullets},
+        {"name": "Tomato Slice", "cost": 100, "currency": "coins", "action": apply_Tomato_slice},
+        {"name": "Ketchup Kannon", "cost": 200, "currency": "coins", "action": apply_Ketchup_Kannon},
+        {"name": "Knife of Justice", "cost": 300, "currency": "coins", "action": apply_Knife_of_Justice},
         {"name": "Fridge Style", "cost": 150, "currency": "diamonds", "action": apply_fridge_style},
     ]
 

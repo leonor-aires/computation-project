@@ -1,6 +1,7 @@
 from utils import*
 from config import*
 import math
+from enemy import Enemy
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x: int, y: int, direction: float, weapon_type="default"):
@@ -21,10 +22,12 @@ class Bullet(pygame.sprite.Sprite):
         self.start_y = y
 
         # Load different bullet images based on weapon type
-        if self.weapon_type == "explosive":
-            self.image = pygame.image.load('characters images/explosive_bullet.png')
-        elif self.weapon_type == "lightning":
-            self.image = pygame.image.load('characters images/lightning_bullet.png')
+        if self.weapon_type == "Ketchup Kannon":
+            self.image = pygame.image.load('characters images/Ketchup_Kannon.png')
+        elif self.weapon_type == "Knife of Justice":
+            self.image = pygame.image.load('characters images/Knife_of_justice.png')
+        elif self.weapon_type == "Tomato Slice":
+            self.image = pygame.image.load('characters images/Tomato_slice.png')
         else:
             self.image = pygame.image.load('characters images/fire.png')
         if self.weapon_type == "egg":

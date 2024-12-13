@@ -52,7 +52,7 @@ class InvincibilityPowerUp(PowerUp):
         super().__init__(x, y)
         self.image = pygame.image.load("characters images/Shield 1.png") # Visual representation
         self.image = pygame.transform.scale(self.image, (50, 50))
-        self.rect = self.image.get_rect(center=(x, y - 15))
+        self.rect = self.image.get_rect(center=(x, y-15))
 
         self.player = None # Store a reference to the player
         self.invincible_image = pygame.image.load("characters images/Invincible tomatio .png")  # Load the invincible player image
@@ -91,7 +91,7 @@ class InvincibilityPowerUp(PowerUp):
         if self.player:
             self.player.invincible = False
             self.player.image = self.player.original_image
-            self.player.image_offset_y  = 0
+            self.player.image_offset_y = 0
 
             # Reset the rect.y to the original stored position
             self.player.rect.y = self.player.original_y  # Restore the original position

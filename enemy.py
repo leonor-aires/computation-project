@@ -30,7 +30,7 @@ class Enemy(pygame.sprite.Sprite):
         self.speed = random.choice([-1, 1]) * random.uniform(1, 1.5)
 
         # Health
-        self.max_health = 10
+        self.max_health = 20
         self.health = self.max_health
 
     def update(self, character=None):
@@ -65,3 +65,13 @@ class Enemy(pygame.sprite.Sprite):
         health_ratio = max(0, self.health / self.max_health) # Avoids negative health values
         pygame.draw.rect(screen, deep_black, (self.rect.x, self.rect.y - 10, health_bar_width, 5))
         pygame.draw.rect(screen, green, (self.rect.x, self.rect.y - 10, health_bar_width * health_ratio, 5))
+
+    def decrease_health(self, amount):
+        """
+        Decrease the enemy's health by a certain amount.
+
+        Args:
+            amount (int): The amount to decrease the health by.
+        """
+        self.health -= amount
+        self.health = max(0, self.health)  # Ensure health doesn't go below zero

@@ -275,7 +275,8 @@ def handle_collisions(character, bullets, enemies):
     for bullet in bullets:
         collided_enemies = pygame.sprite.spritecollide(bullet, enemies, False)
         for enemy in collided_enemies:
-            enemy.health -= 5
+            # Apply bullet damage based on character's bullet_damage attribute
+            enemy.health -= character.bullet_damage
             bullet.kill()
             if enemy.health <= 0:
                 # Apply coin multiplier when earning coins
@@ -286,6 +287,7 @@ def handle_collisions(character, bullets, enemies):
         if pygame.sprite.collide_rect(character, enemy):
             if not character.invincible:
                 character.take_damage(10)
+
 
 
 

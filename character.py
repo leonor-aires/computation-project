@@ -34,6 +34,7 @@ class Character(pygame.sprite.Sprite):
         self.weapon = "default"  # Default weapon type
         self.current_level = 1  # Initialize level
         self.diamond_count = 0
+        self.bullet_damage = 3
 
         # Jumping variables
         self.is_jumping = False
@@ -55,7 +56,7 @@ class Character(pygame.sprite.Sprite):
             self.rect.x += self.speed
 
         # Jumping mechanism
-        if keys[pygame.K_UP]:  # Check if the spacebar is pressed
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
             if not self.is_jumping:  # Only jump if not already jumping
                 self.is_jumping = True
                 self.y_velocity = self.jump_height  # Set the jump velocity
@@ -100,12 +101,12 @@ class Character(pygame.sprite.Sprite):
 
     def shoot(self, bullets_group):
         """
-        Create a bullet in the direction of the mouse
+        Create a bullet in the forward direction
+
+        args:
+        bullets_group:
         """
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        dx = mouse_x - self.rect.centerx
-        dy = mouse_y - self.rect.centery
-        angle = math.atan2(dy, dx)  # Direction in radians
+        angle = math.radians(0)
 
         # Create a new bullet with the current weapon type
         new_bullet = Bullet(self.rect.centerx, self.rect.centery, angle, weapon_type=self.weapon)
@@ -146,5 +147,9 @@ class Character(pygame.sprite.Sprite):
         health_ratio = self.health / self.max_health
         pygame.draw.rect(screen, deep_black, (self.rect.x, self.rect.y - 10, health_bar_width, 5))
         pygame.draw.rect(screen, green, (self.rect.x, self.rect.y - 10, health_bar_width * health_ratio, 5))
+
+        # Function to update bullet damage
+    def update_bullet_damage(self, new_damage):
+        self.bullet_damage = new_damage
 
 
