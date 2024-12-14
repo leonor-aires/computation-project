@@ -157,6 +157,9 @@ def play_level(screen, character, level, platforms):
     background_image = pygame.transform.scale(background_image, resolution)
 
     bullets = pygame.sprite.Group()
+    character.bullets = bullets    # Attach the bullets group to the character
+    print(f"[DEBUG] Bullets group initialized: {bullets}")
+
     enemies = pygame.sprite.Group()
     chests = pygame.sprite.Group()
     spawn_enemies(enemies, platforms)
@@ -165,7 +168,7 @@ def play_level(screen, character, level, platforms):
 
     # Add a random power-up to a random platform
     platform = random.choice(platforms)
-    powerup = random.choice([InvincibilityPowerUp, TomatoCoinPowerUp])
+    powerup = random.choice([InvincibilityPowerUp, TomatoCoinPowerUp, RapidBlasterPowerUp])
     print(f"[DEBUG] Selected Power-Up: {powerup.__name__}")
     powerup_instance = powerup(platform.centerx, platform.top - 15)
     powerups.add(powerup_instance)
@@ -210,11 +213,15 @@ def play_level(screen, character, level, platforms):
                 if 10 <= mouse[0] <= 110 and 100 <= mouse[1] <= 155:
                     return "break"
 
+        # Update game components
         character.update()
         bullets.update()
         enemies.update(character)
         chests.update()
-        powerups.update()
+
+        # Update active power-up timers
+        for powerup in powerups:
+            powerup.update()
 
         # Check collisions with chests
         collected_chests = pygame.sprite.spritecollide(character, chests, True)
@@ -224,7 +231,12 @@ def play_level(screen, character, level, platforms):
         # Collecting power-ups
         collected_powerups = pygame.sprite.spritecollide(character, powerups, True)
         for powerup in collected_powerups:
+            print(f"[DEBUG] Collected Power-Up: {type(powerup).__name__}")
             powerup.affect_player(character)
+
+        # Fire bullets if RapidBlaster is active
+        if character.rapid_blaster_active:
+            character.shoot_automatic()
 
         handle_collisions(character, bullets, enemies)
 

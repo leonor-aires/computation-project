@@ -31,6 +31,9 @@ class Character(pygame.sprite.Sprite):
         self.coin_reward = 5
         self.coin_powerup_active = False# Default reward per enemy
         self.coin_powerup_timer = 0  # Initialize the Tomato Coin timer
+        self.rapid_blaster_active = False
+        self.rapid_blaster_timer = 0
+        self.bullets = None
         self.weapon = "default"  # Default weapon type
         self.current_level = 1  # Initialize level
         self.diamond_count = 0
@@ -44,7 +47,7 @@ class Character(pygame.sprite.Sprite):
 
     def update(self):
         """
-        Update the position of the character based on keyboard input and physics (gravity).
+        Update the character position, bullet cooldowns, and special power-ups.
         """
         # Detecting key presses for character movement
         keys = pygame.key.get_pressed()
@@ -98,6 +101,35 @@ class Character(pygame.sprite.Sprite):
                 self.coin_powerup_active = False
                 self.coin_reward = 5  # Reset to default reward
                 print("[DEBUG] Tomato Coin Power-Up expired.")
+
+        # Handle Rapid Blaster timer
+        if self.rapid_blaster_active:
+            self.rapid_blaster_timer -= 1
+            if self.rapid_blaster_timer <= 0:
+                self.rapid_blaster_active = False
+                print("[DEBUG] Rapid Blaster effect ended.")
+
+    def shoot_backwards(self, bullets_group):
+        """
+        Shoot bullets backward.
+        """
+        angle = math.pi  # Angle facing backward
+        new_bullet = Bullet(self.rect.centerx, self.rect.centery, angle, weapon_type=self.weapon)
+        bullets_group.add(new_bullet)
+
+    def shoot_automatic(self):
+        """
+        Automatically shoot bullets forward and backward with a cooldown.
+        """
+        if self.rapid_blaster_active:
+            if self.rapid_blaster_cooldown <= 0:
+                forward_bullet = Bullet(self.rect.centerx, self.rect.centery, 0)  # Right
+                backward_bullet = Bullet(self.rect.centerx, self.rect.centery, math.pi)  # Left
+                self.bullets.add(forward_bullet, backward_bullet)
+                print("[DEBUG] Bullets fired automatically: forward and backward")
+                self.rapid_blaster_cooldown = 10  # Reset cooldown (10 frames)
+            else:
+                self.rapid_blaster_cooldown -= 1
 
     def shoot(self, bullets_group):
         """

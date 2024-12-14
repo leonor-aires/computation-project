@@ -1,6 +1,7 @@
 import pygame
 from abc import ABC, abstractmethod
 from config import *
+from character import *
 import random
 
 class PowerUp(pygame.sprite.Sprite, ABC):
@@ -136,6 +137,51 @@ class TomatoCoinPowerUp(PowerUp):
         if self.player:
             self.player.coin_reward = False # Mark as expired
             print("[DEBUG] Coin multiplier expired.")
+        super().expire()
+
+class RapidBlasterPowerUp(PowerUp):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        # Load the visual representation for the power-up
+        self.image = pygame.image.load("characters images/rapid_blaster1.png")  # Replace with the actual image
+        self.image = pygame.transform.scale(self.image, (60, 60))
+        self.rect = self.image.get_rect(center=(x, y - 10))
+        self.player = None
+        self.collected = False
+        self.duration = 5 * fps  # Effect lasts for 5 seconds
+        self.timer = 0
+
+    def affect_player(self, player):
+        if not self.collected:  # Only activate once
+            self.collected = True
+            player.rapid_blaster_active = True
+            player.rapid_blaster_timer = self.duration
+            player.rapid_blaster_cooldown = 10  # Cooldown for automatic shots
+            print(f"[DEBUG] Rapid Blaster activated! Duration: {self.duration / fps} seconds")
+
+    def affect_game(self, game_state):
+        """
+        No direct effect on the game state.
+        """
+        pass
+
+    def update(self):
+        """
+        Updates the Rapid Blaster power-up timer and fires bullets continuously.
+        """
+        if self.collected and self.timer < self.duration:
+            self.timer += 1
+            if self.timer >= self.duration:
+                self.expire()
+
+    def expire(self):
+        """
+        Cleanup when the rapid shooting effect ends.
+        """
+        if self.player:
+            self.player.rapid_blaster_active = False
+            self.player.rapid_blaster_timer = 0
+            print("[DEBUG] Rapid Blaster expired!")
         super().expire()
 
 
