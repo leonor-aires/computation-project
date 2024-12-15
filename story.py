@@ -7,6 +7,25 @@ def typewriter_effect_wrapped(screen, text, font, color, rect, speed=25):
     """
     Display text letter by letter with word wrapping inside a rectangle.
     When the text is fully displayed, show a semi-transparent rectangle.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The surface where the text will appear.
+    text : str
+        The text content to be displayed.
+    font : pygame.font.Font
+        The font used for the text.
+    color : tuple of int
+        The color of the text.
+    rect : pygame.Rect
+        The rectangle area within which the text should be displayed.
+    speed : int, optional
+        The delay in milliseconds between displaying each character (default is 25).
+
+    Returns
+    -------
+    The fully displayed text content.
     """
     words = text.split()
     lines = []
@@ -62,6 +81,11 @@ def typewriter_effect_wrapped(screen, text, font, color, rect, speed=25):
 def play_background_music(music_file):
     """
     Play background music for the story.
+
+    Parameters
+    ----------
+    music_file : str
+        The music file to be played.
     """
     pygame.mixer.init()
     pygame.mixer.music.load(music_file)
@@ -71,6 +95,11 @@ def play_background_music(music_file):
 def display_story_with_buttons(screen):
     """
     Displays the game's backstory screen with buttons for navigation and skipping.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The surface on which the story slides will be displayed.
     """
     pygame.init()
     font = pygame.font.SysFont("Corbel", 25)
@@ -217,6 +246,19 @@ def display_story_with_buttons(screen):
 def render_wrapped_text(screen, text, font, color, rect):
     """
     Render text with word wrapping inside a rectangle.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The surface where the text will be rendered.
+    text : str
+        The text content to be displayed.
+    font : pygame.font.Font
+        The font used for rendering text.
+    color : tuple of int
+        The color of the text.
+    rect : pygame.Rect
+        The rectangle area within which the text should be displayed.
     """
     words = text.split()
     lines = []
@@ -242,6 +284,11 @@ def render_wrapped_text(screen, text, font, color, rect):
 def start_game_with_story(screen):
     """
     Main function to start the game with a backstory, images, and transitions.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The screen on which the story and the game will be displayed.
     """
     screen = pygame.display.set_mode(resolution)
     display_story_with_buttons(screen)

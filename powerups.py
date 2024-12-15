@@ -5,11 +5,17 @@ from character import *
 import random
 
 class PowerUp(pygame.sprite.Sprite, ABC):
-    """
-    Abstract class for power-ups in the game.
-    """
-
     def __init__(self, x, y):
+        """
+        Abstract class for power-ups in the game.
+
+        Parameters
+        ----------
+        x : int
+            X-coordinate of the power-up.
+        y : int
+            Y-coordinate of the power-up.
+        """
         super().__init__()
         self.image = None  # To be defined in subclasses
         self.rect = None  # To be defined in subclasses
@@ -21,6 +27,11 @@ class PowerUp(pygame.sprite.Sprite, ABC):
     def affect_player(self, player):
         """
         Abstract method to apply the power-up's effect on the player.
+
+        Parameters
+        ----------
+        player : Character
+            The player character to affect.
         """
         pass
 
@@ -28,6 +39,11 @@ class PowerUp(pygame.sprite.Sprite, ABC):
     def affect_game(self, game_state):
         """
         Abstract method to apply the power-up's effect on the game.
+
+        Parameters
+        ----------
+        game_state : dict
+            The current state of the game.
         """
         pass
 
@@ -37,7 +53,6 @@ class PowerUp(pygame.sprite.Sprite, ABC):
         """
         if self.collected:
             self.timer -= 1
-            print(f"[DEBUG] Timer for {self.__class__.__name__}: {self.timer}")  # Debug the timer
             if self.timer <= 0:
                 self.expire()
 
@@ -45,7 +60,6 @@ class PowerUp(pygame.sprite.Sprite, ABC):
         """
         Cleanup when the power-up's effect ends.
         """
-        print(f"[DEBUG] {self.__class__.__name__} expired.")
         self.kill()  # Remove the power-up sprite
 
 class InvincibilityPowerUp(PowerUp):
@@ -62,6 +76,11 @@ class InvincibilityPowerUp(PowerUp):
     def affect_player(self, player):
         """
         Make the player invincible and change its appearance.
+
+        Parameters
+        ----------
+        player : Character
+            The player character to affect.
         """
         self.player = player # Save reference
         self.timer = self.duration # Set the timer
@@ -75,8 +94,6 @@ class InvincibilityPowerUp(PowerUp):
         # Save the original y-position of the rect and move the player higher
         player.original_y = player.rect.y  # Store the original position
         player.rect.y -= 15  # Move the rect up by 15 pixels
-        print(f"[DEBUG] Invincibility activated. Timer: {player.invincibility_timer / fps}")
-
 
     def affect_game(self, game_state):
         """
@@ -88,6 +105,7 @@ class InvincibilityPowerUp(PowerUp):
     def expire(self):
         """
         Cleanup when invincibility ends.
+        Resets the player back to their original state.
         """
         if self.player:
             self.player.invincible = False
@@ -96,8 +114,6 @@ class InvincibilityPowerUp(PowerUp):
 
             # Reset the rect.y to the original stored position
             self.player.rect.y = self.player.original_y  # Restore the original position
-            print("[DEBUG] Invincibility expired. Position reset.")
-
 
         super().expire()  # Call the base class expire logic
 
@@ -115,8 +131,12 @@ class TomatoCoinPowerUp(PowerUp):
     def affect_player(self, player):
         """
         Temporarily set the coin reward to 10.
-        """
 
+        Parameters
+        ----------
+        player : Character
+            The player character to affect.
+        """
         self.player = player
         self.timer = self.duration
         player.coin_powerup_active = True # Track activation
@@ -136,7 +156,6 @@ class TomatoCoinPowerUp(PowerUp):
         """
         if self.player:
             self.player.coin_reward = False # Mark as expired
-            print("[DEBUG] Coin multiplier expired.")
         super().expire()
 
 class RapidBlasterPowerUp(PowerUp):
@@ -152,12 +171,19 @@ class RapidBlasterPowerUp(PowerUp):
         self.timer = 0
 
     def affect_player(self, player):
+        """
+        Temporarily apply RapidBlasterPowerUp
+
+        Parameters
+        ----------
+        player : Character
+            The player character to affect.
+        """
         if not self.collected:  # Only activate once
             self.collected = True
             player.rapid_blaster_active = True
             player.rapid_blaster_timer = self.duration
             player.rapid_blaster_cooldown = 10  # Cooldown for automatic shots
-            print(f"[DEBUG] Rapid Blaster activated! Duration: {self.duration / fps} seconds")
 
     def affect_game(self, game_state):
         """
