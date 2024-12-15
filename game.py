@@ -9,6 +9,19 @@ from chest import Chest, spawn_chests
 
 # Function to create platforms for each level
 def create_platforms(level):
+    """
+    Create platforms for the specified level.
+
+    Parameters
+    ----------
+    level : int
+        The current level number.
+
+    Returns
+    -------
+    list of pygame.Rect
+        A list of platforms for the given level.
+    """
     platforms = []
     last_platform = pygame.Rect(width - 150, 100, 150, 10)  # Always the final platform
 
@@ -105,6 +118,16 @@ def create_platforms(level):
 
 
 def game_loop(screen, character=None):
+    """
+    Main game loop for managing the levels and states.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The game screen surface.
+    character : Character
+        The main character object. If None, a new character is created.
+    """
     if character is None:
         character = Character(image="characters images/Tomátio.png", x=10, y=height - 50)  # Start at bottom-left corner
 
@@ -148,17 +171,44 @@ def game_loop(screen, character=None):
 
 
 def execute_game(screen, character=None):
+    """
+    Execute the game loop.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The game screen surface.
+    character : Character
+        The main character object. If None, a new character is created.
+    """
     game_loop(screen, character)
 
 
 def play_level(screen, character, level, platforms):
+    """
+    Play the current level of the game.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The game screen surface.
+    character : Character
+        The main character.
+    level : int
+        The current level number.
+    platforms : list of pygame.Rect
+        A list of platform rectangles for the level.
+
+    Returns
+    -------
+    The result of the level ("next_level", "retry", "shed", "break", or "main_menu").
+    """
     clock = pygame.time.Clock()
     background_image = pygame.image.load("backgrounds/game.webp")
     background_image = pygame.transform.scale(background_image, resolution)
 
     bullets = pygame.sprite.Group()
     character.bullets = bullets    # Attach the bullets group to the character
-    print(f"[DEBUG] Bullets group initialized: {bullets}")
 
     enemies = pygame.sprite.Group()
     chests = pygame.sprite.Group()
@@ -169,10 +219,8 @@ def play_level(screen, character, level, platforms):
     # Add a random power-up to a random platform
     platform = random.choice(platforms)
     powerup = random.choice([InvincibilityPowerUp, TomatoCoinPowerUp, RapidBlasterPowerUp])
-    print(f"[DEBUG] Selected Power-Up: {powerup.__name__}")
     powerup_instance = powerup(platform.centerx, platform.top - 15)
     powerups.add(powerup_instance)
-    print(f"[DEBUG] Power-Up Spawned: {powerup.__name__} at ({platform.centerx}, {platform.top - 15})")
 
     running = True
     level_complete = False
@@ -231,7 +279,6 @@ def play_level(screen, character, level, platforms):
         # Collecting power-ups
         collected_powerups = pygame.sprite.spritecollide(character, powerups, True)
         for powerup in collected_powerups:
-            print(f"[DEBUG] Collected Power-Up: {type(powerup).__name__}")
             powerup.affect_player(character)
 
         # Fire bullets if RapidBlaster is active
@@ -278,12 +325,34 @@ def play_level(screen, character, level, platforms):
 
 
 def spawn_enemies(group, platforms):
+    """
+    Spawn enemies on the given platforms.
+
+    Parameters
+    ----------
+    group : pygame.sprite.Group
+        The group to which the enemies are added.
+    platforms : list of pygame.Rect
+        The platform rectangles to place enemies on.
+    """
     for platform in platforms:
         enemy = Enemy(platform)
         group.add(enemy)
 
 
 def handle_collisions(character, bullets, enemies):
+    """
+    Handle collisions between bullets, enemies, and the character.
+
+    Parameters
+    ----------
+    character : Character
+        The main character.
+    bullets : pygame.sprite.Group
+        The group of bullets.
+    enemies : pygame.sprite.Group
+        The group of enemies.
+    """
     for bullet in bullets:
         collided_enemies = pygame.sprite.spritecollide(bullet, enemies, False)
         for enemy in collided_enemies:
@@ -300,11 +369,23 @@ def handle_collisions(character, bullets, enemies):
             if not character.invincible:
                 character.take_damage(10)
 
-
-
-
-
 def level_end_screen(screen, level, character):
+    """
+    Display the level-end screen and handle user interactions.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The game screen surface to render the UI elements on.
+    level : int
+        The current level that the player has completed.
+    character : object
+        The main character, which is used to update coins.
+
+    Returns
+    -------
+    The next action based on user selection: "next_level" or "main_menu".
+    """
     # Load background image
     background_image = pygame.image.load("backgrounds/game.webp")
     background_image = pygame.transform.scale(background_image, resolution)
@@ -344,8 +425,19 @@ def level_end_screen(screen, level, character):
                 elif menu_button.collidepoint(mouse):
                     return "main_menu"
 
-
 def game_over_screen(screen):
+    """
+    Display the game-over screen and handle user interactions.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The game screen surface to render the UI elements on.
+
+    Returns
+    -------
+    The next action based on user selection: "retry" or "main_menu".
+    """
     # Load background image
     background_image = pygame.image.load("backgrounds/game.webp")
     background_image = pygame.transform.scale(background_image, resolution)
@@ -386,8 +478,19 @@ def game_over_screen(screen):
                 elif menu_button.collidepoint(mouse):
                     return "main_menu"
 
-
 def last_level_screen(screen):
+    """
+    Display the last-level completion screen and handle user interactions.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The game screen surface to render the UI elements on.
+
+    Returns
+    -------
+    The next action based on user selection: "main_menu".
+    """
     # Load background image
     background_image = pygame.image.load("backgrounds/game.webp")
     background_image = pygame.transform.scale(background_image, resolution)
@@ -421,6 +524,16 @@ def last_level_screen(screen):
                 if menu_button.collidepoint(mouse):
                     return "main_menu"
 def draw_ui(screen, character):
+    """
+    Draw the in-game UI elements showing the player's status.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The game screen surface to render the UI elements on.
+    character : object
+        The main character, which contains health, coins, diamonds, and level.
+    """
     font = pygame.font.SysFont("Corbel", 30, bold=True)
     health_text = font.render(f"Health: {character.health}/{character.max_health}", True, green)
     screen.blit(health_text, (10, 10))
