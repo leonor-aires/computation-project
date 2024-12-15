@@ -17,7 +17,7 @@ class Chest(pygame.sprite.Sprite):
 
 # Function to spawn chests
 def spawn_chests(group, platforms):
-    if random.random() < 0.5:  # Always spawn a chest
+    if random.random() < 1:  # Always spawn a chest
         platform = random.choice(platforms)
         chest = Chest(platform.centerx, platform.top - 25)
         group.add(chest)
@@ -34,6 +34,18 @@ def speed_boost(character):
 def diamonds(character):
     character.diamond_count += 50
 
+def Ketchup_Kannon(character):
+    """
+    Apply a Ketchup Kannon to the character.
+
+    Args:
+    character (object): The character who will be applied the Ketchup Kannon.
+
+    Returns:
+    None
+    """
+    character.weapon = 'Ketchup Kannon'
+    character.bullet_damage = 6
 
 # Function to open the chest and handle options
 def open_chest(character):
@@ -48,6 +60,7 @@ def open_chest(character):
         {"name": "100$", "effect": extra_coins},
         {"name": "Speed Boost", "effect": speed_boost},
         {"name": "50 diamonds", "effect": diamonds},
+        {"name": "Ketchup Kannon", "effect": Ketchup_Kannon},
     ]
 
     # Randomize three options to present

@@ -183,5 +183,3 @@ class Character(pygame.sprite.Sprite):
         # Function to update bullet damage
     def update_bullet_damage(self, new_damage):
         self.bullet_damage = new_damage
-
-

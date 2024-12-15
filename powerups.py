@@ -206,3 +206,5 @@ class DespawnerPowerUp(PowerUp):
             enemy.kill()
 
         game_state['spawn_rate'] *= 2  # Slow spawn rate by half temporarily
+
+

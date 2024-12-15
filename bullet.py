@@ -28,6 +28,7 @@ class Bullet(pygame.sprite.Sprite):
             self.image = pygame.image.load('characters images/Knife_of_justice.png')
         elif self.weapon_type == "Tomato Slice":
             self.image = pygame.image.load('characters images/Tomato_slice.png')
+
         else:
             self.image = pygame.image.load('characters images/fire.png')
         if self.weapon_type == "egg":

@@ -44,6 +44,8 @@ def apply_fridge_style(character):
     character.image = pygame.transform.scale(character.image, (100, 100))
     character.rect = character.image.get_rect(topleft=(character.rect.x, character.rect.y))
     character.weapon = "egg"  # Set the weapon type for gameplay bullets
+    character.original_color = character.image
+
 
 def apply_Tomato_slice(character):
     """
@@ -79,7 +81,7 @@ def shop(screen, character):
         {"name": "Tomato Slice", "cost": 100, "currency": "coins", "action": apply_Tomato_slice},
         {"name": "Ketchup Kannon", "cost": 200, "currency": "coins", "action": apply_Ketchup_Kannon},
         {"name": "Knife of Justice", "cost": 300, "currency": "coins", "action": apply_Knife_of_Justice},
-        {"name": "Fridge Style", "cost": 150, "currency": "diamonds", "action": apply_fridge_style},
+        {"name": "Fridge Style", "cost": 50, "currency": "diamonds", "action": apply_fridge_style},
     ]
 
     # Colors

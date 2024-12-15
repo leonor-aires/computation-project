@@ -1,6 +1,6 @@
 import pygame
 import random
-from config import *  # Basic game settings (such as colors, resolution)
+from config import *
 from character import Character  # Main character class
 from enemy import Enemy  # Enemy class
 from shed import shed  # Shop system (shed)
