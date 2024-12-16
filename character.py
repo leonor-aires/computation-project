@@ -91,7 +91,7 @@ class Character(pygame.sprite.Sprite):
             self.invincibility_timer -= 1
             if self.invincibility_timer <= 0:
                 self.invincible = False
-                self.image = self.original_color  # Restore original sprite
+                # self.image = self.original_color  # Restore original sprite
                 print("[DEBUG] Invincibility expired!")
 
         # Handle Tomato Coin power-up timer
@@ -109,17 +109,12 @@ class Character(pygame.sprite.Sprite):
                 self.rapid_blaster_active = False
                 print("[DEBUG] Rapid Blaster effect ended.")
 
-    def shoot_backwards(self, bullets_group):
-        """
-        Shoot bullets backward.
-        """
-        angle = math.pi  # Angle facing backward
-        new_bullet = Bullet(self.rect.centerx, self.rect.centery, angle, weapon_type=self.weapon)
-        bullets_group.add(new_bullet)
-
     def shoot_automatic(self):
         """
-        Automatically shoot bullets forward and backward with a cooldown.
+        Automatically shoot bullets forward and backward.
+
+        This method fires two bullets: one moving forward and the other backward.
+        It is triggered when the Rapid Blaster power-up is active
         """
         if self.rapid_blaster_active:
             if self.rapid_blaster_cooldown <= 0:
