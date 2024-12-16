@@ -6,6 +6,10 @@ from enemy import Enemy  # Enemy class
 from shed import shed  # Shop system (shed)
 from powerups import *  # Power-ups used in the game
 from chest import Chest, spawn_chests
+from config import deep_black, dark_red, white, fps, resolution
+
+width, height = resolution
+
 
 # Function to create platforms for each level
 def create_platforms(level):
@@ -23,6 +27,7 @@ def create_platforms(level):
         A list of platforms for the given level.
     """
     platforms = []
+    moving_platforms = []
     last_platform = pygame.Rect(width - 150, 100, 150, 10)  # Always the final platform
 
     if level == 1:
@@ -36,36 +41,35 @@ def create_platforms(level):
     elif level == 2:
         platforms = [
             pygame.Rect(50, height - 50, 200, 10),
-            pygame.Rect(250, height - 100, 200, 10),
-            pygame.Rect(500, height - 200, 200, 10),
-            pygame.Rect(750, height - 300, 200, 10),
-            pygame.Rect(500, height - 400, 200, 10),
+            pygame.Rect(300, height - 150, 200, 10),
+            pygame.Rect(500, height - 250, 200, 10),
+            pygame.Rect(800, height - 350, 200, 10),
+            pygame.Rect(500, height - 470, 200, 10),
             last_platform,
         ]
     elif level == 3:
         platforms = [
             pygame.Rect(50, height - 50, 200, 10),
-            pygame.Rect(200, height - 120, 200, 10),
-            pygame.Rect(450, height - 220, 200, 10),
-            pygame.Rect(700, height - 320, 200, 10),
-            pygame.Rect(800, height - 420, 200, 10),
+            pygame.Rect(55, height - 200, 200, 10),
+            pygame.Rect(350, height - 200, 200, 10),
+            pygame.Rect(405, height - 320, 200, 10),
+            pygame.Rect(700, height - 400, 200, 10),
             last_platform,
         ]
     elif level == 4:
         platforms = [
             pygame.Rect(50, height - 50, 200, 10),
-            pygame.Rect(200, height - 100, 200, 10),
-            pygame.Rect(400, height - 180, 200, 10),
-            pygame.Rect(600, height - 280, 200, 10),
-            pygame.Rect(800, height - 380, 200, 10),
+            pygame.Rect(80, height - 250, 200, 10),
+            pygame.Rect(300, height - 440, 200, 10),
+            pygame.Rect(600, height - 500, 200, 10),
             last_platform,
         ]
     elif level == 5:
         platforms = [
             pygame.Rect(50, height - 50, 200, 10),
-            pygame.Rect(200, height - 100, 200, 10),
-            pygame.Rect(400, height - 180, 200, 10),
-            pygame.Rect(600, height - 280, 200, 10),
+            pygame.Rect(350, height - 80, 200, 10),
+            pygame.Rect(600, height - 200, 200, 10),
+            pygame.Rect(800, height - 350, 200, 10),
             last_platform,
         ]
     elif level == 6:
@@ -73,48 +77,60 @@ def create_platforms(level):
             pygame.Rect(50, height - 50, 200, 10),
             pygame.Rect(250, height - 120, 200, 10),
             pygame.Rect(450, height - 220, 200, 10),
-            pygame.Rect(650, height - 320, 200, 10),
-            pygame.Rect(850, height - 420, 200, 10),
             last_platform,
         ]
+        moving_platforms = [{"rect": pygame.Rect(650, height-320, 200, 10), "direction": "vertical", "speed": 1, "range": 100},]
     elif level == 7:
         platforms = [
             pygame.Rect(50, height - 50, 200, 10),
-            pygame.Rect(150, height - 100, 200, 10),
-            pygame.Rect(350, height - 200, 200, 10),
-            pygame.Rect(550, height - 300, 200, 10),
-            pygame.Rect(750, height - 400, 200, 10),
+            pygame.Rect(560, height - 400, 200, 10),
             last_platform,
         ]
+        moving_platforms = [{"rect": pygame.Rect(350, height - 150, 200, 10), "direction": "vertical", "speed": 1, "range": 150}, ]
     elif level == 8:
         platforms = [
-            pygame.Rect(50, height - 50, 200, 10),
-            pygame.Rect(200, height - 150, 200, 10),
             pygame.Rect(400, height - 250, 200, 10),
             pygame.Rect(600, height - 350, 200, 10),
-            pygame.Rect(800, height - 450, 200, 10),
             last_platform,
         ]
+        moving_platforms = [{"rect": pygame.Rect(75, height - 50, 200, 10), "direction": "horizontal", "speed": 1, "range": 200}]
     elif level == 9:
         platforms = [
             pygame.Rect(50, height - 50, 200, 10),
-            pygame.Rect(150, height - 100, 200, 10),
-            pygame.Rect(300, height - 150, 200, 10),
-            pygame.Rect(500, height - 250, 200, 10),
-            pygame.Rect(700, height - 350, 200, 10),
-            pygame.Rect(800, height - 450, 200, 10),
+            pygame.Rect(200, height - 400, 200, 10),
             last_platform,
         ]
+        moving_platforms = [{"rect": pygame.Rect(50, height - 200, 200, 10), "direction": "vertical", "speed": 1, "range": 100},
+                            {"rect": pygame.Rect(600, height - 450, 200, 10), "direction": "horizontal", "speed": 2, "range": 200}]
+
     elif level == 10:
         platforms = [
-            pygame.Rect(50, height - 50, 200, 10),
-            pygame.Rect(150, height - 100, 200, 10),
-            pygame.Rect(300, height - 200, 200, 10),
-            pygame.Rect(500, height - 300, 200, 10),
-            pygame.Rect(700, height - 400, 200, 10),
+            pygame.Rect(20, height-50, 200, 10),
+            pygame.Rect(650, 100, 150, 10),
             last_platform,
         ]
-    return platforms
+        moving_platforms = [{"rect": pygame.Rect(50, height - 100, 200, 10), "direction": "vertical", "speed": 1, "range": 100},
+                            {"rect": pygame.Rect(500, height - 300, 200, 10), "direction": "horizontal", "speed": 2, "range": 200}
+                            ]
+
+    # Initialize moving platform positions
+    for platform in moving_platforms:
+        platform["initial_x"] = platform["rect"].x
+        platform["initial_y"] = platform["rect"].y
+
+    return platforms, moving_platforms
+
+
+def update_moving_platforms(moving_platforms):
+    for platform in moving_platforms:
+        if platform["direction"] == "horizontal":
+            platform["rect"].x += platform["speed"]
+            if abs(platform["rect"].x - platform["initial_x"]) >= platform["range"]:
+                platform["speed"] *= -1
+        elif platform["direction"] == "vertical":
+            platform["rect"].y += platform["speed"]
+            if abs(platform["rect"].y - platform["initial_y"]) >= platform["range"]:
+                platform["speed"] *= -1
 
 
 def game_loop(screen, character=None):
@@ -137,8 +153,8 @@ def game_loop(screen, character=None):
 
     while True:
         if current_state == "main":
-            platforms = create_platforms(current_level)
-            result = play_level(screen, character, current_level, platforms)
+            platforms, moving_platforms = create_platforms(current_level)
+            result = play_level(screen, character, current_level, platforms, moving_platforms)
 
             if result == "next_level":
                 if current_level < last_level:
@@ -184,7 +200,7 @@ def execute_game(screen, character=None):
     game_loop(screen, character)
 
 
-def play_level(screen, character, level, platforms):
+def play_level(screen, character, level, platforms, moving_platforms):
     """
     Play the current level of the game.
 
@@ -222,6 +238,7 @@ def play_level(screen, character, level, platforms):
     powerup_instance = powerup(platform.centerx, platform.top - 15)
     powerups.add(powerup_instance)
 
+
     running = True
     level_complete = False
 
@@ -229,9 +246,11 @@ def play_level(screen, character, level, platforms):
         screen.blit(background_image, (0, 0))
         clock.tick(fps)
 
+        update_moving_platforms(moving_platforms)
+
         # Check collisions with platforms
         on_platform = False
-        for platform in platforms:
+        for platform in platforms + [mp["rect"] for mp in moving_platforms]:
             if character.rect.colliderect(platform):
                 if character.y_velocity >= 0:
                     character.rect.bottom = platform.top
@@ -287,8 +306,12 @@ def play_level(screen, character, level, platforms):
 
         handle_collisions(character, bullets, enemies)
 
+        # Draw platforms
         for platform in platforms:
             pygame.draw.rect(screen, deep_black, platform)
+        # Draw moving platforms
+        for mp in moving_platforms:
+            pygame.draw.rect(screen, deep_black, mp["rect"])
 
         if character.rect.right >= width and character.rect.bottom >= height - 50:
             return "shed"
@@ -316,7 +339,6 @@ def play_level(screen, character, level, platforms):
             text_surf = corbel_font.render(text, True, white)
             text_rect = text_surf.get_rect(center=rect.center)
             screen.blit(text_surf, text_rect)
-
 
         back_rect = pygame.Rect(15, 130, 120, 50)  # Position the button
         draw_button(back_rect, "Back", dark_red)  # Green button for retry

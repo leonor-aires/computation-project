@@ -28,7 +28,7 @@ def credits_(screen):
     leonor = comicsans_font.render("Leonor Aires", True, deep_black)
     constanca = comicsans_font.render("Constança Fernandes", True, deep_black)
     marta = comicsans_font.render("Marta Soares", True, deep_black)
-    #leonor:20231654@novaims.unl.pt / constanca: 20231685@novaims.unl.pt / marta:20231640@novaims.unl.pt
+    # leonor:20231654@novaims.unl.pt / constanca: 20231685@novaims.unl.pt / marta:20231640@novaims.unl.pt
 
 
     running = True
@@ -61,7 +61,7 @@ def credits_(screen):
         pygame.draw.rect(screen, button_color, pygame.Rect(20, 20, 140, 60), border_radius=10)  # Rectangle for the button
 
         # Draw a back button [x, y, width, height]
-        back_text = corbel_font.render("    back", True, deep_black)
+        back_text = corbel_font.render("back", True, white)
         back_rect = back_text.get_rect(center=(20 + 140 // 2, 20 + 60 // 2))
         screen.blit(back_text, back_rect)
 

@@ -1,6 +1,7 @@
 import pygame
 from config import resolution, white, grey, light_grey, deep_black
 
+
 def show_rules(screen, font, images):
     """Displays the game rules on the screen."""
     # Main loop for Rules screen
@@ -16,6 +17,9 @@ def show_rules(screen, font, images):
                 if 20 <= mouse[0] <= 160 and 20 <= mouse[1] <= 80:  # Back button area
                     running = False
 
+        # Capture mouse position for hover effect
+        mouse = pygame.mouse.get_pos()
+
         # Background for Rules screen
         screen.fill((30, 30, 30))  # Grey background
 
@@ -26,10 +30,9 @@ def show_rules(screen, font, images):
 
         # Render the rules text
         rules_title = title_font.render("Game Rules", True, (255, 255, 255))
-        powerups = font.render("Power-Ups", True, (255, 255, 255))
-        chests = font.render("Chests", True, (255, 255, 255))
-        movements = font.render("Movements", True, (255, 255, 255))
-
+        powerups = font.render("Power-Ups", True, deep_black)
+        chests = font.render("Chests", True, deep_black)
+        movements = font.render("Movements", True, deep_black)
 
         # Blit rules text onto the screen
         screen.blit(rules_title, (320, 25))
@@ -55,11 +58,10 @@ def show_rules(screen, font, images):
             if key in images:  # Check if the image exists
                 # Draw the power-up image
                 screen.blit(images[key], (start_x + i * spacing_x, start_y))
-
                 # Render the power-up name below the image
-                powerup_text = font.render(powerup_names[i], True, (white))
+                powerup_text = font.render(powerup_names[i], True, white)
                 # Offset for text below the image
-                screen.blit(powerup_text, ((start_x-25) + i * spacing_x, start_y + 90))
+                screen.blit(powerup_text, ((start_x - 25) + i * spacing_x, start_y + 90))
 
         # Explanation of the powerups below the powerup names
         explain_powerup1 = explain_font.render("Dragon doesn't loose health", True, white)
@@ -67,10 +69,10 @@ def show_rules(screen, font, images):
         explain_powerup3 = explain_font.render("Blue fire causes +1 the damage", True, white)
         explain_powerup4 = explain_font.render("Bigger fire", True, white)
         # Position the explanation texts
-        screen.blit(explain_powerup1, (start_x-45, start_y+120))
-        screen.blit(explain_powerup2, (start_x+180, start_y+120))
-        screen.blit(explain_powerup3, (start_x+450, start_y+120))
-        screen.blit(explain_powerup4, (start_x+750, start_y+120))
+        screen.blit(explain_powerup1, (start_x - 45, start_y + 120))
+        screen.blit(explain_powerup2, (start_x + 180, start_y + 120))
+        screen.blit(explain_powerup3, (start_x + 450, start_y + 120))
+        screen.blit(explain_powerup4, (start_x + 750, start_y + 120))
 
         # CHESTS
         chest_keys = ["chest1", "chest2", "chest3", "chest4"]
@@ -82,7 +84,7 @@ def show_rules(screen, font, images):
         ]
         # Starting positions for chest
         chest_start_x = 100  # Starting x position for power-ups
-        chest_start_y= 315  # Starting y position for power-ups
+        chest_start_y = 315  # Starting y position for power-ups
         chest_spacing_x = 250  # Space between power-up images
 
         # Blit chests images and names
@@ -92,8 +94,7 @@ def show_rules(screen, font, images):
                 screen.blit(images[key], (chest_start_x + i * chest_spacing_x, chest_start_y))
                 # Render chest names below chest image
                 chests_text = font.render(chest_names[i], True, white)
-                screen.blit(chests_text, ((chest_start_x+7) + i * chest_spacing_x, chest_start_y + 90))
-
+                screen.blit(chests_text, ((chest_start_x + 7) + i * chest_spacing_x, chest_start_y + 90))
 
         # MOVEMENTS
         # Movement keys and their positions
@@ -109,13 +110,10 @@ def show_rules(screen, font, images):
         for key in movement_keys:
             # Draw a white rectangle for the key
             pygame.draw.rect(screen, white, (key["x"], key["y"], key_width, key_height))
-
             # Draw a black border around the rectangle
             pygame.draw.rect(screen, deep_black, (key["x"], key["y"], key_width, key_height), 2)
-
             # Render the key text
             movement_text = font.render(key["text"], True, deep_black)  # Black text
-
             # Center the text inside the rectangle
             text_x = key["x"] + key_width // 2
             text_y = key["y"] + key_height // 2
@@ -126,14 +124,12 @@ def show_rules(screen, font, images):
 
         back_hover = 20 <= mouse[0] <= 160 and 20 <= mouse[1] <= 80
         button_color = light_grey if back_hover else grey  # Change color on hover
-        pygame.draw.rect(screen, button_color, pygame.Rect(20, 20, 140, 60), border_radius=10)  # Rectangle for the button
+        pygame.draw.rect(screen, button_color, pygame.Rect(20, 20, 140, 60),
+                         border_radius=10)  # Rectangle for the button
 
         # Render and position the back text
         back_text = corbel_font.render("Back", True, white)
         back_rect = back_text.get_rect(center=(90, 50))  # Centered within the rectangle
         screen.blit(back_text, back_rect)
-
         # Update the display
         pygame.display.update()
-
-

@@ -80,7 +80,7 @@ class Character(pygame.sprite.Sprite):
             self.rect.x += self.speed
 
         # Jumping mechanism
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
+        if keys[pygame.K_UP] or keys[pygame.K_w]:  # Check if the spacebar is pressed
             if not self.is_jumping:  # Only jump if not already jumping
                 self.is_jumping = True
                 self.y_velocity = self.jump_height  # Set the jump velocity
@@ -160,12 +160,7 @@ class Character(pygame.sprite.Sprite):
 
     def shoot(self, bullets_group):
         """
-        Shoot a bullet in the forward direction.
-
-        Parameters
-        ----------
-        bullets_group : pygame.sprite.Group
-            The group to which the new bullet will be added.
+        Create a bullet in the direction of the mouse
         """
         angle = math.radians(0)
 
