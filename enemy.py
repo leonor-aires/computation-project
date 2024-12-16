@@ -10,8 +10,10 @@ class Enemy(pygame.sprite.Sprite):
         """
         Initialize an enemy instance restricted to a specific platform.
 
-        Args:
-            platform (pygame.Rect): The platform the enemy will be restricted to.
+        Parameters
+        ----------
+        platform: pygame.Rect
+                The platform the enemy will be restricted to.
         """
         super().__init__()
         # Load the enemy image
@@ -36,8 +38,11 @@ class Enemy(pygame.sprite.Sprite):
     def update(self, character=None):
         """
         Update the enemy's horizontal position, restricting it to its assigned platform.
-        Args:
-            character (Character, optional): The player character, if needed.
+
+        Parameters
+        ----------
+        character : Character
+            The player character, used for potential future interactions (default is None).
         """
         # Move horizontally
         self.rect.x += self.speed
@@ -54,24 +59,30 @@ class Enemy(pygame.sprite.Sprite):
         """
         Draw the enemy and its health bar on the screen.
 
-        Args:
-            screen (pygame.Surface): The screen to draw on.
+        Parameters
+        ----------
+        screen : pygame.Surface
+            The surface to draw the enemy and health bar on.
         """
         # Draw enemy
         screen.blit(self.image, self.rect)
 
-        # Draw health bar
+        # Draw health bar background
         health_bar_width = self.rect.width
-        health_ratio = max(0, self.health / self.max_health) # Avoids negative health values
         pygame.draw.rect(screen, deep_black, (self.rect.x, self.rect.y - 10, health_bar_width, 5))
+
+        # Draw health bar foreground (proportional to current health)
+        health_ratio = max(0, self.health / self.max_health)  # Avoid negative health values
         pygame.draw.rect(screen, green, (self.rect.x, self.rect.y - 10, health_bar_width * health_ratio, 5))
 
     def decrease_health(self, amount):
         """
         Decrease the enemy's health by a certain amount.
 
-        Args:
-            amount (int): The amount to decrease the health by.
+        Parameters
+        ----------
+        amount : int
+            The amount of health to subtract.
         """
         self.health -= amount
         self.health = max(0, self.health)  # Ensure health doesn't go below zero

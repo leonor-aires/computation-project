@@ -8,11 +8,16 @@ class Bullet(pygame.sprite.Sprite):
         """
         Initialize a bullet instance:
 
-        Args
-        ---
-        x:position of the bullet in the x-axis
-        y:Position of the bullet in the y-axis
-        direction: direction in which it is fired, in radians
+        Parameters
+        ----------
+        x : int
+            Position of the bullet in the x-axis
+        y : int
+            Position of the bullet in the y-axis
+        direction: float
+            Direction in which it is fired, in radians
+        weapon_type : str
+            The type of weapon firing the bullet, by default "default".
         """
         super().__init__()
         self.speed = 2
@@ -28,7 +33,6 @@ class Bullet(pygame.sprite.Sprite):
             self.image = pygame.image.load('characters images/Knife_of_justice.png')
         elif self.weapon_type == "Tomato Slice":
             self.image = pygame.image.load('characters images/Tomato_slice.png')
-
         else:
             self.image = pygame.image.load('characters images/fire.png')
         if self.weapon_type == "egg":
@@ -40,7 +44,11 @@ class Bullet(pygame.sprite.Sprite):
     def update(self):
         """
         Update the bullet's position and check if it goes offscreen.
-        :return:
+
+        Notes
+        -----
+        - Only the horizontal coordinate (x) is updated based on the bullet's speed and direction.
+        - The bullet is removed if it goes offscreen or exceeds a certain range.
         """
         # Update only the horizontal coordinate
         self.rect.x += int(self.speed * math.copysign(1, math.cos(self.direction)))
@@ -52,6 +60,9 @@ class Bullet(pygame.sprite.Sprite):
     def exceeds_range(self):
         """
         Check if the bullet exceeds a certain range from its starting position.
+
+        Returns: boolean
+            True if the bullet exceeds the predefined range, False otherwise.
         """
         # Calculate the distance from the starting position
         distance = math.sqrt((self.rect.x - self.start_x) ** 2 + (self.rect.y - self.start_y) ** 2)
@@ -59,7 +70,12 @@ class Bullet(pygame.sprite.Sprite):
 
     def draw(self, screen: pygame.Surface):
         """
-        Draw the bullet on the screen
+        Draw the bullet on the screen.
+
+        Parameters
+        ----------
+        screen : pygame.Surface
+            The Pygame surface on which the bullet will be drawn.
         """
         screen.blit(self.image, self.rect)
 

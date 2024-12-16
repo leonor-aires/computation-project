@@ -10,6 +10,15 @@ from config import light_grey, grey
 
 
 def interface(screen):
+    """
+    The main menu interface for the game. It initializes the game menu screen, handles user interactions,
+    and redirects to other parts of the game based on user input (Play, Rules, Options, Credits, Quit).
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The pygame display surface to draw the menu interface.
+    """
     # initiating pygame
     pygame.init()
     pygame.mixer.music.load('Music/music.mp3')
@@ -21,8 +30,6 @@ def interface(screen):
 
     # fonts
     corbel_font = pygame.font.SysFont("Corbel", 50)
-    #comicsans_font = pygame.font.SysFont("Comic Sans MS", 50)
-    #font = pygame.font.Font(None, 36)
 
     play_text = corbel_font.render("Play", True, white)
     rules_text = corbel_font.render("Rules", True, white)
@@ -55,7 +62,6 @@ def interface(screen):
     clock = pygame.time.Clock()
 
     # main game loop
-    #running = True
     while True:
         # Get the mouse position
         mouse = pygame.mouse.get_pos()
@@ -104,11 +110,13 @@ def interface(screen):
         pygame.draw.rect(screen, hover_colors if quit_hover else default_color, pygame.Rect(850, 60, 100, 60), border_radius=10)
 
         # Drawing the buttons
+
         # Play button-appearance
         tile_rect = play_text.get_rect(center=(500, 500))
         screen.blit(play_text, tile_rect)
+
         # get the mouse information
-        mouse = pygame.mouse.get_pos()  # locates where the mouse is
+        #mouse = pygame.mouse.get_pos()  # locates where the mouse is
 
 
         # Draw the buttons
@@ -132,11 +140,18 @@ def interface(screen):
         clock.tick(60)
 
 def rules_():
+    """
+    Displays the rules screen.
+    Calls the `show_rules` function to render the rules.
+    """
     show_rules()
 
 def wilderness_explorer():
+    """
+    Starts the main game. This function executes the game and returns the user to the main interface once complete.
+    """
     execute_game()
-    interface()
+    #interface()
 
 
 

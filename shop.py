@@ -6,40 +6,39 @@ from bullet import Bullet
 
 def apply_Ketchup_Kannon(character):
     """
-    Apply a Ketchup Kannon to the character.
+    Apply the Ketchup Kannon weapon to the character.
 
-    Args:
-    character (object): The character who will be applied the Ketchup Kannon.
+    Parameters
+    ----------
+    character (object)
+    The character to whom the Ketchup Kannon will be applied.
 
-    Returns:
-    None
+
     """
     character.weapon = 'Ketchup Kannon'
     character.bullet_damage = 6
 
 def apply_Knife_of_Justice(character):
     """
-    Apply a lightning bullets to the character.
+    Apply the Knife of Justice weapon to the character.
 
-    Args:
-    character (object): The character who will be applied the lightning bullets.
-
-    Returns:
-    None
+    Parameters
+    ----------
+    character : object
+        The character to whom the Knife of Justice will be applied.
     """
     character.weapon = 'Knife of Justice'
     character.bullet_damage = 10
 
 def apply_fridge_style(character):
     """
-    Change the character and  the bullet design
+    Apply the Fridge Style  and egg weapon to the character.
 
-    Args:
-    character (object): The character who will be applied the fridge style.
-
-    Returns:
-    None
-        """
+    Parameters
+    ----------
+    character : object
+        The character to whom the Fridge Style will be applied.
+    """
     character.image = pygame.image.load("characters images/fridge_style.png")
     character.image = pygame.transform.scale(character.image, (100, 100))
     character.rect = character.image.get_rect(topleft=(character.rect.x, character.rect.y))
@@ -49,27 +48,26 @@ def apply_fridge_style(character):
 
 def apply_Tomato_slice(character):
     """
-    Apply a Tomato slice to the character.
+    Apply the Tomato Slice weapon to the character.
 
-    Args:
-    character (object): The character who will be applied the Tomato slice.
-
-    Returns:
-    None
+    Parameters
+    ----------
+    character : object
+        The character to whom the Tomato Slice will be applied.
     """
     character.weapon = 'Tomato Slice'
     character.bullet_damage = 4
 
 def shop(screen, character):
     """
-    Display and manage the shop. Allows the character to purchase items.
+    Display and manage the shop where the character can purchase items.
 
-    Args:
-    screen (pygame.Surface): The Pygame screen to draw the shop on.
-    character (object): The character accessing the shop
-
-    Returns:
-    None
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The Pygame screen on which the shop interface will be drawn.
+    character : object
+        The character interacting with the shop.
     """
     pygame.init()
     font = pygame.font.SysFont("Corbel", 40,  bold = True)

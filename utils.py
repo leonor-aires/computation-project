@@ -5,6 +5,18 @@ from config import resolution, white, deep_black, dark_red
 
 # Function to draw a stick figure with a construction hat
 def draw_stick_figure_with_hat(screen, x, y):
+    """
+    Draws a stick figure with a construction hat on the given screen at specified coordinates.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The surface on which the stick figure will be drawn.
+    x : int
+        The x-coordinate of the stick figure's head.
+    y : int
+        The y-coordinate of the stick figure's head.
+    """
     # head
     pygame.draw.circle(screen, (255, 255, 255), (x, y), 20, 2)  # White head outline
 
@@ -29,6 +41,18 @@ def draw_stick_figure_with_hat(screen, x, y):
 
 # Function to draw a normal stick figure (without a hat)
 def draw_normal_stick_figure(screen, x, y):
+    """
+    Draws a normal stick figure (without a construction hat) on the given screen at specified coordinates.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The surface on which the stick figure will be drawn.
+    x : int
+        The x-coordinate of the stick figure's head.
+    y : int
+        The y-coordinate of the stick figure's head.
+    """
     # head
     pygame.draw.circle(screen, (255, 255, 255), (x, y), 20, 2)  # White head outline
 
@@ -45,6 +69,9 @@ def draw_normal_stick_figure(screen, x, y):
 
 
 def under_construction():
+    """
+    Displays the 'Under Construction' screen with stick figures and interactive elements.
+    """
     # creating the screen at 720x720 pixels - placeholder
     screen = pygame.display.set_mode(resolution)
 

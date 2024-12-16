@@ -7,8 +7,18 @@ from bullet import Bullet
 class Character(pygame.sprite.Sprite):
     def __init__(self, image, x = 100, y = 100):
         """
-        Initialize a Player instance
-        """
+       Initialize the Character instance.
+
+       Parameters
+       ----------
+       image : str
+           Image file to be used as the character sprite.
+       x : int
+           Initial x-coordinate for the character's position (default is 100).
+       y : int
+           Initial y-coordinate for the character's position (default is 100).
+
+       """
         super().__init__()
         # Load and scale the image
         self.image = pygame.image.load("characters images/Tomátio.png")  # Load player sprite
@@ -33,11 +43,11 @@ class Character(pygame.sprite.Sprite):
         self.coin_powerup_timer = 0  # Initialize the Tomato Coin timer
         self.rapid_blaster_active = False
         self.rapid_blaster_timer = 0
-        self.bullets = None
         self.weapon = "default"  # Default weapon type
         self.current_level = 1  # Initialize level
         self.diamond_count = 0
         self.bullet_damage = 3
+        self.bullets = None
 
         # Jumping variables
         self.is_jumping = False
@@ -47,7 +57,18 @@ class Character(pygame.sprite.Sprite):
 
     def update(self):
         """
-        Update the character position, bullet cooldowns, and special power-ups.
+        Update the character's state, including movement, gravity, and power-up effects.
+
+        This method handles:
+        - Character movement (left, right, and jumping).
+        - Gravity effects and ensuring the character stays on the screen.
+        - Handling cooldowns for damage and invincibility power-up.
+        - Managing power-up timers.
+
+        Notes:
+        - Horizontal movement is controlled by left/right arrow keys or 'A'/'D'.
+        - Jumping is controlled by the up arrow key or 'W'. The player can only jump when on the ground.
+        - The player's position is adjusted to prevent them from leaving the screen boundaries.
         """
         # Detecting key presses for character movement
         keys = pygame.key.get_pressed()
@@ -59,7 +80,7 @@ class Character(pygame.sprite.Sprite):
             self.rect.x += self.speed
 
         # Jumping mechanism
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
+        if keys[pygame.K_UP] or keys[pygame.K_w]:  # Check if the spacebar is pressed
             if not self.is_jumping:  # Only jump if not already jumping
                 self.is_jumping = True
                 self.y_velocity = self.jump_height  # Set the jump velocity
@@ -109,6 +130,19 @@ class Character(pygame.sprite.Sprite):
                 self.rapid_blaster_active = False
                 print("[DEBUG] Rapid Blaster effect ended.")
 
+    def shoot_backwards(self, bullets_group):
+        """
+       Shoot bullets backward.
+
+       Parameters
+       ----------
+       bullets_group : pygame.sprite.Group
+           The group to which the new bullet will be added.
+        """
+        angle = math.pi  # Angle facing backward
+        new_bullet = Bullet(self.rect.centerx, self.rect.centery, angle, weapon_type=self.weapon)
+        bullets_group.add(new_bullet)
+
     def shoot_automatic(self):
         """
         Automatically shoot bullets forward and backward.
@@ -128,10 +162,7 @@ class Character(pygame.sprite.Sprite):
 
     def shoot(self, bullets_group):
         """
-        Create a bullet in the forward direction
-
-        args:
-        bullets_group:
+        Create a bullet in the direction of the mouse
         """
         angle = math.radians(0)
 
@@ -142,6 +173,11 @@ class Character(pygame.sprite.Sprite):
     def take_damage(self, damage):
         """
         Reduce the player's health, considering invincibility and cooldown.
+
+        Parameters
+        ----------
+        damage : int
+            The amount of damage to inflict.
         """
         if self.invincible:  # Skip damage if invincible
             return
@@ -154,6 +190,11 @@ class Character(pygame.sprite.Sprite):
     def earn_coins(self, amount):
         """
         Add coins to the player's total
+
+         Parameters
+        ----------
+        amount : int
+            The number of coins to add.
         """
         earned_amount = amount
         self.coins += earned_amount
@@ -161,7 +202,12 @@ class Character(pygame.sprite.Sprite):
 
     def draw(self, screen):
         """
-        Draw the character and its health bar, supporting optional image offsets.
+        Draw the character and its health bar on the screen.
+
+        Parameters
+        ----------
+        screen : pygame.Surface
+            The screen on which the character will be drawn.
         """
         # Apply an optional image offset for invincibility
         offset_y = getattr(self, "image_offset_y", 0)  # Default to 0 if not set
@@ -177,4 +223,12 @@ class Character(pygame.sprite.Sprite):
 
         # Function to update bullet damage
     def update_bullet_damage(self, new_damage):
+        """
+        Update the character's bullet damage value.
+
+        Parameters
+        ----------
+        new_damage : int
+            The new damage value for bullets.
+        """
         self.bullet_damage = new_damage

@@ -4,6 +4,20 @@ from shop import shop
 
 
 def shed(screen, player):
+    """
+    Set up and manage the player interaction with the shed background.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The pygame display surface where the shed interface will be drawn.
+    player : Character
+        The  player interacting with the shed.
+
+    Returns
+    -------
+    "main" if the player exits the shed, otherwise it continues in shed.
+    """
     # Load and scale the background
     background = pygame.image.load("backgrounds/cave.webp")
     background = pygame.transform.scale(background, resolution)
@@ -11,7 +25,6 @@ def shed(screen, player):
 
     # Set player's initial position in the shed
     player.rect.left = 30
-    player_group = pygame.sprite.Group(player)
 
     # Define the shop interaction area
     shop_area = pygame.Rect(300, height - 100, 100, 100)

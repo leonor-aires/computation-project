@@ -3,7 +3,11 @@ from config import resolution, dark_red, deep_black, white, fps
 def show_options(screen):
     """
     Display the options menu with the volume slider
-    :param screen: The pygame display surface.
+
+    Parameters
+    ----------
+    Screen: pygame.Surface
+        The pygame display surface.
     """
     # Music Volume, Sound Effects Volume and Brightness variables
     music_volume = pygame.mixer.music.get_volume()  # Current music volume

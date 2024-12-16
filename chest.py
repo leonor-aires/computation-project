@@ -6,50 +6,113 @@ from character import Character
 # Define a class for the chest
 class Chest(pygame.sprite.Sprite):
     def __init__(self, x, y):
+        """
+        Initialize the Chest instance.
+
+        Parameters
+        ----------
+        x : int
+            The x-coordinate of the chest.
+        y : int
+            The y-coordinate of the chest.
+        """
         super().__init__()
         self.image = pygame.image.load("Chest Images/chest.png")  # Replace with your chest image path
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect(center=(x, y))
 
     def interact(self, character):
-        """Pauses the game and presents the chest options."""
+        """
+        Pauses the game and presents the chest options.
+
+        Parameters
+        ----------
+        character : object
+            The character interacting with the chest.
+        """
         return open_chest(character)
 
 # Function to spawn chests
 def spawn_chests(group, platforms):
+    """
+    Spawn chests randomly on the  platforms.
+
+    Parameters
+    ----------
+    group : pygame.sprite.Group
+        The group to which the spawned chest will be added.
+    platforms : list of pygame.Rect - in game.py
+        The list of platform rectangles to spawn the chests on.
+    """
     if random.random() < 1:  # Always spawn a chest
         platform = random.choice(platforms)
         chest = Chest(platform.centerx, platform.top - 25)
         group.add(chest)
 
 def health_boost(character):
+    """
+    Fully restores the character's health.
+
+    Parameters
+    ----------
+    character : object
+        The character receiving the health boost.
+    """
     character.health = min(character.max_health, character.max_health)
 
 def extra_coins(character):
+    """
+    Grants the character an additional 100 coins.
+
+    Parameters
+    ----------
+    character : object
+        The character receiving the extra coins.
+    """
     character.earn_coins(100)
 
 def speed_boost(character):
+    """
+    Increases the character's speed by 1.
+
+    Parameters
+    ----------
+    character : object
+        The character receiving the speed boost.
+    """
     character.speed += 1
 
 def diamonds(character):
+    """
+    Grants the character an additional 50 diamonds.
+
+    Parameters
+    ----------
+    character : object
+        The character receiving the diamonds.
+    """
     character.diamond_count += 50
 
 def Ketchup_Kannon(character):
     """
-    Apply a Ketchup Kannon to the character.
+    Apply a Ketchup Kannon weapon to the character.
 
     Args:
-    character (object): The character who will be applied the Ketchup Kannon.
-
-    Returns:
-    None
+    character (object): The character who will be applied the Ketchup Kannon weapon.
     """
     character.weapon = 'Ketchup Kannon'
     character.bullet_damage = 6
 
 # Function to open the chest and handle options
 def open_chest(character):
-    """Handles the interaction when the player opens a chest."""
+    """
+    Opens a chest and presents random reward options to the player.
+
+    Parameters
+    ----------
+    character : object
+        The character interacting with the chest.
+    """
     screen = pygame.display.get_surface()
     font = pygame.font.SysFont("Corbel", 40, bold=True)
     #mouse = pygame.mouse.get_pos()  # Get the current mouse position
@@ -116,6 +179,20 @@ def open_chest(character):
 
 # Modify the game loop to integrate chests
 def play_level_with_chests(screen, character, level, platforms):
+    """
+    Plays the game level's with the addition of randomly spawned chests.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The Pygame screen where the level is displayed.
+    character : object
+        The character playing the level.
+    level : int
+        The current level number.
+    platforms : list of pygame.Rect
+        The list of platform rectangles in the level- - in game.py
+    """
     clock = pygame.time.Clock()
     background_image = pygame.image.load("backgrounds/game.webp")
     background_image = pygame.transform.scale(background_image, resolution)
