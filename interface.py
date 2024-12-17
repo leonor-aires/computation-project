@@ -151,7 +151,7 @@ def wilderness_explorer():
     Starts the main game. This function executes the game and returns the user to the main interface once complete.
     """
     execute_game()
-    #interface()
+    interface()
 
 
 
