@@ -54,6 +54,7 @@ class PowerUp(pygame.sprite.Sprite, ABC):
         if self.collected:
             self.timer -= 1
             if self.timer <= 0:
+                print(f"[DEBUG] {self.__class__.__name__} timer expired.")
                 self.expire()
 
     def expire(self):
@@ -126,7 +127,8 @@ class TomatoCoinPowerUp(PowerUp):
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect(center=(x, y - 10))
         self.player = None
-        self.duration = 5 * fps
+        self.golden_image = pygame.image.load("characters images/golden_tomatio1.png")
+        self.golden_image = pygame.transform.scale(self.golden_image, (120, 120))
 
     def affect_player(self, player):
         """
@@ -137,11 +139,17 @@ class TomatoCoinPowerUp(PowerUp):
         player : Character
             The player character to affect.
         """
-        self.player = player
         self.timer = self.duration
-        player.coin_powerup_active = True # Track activation
+        player.coin_powerup_active = True
         player.coin_powerup_timer = self.duration
-        player.coin_reward = 10  # Set coin reward to 10 coins
+        self.player = player
+
+        player.original_image = player.image
+        player.image = self.golden_image
+        player.coin_reward = 10
+        player.original_y = player.rect.y  # Store the original position
+        player.rect.y -= 15
+        # Set coin reward to 10 coins
         print(f"[DEBUG] Tomato Coin Power-Up activated! Duration: {self.timer / fps} seconds")
 
     def affect_game(self, game_state):
@@ -155,7 +163,15 @@ class TomatoCoinPowerUp(PowerUp):
         Reset the coin multiplier effect.
         """
         if self.player:
-            self.player.coin_reward = False # Mark as expired
+            self.player.coin_powerup_active = False
+            self.player.image = self.player.original_image
+            self.player.coin_reward = 5
+            self.player.image_offset_y = 0
+
+            # Reset the rect.y to the original stored position
+            self.player.rect.y = self.player.original_y  # Restore the original position
+
+            print("[DEBUG] Tomato Coin Power-Up expired.")
         super().expire()
 
 class RapidBlasterPowerUp(PowerUp):

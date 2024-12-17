@@ -22,12 +22,14 @@ class Character(pygame.sprite.Sprite):
         super().__init__()
         # Load and scale the image
         self.image = pygame.image.load("characters images/Tomátio.png")  # Load player sprite
+        self.original_image = self.image
         self.image = pygame.transform.scale(self.image, (80, 80))
         self.original_color = self.image.copy()  # Save original appearance
 
         # Set initial position
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
+        self.original_size = (80, 80)  # Store original image size for scaling
 
         # Gameplay variables
         self.speed = 2
@@ -112,6 +114,7 @@ class Character(pygame.sprite.Sprite):
             self.invincibility_timer -= 1
             if self.invincibility_timer <= 0:
                 self.invincible = False
+                self.image = self.original_image  # Reset the image
                 # self.image = self.original_color  # Restore original sprite
                 print("[DEBUG] Invincibility expired!")
 
@@ -120,6 +123,7 @@ class Character(pygame.sprite.Sprite):
             self.coin_powerup_timer -= 1
             if self.coin_powerup_timer <= 0:
                 self.coin_powerup_active = False
+                self.image = self.original_image  # Reset the image
                 self.coin_reward = 5  # Reset to default reward
                 print("[DEBUG] Tomato Coin Power-Up expired.")
 
