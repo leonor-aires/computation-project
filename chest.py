@@ -44,7 +44,7 @@ def spawn_chests(group, platforms):
     platforms : list of pygame.Rect - in game.py
         The list of platform rectangles to spawn the chests on.
     """
-    if random.random() < 1:  # Always spawn a chest
+    if random.random() < 0.3:  # Always spawn a chest
         platform = random.choice(platforms)
         chest = Chest(platform.centerx, platform.top - 25)
         group.add(chest)

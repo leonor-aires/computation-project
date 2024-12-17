@@ -23,3 +23,5 @@ fps= 60 # frames per second
 player_size= (50,100)
 enemy_size= 40
 bullet_size=10
+
+

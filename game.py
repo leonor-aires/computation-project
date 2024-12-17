@@ -7,6 +7,8 @@ from shed import shed  # Shop system (shed)
 from powerups import *  # Power-ups used in the game
 from chest import Chest, spawn_chests
 from config import deep_black, dark_red, white, fps, resolution
+from shop import *
+from save_game import save_progress, load_progress
 
 width, height = resolution
 
@@ -224,7 +226,7 @@ def play_level(screen, character, level, platforms, moving_platforms):
     background_image = pygame.transform.scale(background_image, resolution)
 
     bullets = pygame.sprite.Group()
-    character.bullets = bullets    # Attach the bullets group to the character
+    character.bullets = bullets  # Attach the bullets group to the character
 
     enemies = pygame.sprite.Group()
     chests = pygame.sprite.Group()
@@ -237,7 +239,6 @@ def play_level(screen, character, level, platforms, moving_platforms):
     powerup = random.choice([InvincibilityPowerUp, TomatoCoinPowerUp, RapidBlasterPowerUp])
     powerup_instance = powerup(platform.centerx, platform.top - 15)
     powerups.add(powerup_instance)
-
 
     running = True
     level_complete = False
@@ -276,9 +277,13 @@ def play_level(screen, character, level, platforms, moving_platforms):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button
                     character.shoot(bullets)
-                    # Detect click on the "Back" button
-                if 10 <= mouse[0] <= 110 and 100 <= mouse[1] <= 155:
+                mouse = pygame.mouse.get_pos()
+                # Detect click on the "Back" button
+                if back_rect.collidepoint(mouse):
                     return "break"
+                # Detect click on the "Shop" button
+                elif shop_rect.collidepoint(mouse):
+                    shop(screen, character)
 
         # Update game components
         character.update()
@@ -306,6 +311,12 @@ def play_level(screen, character, level, platforms, moving_platforms):
 
         handle_collisions(character, bullets, enemies)
 
+        # Define a rectangle at the bottom of the screen
+        ground_rect = pygame.Rect(0, height - 1, width, 1)
+        # Check if the character's rectangle touches the ground rectangle
+        if character.rect.colliderect(ground_rect):
+            return game_over_screen(screen)
+
         # Draw platforms
         for platform in platforms:
             pygame.draw.rect(screen, deep_black, platform)
@@ -331,17 +342,31 @@ def play_level(screen, character, level, platforms, moving_platforms):
         if character.health <= 0:
             return game_over_screen(screen)
 
+        # Draw buttons
         corbel_font = pygame.font.SysFont("Corbel", 40, bold=True)
         mouse = pygame.mouse.get_pos()
-        #button styling
-        def draw_button(rect, text, color):
-            pygame.draw.rect(screen, color, rect, border_radius=10)  # Rounded corners
+
+        # Button styling function
+        def draw_button(rect, text, color, hover_color):
+            if rect.collidepoint(mouse):
+                pygame.draw.rect(screen, hover_color, rect, border_radius=10)
+            else:
+                pygame.draw.rect(screen, color, rect, border_radius=10)
             text_surf = corbel_font.render(text, True, white)
             text_rect = text_surf.get_rect(center=rect.center)
             screen.blit(text_surf, text_rect)
 
-        back_rect = pygame.Rect(15, 130, 120, 50)  # Position the button
-        draw_button(back_rect, "Back", dark_red)  # Green button for retry
+        # Define button colors
+        default_color = dark_red
+        hover_color = glowing_light_red
+
+        # Back button
+        back_rect = pygame.Rect(15, 130, 120, 50)
+        draw_button(back_rect, "Back", default_color, hover_color)
+
+        # Shop button (below the Back button)
+        shop_rect = pygame.Rect(15, 190, 120, 50)
+        draw_button(shop_rect, "Shop", default_color, hover_color)
 
         pygame.display.flip()
 
@@ -446,7 +471,6 @@ def level_end_screen(screen, level, character):
                     return "next_level"
                 elif menu_button.collidepoint(mouse):
                     return "main_menu"
-
 def game_over_screen(screen):
     """
     Display the game-over screen and handle user interactions.
@@ -517,6 +541,7 @@ def last_level_screen(screen):
     background_image = pygame.image.load("backgrounds/game.webp")
     background_image = pygame.transform.scale(background_image, resolution)
     screen.blit(background_image, (0, 0))  # Draw the background image
+
     #Font that will be use in the text
     font = pygame.font.SysFont("Corbel", 50, bold=True)
 
@@ -531,7 +556,7 @@ def last_level_screen(screen):
         text_rect = text_surf.get_rect(center=rect.center)
         screen.blit(text_surf, text_rect)
 
-    menu_button = pygame.Rect(3500, 400, 260, 60)
+    menu_button = pygame.Rect(350, 400, 260, 60)
     draw_button(menu_button, "Main Menu", dark_red)  # Dark red button for main menu
 
     pygame.display.flip()
@@ -565,3 +590,4 @@ def draw_ui(screen, character):
     screen.blit(diamond_text, (10, 70))
     level_text = font.render(f"Level: {character.current_level}", True, deep_black)
     screen.blit(level_text, (10, 100))
+
