@@ -28,7 +28,7 @@ class Bullet(pygame.sprite.Sprite):
 
         # Load different bullet images based on weapon type
         if self.weapon_type == "Ketchup Kannon":
-            self.image = pygame.image.load('characters images/Ketchup_Kannon.png')
+            self.image = pygame.image.load('characters images/bomb.png')
         elif self.weapon_type == "Knife of Justice":
             self.image = pygame.image.load('characters images/Knife_of_justice.png')
         elif self.weapon_type == "Tomato Slice":
