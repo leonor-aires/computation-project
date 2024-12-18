@@ -247,27 +247,39 @@ class DespawnerPowerUp(PowerUp):
 
     def affect_player(self, player, game_state):
         """
-        Trigger the Despawner effect.
+        Remove a random number of enemies (at least 1 and less than total enemies).
 
         Parameters
         ----------
         player : Character
-            The player character.
+            The player object.
         game_state : dict
-            The game state containing enemies.
+            The current state of the game containing enemies.
         """
-        enemies = game_state['enemies']
-        total_enemies = len(enemies)
+        enemies_group = game_state.get('enemies', None)
 
-        # Calculate a random number of enemies to despawn, at least 1 and never all.
-        enemies_to_remove = random.randint(1, total_enemies - 1)
+        if enemies_group:
+            total_enemies = len(enemies_group)
 
-        # Remove enemies from the game
-        for _ in range(enemies_to_remove):
-            enemy = random.choice(enemies.sprites())
-            enemy.kill()
+            if total_enemies == 1:
+                # If only one enemy exists, remove it
+                enemies_to_remove = 1
+            else:
+                # Otherwise, pick a random number between 1 and total_enemies - 1
+                enemies_to_remove = random.randint(1, total_enemies - 1)
 
-        print(f"[DEBUG] DespawnerPowerUp removed {enemies_to_remove} enemies.")
+            print(f"[DEBUG] Removing {enemies_to_remove} enemies out of {total_enemies}.")
+            enemies_removed = 0
+
+            # Remove enemies
+            for enemy in list(enemies_group):
+                if enemies_removed < enemies_to_remove:
+                    enemy.kill()
+                    enemies_removed += 1
+
+            print(f"[DEBUG] {enemies_removed} enemies removed.")
+        else:
+            print("[DEBUG] No enemies to remove.")
 
     def affect_game(self, game_state):
         """

@@ -345,6 +345,12 @@ def play_level(screen, character, level, platforms, moving_platforms):
         draw_ui(screen, character)
 
         if level_complete:
+            # Expire all active power-ups before transitioning
+            for powerup in powerups:
+                powerup.expire()
+            powerups.empty() # Clear all remaining power-ups
+            character.image = character.original_image  # Restore to true original image
+            character.rect.y = character.original_y  # Reset position
             return level_end_screen(screen, level, character)
 
         if character.health <= 0:

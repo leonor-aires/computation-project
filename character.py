@@ -23,6 +23,7 @@ class Character(pygame.sprite.Sprite):
         # Load and scale the image
         self.image = pygame.image.load("characters images/Tomátio.png")  # Load player sprite
         self.original_image = self.image
+        self.original_y = y
         self.image = pygame.transform.scale(self.image, (80, 80))
         self.original_color = self.image.copy()  # Save original appearance
 
