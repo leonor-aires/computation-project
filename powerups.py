@@ -64,6 +64,7 @@ class PowerUp(pygame.sprite.Sprite, ABC):
         self.kill()  # Remove the power-up sprite
 
 class InvincibilityPowerUp(PowerUp):
+    requires_game_state = False  # This power-up does not need game_state
     def __init__(self, x, y):
         super().__init__(x, y)
         self.image = pygame.image.load("characters images/Shield 1.png") # Visual representation
@@ -120,6 +121,7 @@ class InvincibilityPowerUp(PowerUp):
 
 
 class TomatoCoinPowerUp(PowerUp):
+    requires_game_state = False  # This power-up does not need game_state
     def __init__(self, x, y):
         super().__init__(x, y)
         # Load the Tomato Coin image
@@ -175,6 +177,7 @@ class TomatoCoinPowerUp(PowerUp):
         super().expire()
 
 class RapidBlasterPowerUp(PowerUp):
+    requires_game_state = False  # This power-up does not need game_state
     def __init__(self, x, y):
         super().__init__(x, y)
         # Load the visual representation for the power-up
@@ -228,25 +231,59 @@ class RapidBlasterPowerUp(PowerUp):
 
 
 class DespawnerPowerUp(PowerUp):
+    """
+    Power-up that removes a random number of enemies, ensuring at least one enemy
+    is removed and not all enemies are removed.
+    """
+    requires_game_state = True  # This power-up needs game_state
     def __init__(self, x, y):
+        """
+        Initialize the despawner power-up
+        """
         super().__init__(x, y)
-        self.image = pygame.Surface((30, 30))  # Visual representation
-        self.image.fill(red)  # Red color for despawner
-        self.rect = self.image.get_rect(center=(x, y))
+        self.image = pygame.image.load("characters images/despawner.png")
+        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.rect = self.image.get_rect(center=(x, y - 10))
 
-    def affect_player(self, player):
+    def affect_player(self, player, game_state):
         """
-        No direct effect on the player.
+        Trigger the Despawner effect.
+
+        Parameters
+        ----------
+        player : Character
+            The player character.
+        game_state : dict
+            The game state containing enemies.
         """
-        pass
+        enemies = game_state['enemies']
+        total_enemies = len(enemies)
+
+        # Calculate a random number of enemies to despawn, at least 1 and never all.
+        enemies_to_remove = random.randint(1, total_enemies - 1)
+
+        # Remove enemies from the game
+        for _ in range(enemies_to_remove):
+            enemy = random.choice(enemies.sprites())
+            enemy.kill()
+
+        print(f"[DEBUG] DespawnerPowerUp removed {enemies_to_remove} enemies.")
 
     def affect_game(self, game_state):
         """
         Reduce enemy count and slow down spawns.
         """
-        for enemy in list(game_state['enemies'])[:3]:  # Remove 3 enemies
-            enemy.kill()
+        pass
 
-        game_state['spawn_rate'] *= 2  # Slow spawn rate by half temporarily
+    def update(self):
+        """
+        Update the timer and expire when done.
+        """
+        pass
 
+    def expire(self):
+        """
+        Expire the power-up.
+        """
+        pass
 

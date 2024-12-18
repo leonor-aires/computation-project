@@ -234,11 +234,16 @@ def play_level(screen, character, level, platforms, moving_platforms):
     spawn_chests(chests, platforms)
     powerups = pygame.sprite.Group()
 
+    # Initialize game state to hold enemies
+    game_state = {'enemies': enemies}  # Pass the current enemies group to game state
+
     # Add a random power-up to a random platform
     platform = random.choice(platforms)
-    powerup = random.choice([InvincibilityPowerUp, TomatoCoinPowerUp, RapidBlasterPowerUp])
+    powerup = random.choice([InvincibilityPowerUp, TomatoCoinPowerUp, RapidBlasterPowerUp, DespawnerPowerUp])
     powerup_instance = powerup(platform.centerx, platform.top - 15)
     powerups.add(powerup_instance)
+    #despawner_powerup = DespawnerPowerUp(platform.centerx, platform.top - 15)
+    #powerups.add(despawner_powerup)
 
     running = True
     level_complete = False
@@ -303,7 +308,10 @@ def play_level(screen, character, level, platforms, moving_platforms):
         # Collecting power-ups
         collected_powerups = pygame.sprite.spritecollide(character, powerups, True)
         for powerup in collected_powerups:
-            powerup.affect_player(character)
+            if powerup.requires_game_state:  # Check the flag
+                powerup.affect_player(character, game_state)
+            else:
+                powerup.affect_player(character)
 
         # Fire bullets if RapidBlaster is active
         if character.rapid_blaster_active:
