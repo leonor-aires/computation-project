@@ -38,25 +38,24 @@ def interface(screen):
     quit_text = corbel_font.render("Quit", True, white)
 
     # Load and scale the background image once
-    image = pygame.image.load("backgrounds/main page.png")
+    image = pygame.image.load("backstory images/main page.png")
     image_width, image_height = 1000, 600
     image = pygame.transform.scale(image, (image_width, image_height))
 
     # Placeholder images for Rules screen
-    images = {
-        "powerup1": pygame.image.load("Power-Up Images/invicibility.png"),
-        "powerup2": pygame.image.load("Power-Up Images/Despawner.png"),
-        "powerup3": pygame.image.load("Power-Up Images/deadly fire.png"),
-        "powerup4": pygame.image.load("Power-Up Images/crazyfire.png"),
-        "chest1": pygame.image.load("Chest Images/chest1.png"),
-        "chest2": pygame.image.load("Chest Images/chest2.png"),
-        "chest3": pygame.image.load("Chest Images/chest3.png"),
-        "chest4": pygame.image.load("Chest Images/chest4.png"),
-    }
+    #images = {
+        #"powerup1": pygame.image.load("Power-Up Images/invicibility.png"),
+        #"powerup2": pygame.image.load("Power-Up Images/Despawner.png"),
+        #"powerup3": pygame.image.load("Power-Up Images/deadly fire.png"),
+        #"powerup4": pygame.image.load("Power-Up Images/crazyfire.png"),
+       # "chest1": pygame.image.load("Chest Images/chest1.png"),
+        #"chest2": pygame.image.load("Chest Images/chest2.png"),
+        #"chest3": pygame.image.load("Chest Images/chest3.png"),
+        #"chest4": pygame.image.load("Chest Images/chest4.png"),}
 
     # Optionally resize the images
-    for key in images.keys():
-        images[key] = pygame.transform.scale(images[key], (80, 80))  # Resize to X x Y pixels
+    #for key in images.keys():
+        #images[key] = pygame.transform.scale(images[key], (80, 80))  # Resize to X x Y pixels
 
     # Create a clock object to control the frame rate
     clock = pygame.time.Clock()

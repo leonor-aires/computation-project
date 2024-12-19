@@ -26,7 +26,7 @@ class PowerUp(pygame.sprite.Sprite, ABC):
     @abstractmethod
     def affect_player(self, player):
         """
-        Abstract method to apply the power-up's effect on the player.
+        Abstract method to apply the power-ups effect on the player.
 
         Parameters
         ----------
@@ -84,8 +84,8 @@ class InvincibilityPowerUp(PowerUp):
         player : Character
             The player character to affect.
         """
-        self.player = player # Save reference
-        self.timer = self.duration # Set the timer
+        self.player = player  # Save reference
+        self.timer = self.duration  # Set the timer
         player.invincible = True
         player.invincibility_timer = self.duration
 
