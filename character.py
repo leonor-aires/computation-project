@@ -2,7 +2,7 @@ from config import *
 import pygame
 import math
 from bullet import Bullet
-
+import json
 
 class Character(pygame.sprite.Sprite):
     def __init__(self, image, x = 100, y = 100):
@@ -21,6 +21,7 @@ class Character(pygame.sprite.Sprite):
        """
         super().__init__()
         # Load and scale the image
+        self.current_skin = "Tomatio"
         self.image = pygame.image.load("characters images/Tomátio.png")  # Load player sprite
         self.original_image = self.image
         self.original_y = y
@@ -203,6 +204,7 @@ class Character(pygame.sprite.Sprite):
         """
         earned_amount = amount
         self.coins += earned_amount
+        self.save_player_data("save_file.json")
         print(f"[DEBUG] Coins Earned: {earned_amount}. Total Coins: {self.coins}")
 
     def draw(self, screen):
@@ -237,3 +239,26 @@ class Character(pygame.sprite.Sprite):
             The new damage value for bullets.
         """
         self.bullet_damage = new_damage
+
+    def save_player_data(self, save_file):
+        player_data = {
+            'weapon_power': self.weapon,
+            'coins': self.coins,
+            'diamonds': self.diamond_count,
+            'level': self.current_level,
+            'skin': self.current_skin,
+        }
+        with open(save_file, 'w') as file:
+            json.dump(player_data, file)
+
+    def load_player_data(self, save_file):
+        with open(save_file, 'r') as file:
+            player_data = json.load(file)
+            self.weapon = player_data['weapon_power']
+            self.coins = player_data.get('coins', 0)
+            self.diamond_count = player_data['diamonds']
+            self.current_level = player_data['level']
+            self.current_skin = player_data.get('skin', 'Tomatio')
+
+
+

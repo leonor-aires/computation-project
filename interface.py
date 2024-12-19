@@ -9,6 +9,7 @@ from credits import credits_
 from config import light_grey, grey
 
 
+
 def interface(screen):
     """
     The main menu interface for the game. It initializes the game menu screen, handles user interactions,
@@ -19,6 +20,14 @@ def interface(screen):
     screen : pygame.Surface
         The pygame display surface to draw the menu interface.
     """
+    save_file = "save_file.json"
+    character = Character(image="characters images/Tomátio.png", x=10, y=height - 50)  # Start at bottom-left corner
+    try:
+        with open(save_file, 'r'):
+            character.load_player_data(save_file)
+    except FileNotFoundError:
+        character.save_player_data(save_file)
+
     # initiating pygame
     pygame.init()
     pygame.mixer.music.load('Music/music.mp3')
@@ -82,7 +91,8 @@ def interface(screen):
                     show_options(screen)  # Open options menu
                 elif 610 <= mouse[0] <= 770 and 60 <= mouse[1] <= 120:  # Credits button
                     credits_(screen)  # Placeholder function for credits
-                elif 850 <= mouse[0] <= 950 and 60 <= mouse[1] <= 120:  # Quit button
+                elif 850 <= mouse[0] <= 950 and 60 <= mouse[1] <= 120:# Quit button
+                    character.save_player_data("save_file.json")  # Save player data before quitting
                     pygame.quit()
                     exit()
 

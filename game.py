@@ -8,7 +8,6 @@ from powerups import *  # Power-ups used in the game
 from chest import Chest, spawn_chests
 from config import deep_black, dark_red, white, fps, resolution
 from shop import *
-from save_game import save_progress, load_progress
 
 width, height = resolution
 
@@ -146,8 +145,8 @@ def game_loop(screen, character=None):
     character : Character
         The main character object. If None, a new character is created.
     """
-    if character is None:
-        character = Character(image="characters images/Tomátio.png", x=10, y=height - 50)  # Start at bottom-left corner
+
+    character = Character(image="characters images/Tomátio.png", x=10, y=height - 50)  # Start at bottom-left corner
 
     current_level = 1
     current_state = "main"
@@ -164,6 +163,7 @@ def game_loop(screen, character=None):
                     character.health = character.max_health
                     character.rect.topleft = (10, height - 50)  # Reset character position
                     character.current_level +=1
+                    character.save_player_data("save_file.json")
                 else:
                     # Final level completed
                     current_state = "last_level"
@@ -174,17 +174,21 @@ def game_loop(screen, character=None):
             elif result == "shed":
                 current_state = "shed"
             elif result == "break":
+                character.save_player_data("save_file.json")
                 break
             elif result == "main_menu":
+                character.save_player_data("save_file.json")
                 return
         elif current_state == "shed":
             current_state = shed(screen, character)
         elif current_state == "last_level":
             if current_level > last_level:
+                character.save_player_data("save_file.json")
                 # All levels completed, transition to a final screen or main menu
                 return "all_levels_completed"
             result = last_level_screen(screen)
             if result == "main_menu":
+                character.save_player_data("save_file.json")
                 return
 
 
@@ -276,6 +280,7 @@ def play_level(screen, character, level, platforms, moving_platforms):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                character.save_player_data("save_file.json")
                 running = False
                 pygame.quit()
                 exit()
@@ -285,9 +290,11 @@ def play_level(screen, character, level, platforms, moving_platforms):
                 mouse = pygame.mouse.get_pos()
                 # Detect click on the "Back" button
                 if back_rect.collidepoint(mouse):
+                    character.save_player_data("save_file.json")
                     return "break"
                 # Detect click on the "Shop" button
                 elif shop_rect.collidepoint(mouse):
+                    character.save_player_data("save_file.json")
                     shop(screen, character)
 
         # Update game components
@@ -482,8 +489,10 @@ def level_end_screen(screen, level, character):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
                 if next_level_button.collidepoint(mouse):
+                    character.save_player_data("save_file.json")
                     return "next_level"
                 elif menu_button.collidepoint(mouse):
+                    character.save_player_data("save_file.json")
                     return "main_menu"
 def game_over_screen(screen):
     """

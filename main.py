@@ -2,6 +2,7 @@ import pygame
 from interface import interface
 from config import resolution
 import options
+
 def main():
     """
     Main entry point for the Tomatio's escape game.
@@ -9,7 +10,7 @@ def main():
 
     Note:
     This function initializes the Pygame system, sets up the game window, and handles the main event loop.
-    It uses the `interface` function to render the main menu and manages transitions to other parts of the game,
+    It uses the interface function to render the main menu and manages transitions to other parts of the game,
     such as the Options menu.
 
     """
@@ -36,3 +37,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

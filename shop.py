@@ -41,6 +41,7 @@ def apply_fridge_style(character):
     """
     character.image = pygame.image.load("characters images/fridge_style.png")
     character.image = pygame.transform.scale(character.image, (100, 100))
+    character.current_skin = "Fridge Style"
     character.rect = character.image.get_rect(topleft=(character.rect.x, character.rect.y))
     character.weapon = "egg"  # Set the weapon type for gameplay bullets
     character.original_color = character.image
