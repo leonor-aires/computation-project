@@ -259,6 +259,3 @@ class Character(pygame.sprite.Sprite):
             self.diamond_count = player_data['diamonds']
             self.current_level = player_data['level']
             self.current_skin = player_data.get('skin', 'Tomatio')
-
-
-

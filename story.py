@@ -2,6 +2,7 @@ import pygame
 from config import *
 from game import *
 from character import Character
+from interface import *
 
 def typewriter_effect_wrapped(screen, text, font, color, rect, speed=25):
     """
@@ -292,4 +293,3 @@ def start_game_with_story(screen):
     """
     screen = pygame.display.set_mode(resolution)
     display_story_with_buttons(screen)
-    game_loop(screen)  # Directly call the game loop after the story

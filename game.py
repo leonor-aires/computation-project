@@ -1,12 +1,8 @@
 import pygame
-import random
-from config import *
 from character import Character  # Main character class
 from enemy import Enemy  # Enemy class
-from shed import shed  # Shop system (shed)
 from powerups import *  # Power-ups used in the game
 from chest import Chest, spawn_chests
-from config import deep_black, dark_red, white, fps, resolution
 from shop import *
 
 width, height = resolution
@@ -146,9 +142,10 @@ def game_loop(screen, character=None):
         The main character object. If None, a new character is created.
     """
 
-    character = Character(image="characters images/Tomátio.png", x=10, y=height - 50)  # Start at bottom-left corner
+    if character is None:
+        character = Character(image="characters images/Tomátio.png", x=10, y=height - 50)  # Start at bottom-left corner
 
-    current_level = 1
+    current_level = character.current_level  # Continue from saved level
     current_state = "main"
     last_level = 10  # Define the last level
 
@@ -160,34 +157,43 @@ def game_loop(screen, character=None):
             if result == "next_level":
                 if current_level < last_level:
                     current_level += 1
+                    character.current_level = current_level  # Update the character's current level
                     character.health = character.max_health
                     character.rect.topleft = (10, height - 50)  # Reset character position
-                    character.current_level +=1
-                    character.save_player_data("save_file.json")
+                    print(f"[DEBUG] Avançando para o nível {current_level}.")
+                    character.save_player_data("save_file.json")  # Save progress after advancing
                 else:
                     # Final level completed
+                    print("[DEBUG] Último nível concluído.")
                     current_state = "last_level"
 
             elif result == "retry":
+                # Retry resets character position but does not save progress
                 character.health = character.max_health
                 character.rect.topleft = (10, height - 50)  # Reset position on retry
-            elif result == "shed":
-                current_state = "shed"
+                print("[DEBUG] Reiniciando o nível.")
+
             elif result == "break":
+                # Save progress before breaking the game loop
+                print("[DEBUG] Saindo do jogo e salvando progresso.")
                 character.save_player_data("save_file.json")
                 break
+
             elif result == "main_menu":
+                # Save progress before returning to the main menu
+                print("[DEBUG] Retornando ao menu principal e salvando progresso.")
                 character.save_player_data("save_file.json")
                 return
-        elif current_state == "shed":
-            current_state = shed(screen, character)
+
         elif current_state == "last_level":
             if current_level > last_level:
+                # Save progress after completing all levels
+                print("[DEBUG] Todos os níveis completados.")
                 character.save_player_data("save_file.json")
-                # All levels completed, transition to a final screen or main menu
                 return "all_levels_completed"
             result = last_level_screen(screen)
             if result == "main_menu":
+                print("[DEBUG] Retornando ao menu principal após último nível.")
                 character.save_player_data("save_file.json")
                 return
 
@@ -338,9 +344,6 @@ def play_level(screen, character, level, platforms, moving_platforms):
         # Draw moving platforms
         for mp in moving_platforms:
             pygame.draw.rect(screen, deep_black, mp["rect"])
-
-        if character.rect.right >= width and character.rect.bottom >= height - 50:
-            return "shed"
 
         bullets.draw(screen)
         powerups.draw(screen)
