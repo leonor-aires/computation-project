@@ -71,7 +71,7 @@ def interface(screen):
                     character.load_player_data(save_file)  # Carrega os dados salvos
                     execute_game(screen, character)
                 elif 410 <= mouse[0] <= 500 and 60 <= mouse[1] <= 120:
-                    start_game_with_story(screen)  # Show the story with transitions
+                    start_game_with_story(screen, interface)  # Show the story with transitions
                 elif 50 <= mouse[0] <= 150 and 60 <= mouse[1] <= 120:  # Rules button
                     show_rules(screen, corbel_font, {})
                 elif 210 <= mouse[0] <= 390 and 60 <= mouse[1] <= 120:  # Options button

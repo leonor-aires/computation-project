@@ -1,8 +1,5 @@
 import pygame
 from config import *
-from game import *
-from character import Character
-from interface import *
 
 def typewriter_effect_wrapped(screen, text, font, color, rect, speed=25):
     """
@@ -93,7 +90,7 @@ def play_background_music(music_file):
     pygame.mixer.music.set_volume(0.5)  # Adjust volume as needed
     pygame.mixer.music.play(-1)  # Loop indefinitely
 
-def display_story_with_buttons(screen):
+def display_story_with_buttons(screen, return_to_menu):
     """
     Displays the game's backstory screen with buttons for navigation and skipping.
 
@@ -132,29 +129,31 @@ def display_story_with_buttons(screen):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                # Check if "Next" or "Play" button is clicked
+                # Check if "Next" or "Back" button is clicked
                 if 820 <= mouse_pos[0] <= 920 and 540 <= mouse_pos[1] <= 580:
                     if slide_index < len(story_slides) - 1:  # Not the last slide
                         slide_index += 1
                     else:  # Last slide
-                        running = False  # Exit story loop and start the game
+                        return_to_menu(screen)  # Exit story loop to trigger return_to_menu
+                        return
                 # Check if "Skip" button is clicked
                 if 20 <= mouse_pos[0] <= 120 and 540 <= mouse_pos[1] <= 580:
-                    running = False  # End story
-                    break
+                    return_to_menu(screen) # Immediately go to the menu
+                    return
+
             if event.type == pygame.KEYDOWN:
                 # Skip story with Enter key
                 if event.key == pygame.K_RETURN:
-                    running = False
-                    break
+                    return_to_menu(screen)
+                    return
                 # Navigate forward with Right arrow
                 if event.key == pygame.K_RIGHT:
                     slide_index += 1
-                    if slide_index == len(story_slides) - 1:
-                        running = False  # End story and start the game
-                        break
+                    if slide_index >= len(story_slides):  # Ensure bounds
+                        slide_index = len(story_slides) - 1
                 # Navigate backward with Left Arrow
                 if event.key == pygame.K_LEFT:
                     slide_index -= 1
@@ -186,7 +185,7 @@ def display_story_with_buttons(screen):
                     screen.blit(transparent_rect, (text_rect.left, text_rect.top))
                     render_wrapped_text(screen, displayed_text, font, (255, 255, 255), text_rect)
 
-            # Add "Next" or "Play" button
+            # Add "Next"
             mouse_pos = pygame.mouse.get_pos()
             button_text = "Next >"
             button_color = (200, 200, 200) if 820 <= mouse_pos[0] <= 920 and 540 <= mouse_pos[1] <= 580 else (150, 150, 150)
@@ -228,9 +227,9 @@ def display_story_with_buttons(screen):
                 screen.blit(transparent_rect, (text_rect.left, text_rect.top))
                 render_wrapped_text(screen, displayed_text, font, (255, 255, 255), text_rect)
 
-            # Play button
+            # Back button
             mouse_pos = pygame.mouse.get_pos()
-            button_text = "Play"
+            button_text = "Back"
             button_color = (200, 200, 200) if 820 <= mouse_pos[0] <= 920 and 540 <= mouse_pos[1] <= 580 else (
             150, 150, 150)
             pygame.draw.rect(screen, button_color, [820, 540, 100, 40])  # Button background
@@ -282,7 +281,7 @@ def render_wrapped_text(screen, text, font, color, rect):
         screen.blit(rendered_line, (rect.left, y))
         y += font.get_linesize()
 
-def start_game_with_story(screen):
+def start_game_with_story(screen, return_to_menu):
     """
     Main function to start the game with a backstory, images, and transitions.
 
@@ -291,5 +290,5 @@ def start_game_with_story(screen):
     screen : pygame.Surface
         The screen on which the story and the game will be displayed.
     """
-    screen = pygame.display.set_mode(resolution)
-    display_story_with_buttons(screen)
+    # screen = pygame.display.set_mode(resolution)
+    display_story_with_buttons(screen, return_to_menu)
