@@ -116,8 +116,6 @@ class Character(pygame.sprite.Sprite):
             if self.invincibility_timer <= 0:
                 self.invincible = False
                 self.image = self.original_image  # Reset the image
-                # self.image = self.original_color  # Restore original sprite
-                print("[DEBUG] Invincibility expired!")
 
         # Handle Tomato Coin power-up timer
         if self.coin_powerup_active:
@@ -126,14 +124,12 @@ class Character(pygame.sprite.Sprite):
                 self.coin_powerup_active = False
                 self.image = self.original_image  # Reset the image
                 self.coin_reward = 5  # Reset to default reward
-                print("[DEBUG] Tomato Coin Power-Up expired.")
 
         # Handle Rapid Blaster timer
         if self.rapid_blaster_active:
             self.rapid_blaster_timer -= 1
             if self.rapid_blaster_timer <= 0:
                 self.rapid_blaster_active = False
-                print("[DEBUG] Rapid Blaster effect ended.")
 
     def shoot_backwards(self, bullets_group):
         """
@@ -190,7 +186,6 @@ class Character(pygame.sprite.Sprite):
         if self.damage_cooldown <= 0:  # Only take damage if cooldown is inactive
             self.health -= damage
             self.damage_cooldown = 60  # Set cooldown (1 second at 60 FPS)
-            print(f"[DEBUG] Character took damage: {damage}. Health: {self.health}")
 
     def earn_coins(self, amount):
         """
@@ -204,7 +199,6 @@ class Character(pygame.sprite.Sprite):
         earned_amount = amount
         self.coins += earned_amount
         self.save_player_data("save_file.json")
-        print(f"[DEBUG] Coins Earned: {earned_amount}. Total Coins: {self.coins}")
 
     def draw(self, screen):
         """
@@ -260,7 +254,6 @@ class Character(pygame.sprite.Sprite):
     def reset_player_data(self, save_file):
         """
         Reset the player's progress to the initial state and save it.
-
         Parameters
         ----------
         save_file : str
@@ -278,5 +271,4 @@ class Character(pygame.sprite.Sprite):
                 'diamonds': self.diamond_count,
                 'level': self.current_level,
             }, file)
-
 

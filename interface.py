@@ -6,8 +6,6 @@ from credits import credits_
 from config import light_grey, grey
 from story import start_game_with_story
 
-
-
 def interface(screen):
     """
     The main menu interface for the game. It initializes the game menu screen, handles user interactions,
@@ -68,7 +66,7 @@ def interface(screen):
             # Detect clicks on buttons
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 if 200 <= mouse[0] <= 800 and 470 <= mouse[1] <= 550:  # Play button
-                    character.load_player_data(save_file)  # Carrega os dados salvos
+                    character.load_player_data(save_file)
                     execute_game(screen, character)
                 elif 410 <= mouse[0] <= 500 and 60 <= mouse[1] <= 120:
                     start_game_with_story(screen, interface)  # Show the story with transitions

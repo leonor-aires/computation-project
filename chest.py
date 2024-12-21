@@ -1,7 +1,5 @@
 import pygame
-import random
 from game import *
-from character import Character
 
 # Define a class for the chest
 class Chest(pygame.sprite.Sprite):

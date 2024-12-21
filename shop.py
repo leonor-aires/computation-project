@@ -1,8 +1,5 @@
 import pygame
 from config import *
-from character import Character
-from bullet import Bullet
-
 
 def apply_Ketchup_Kannon(character):
     """
@@ -43,7 +40,7 @@ def apply_fridge_style(character):
     character.image = pygame.transform.scale(character.image, (100, 100))
     character.rect = character.image.get_rect(topleft=(character.rect.x, character.rect.y))
     character.weapon = "egg"  # Set the weapon type for gameplay bullets
-    character.original_color = character.image
+    character.original_image = character.image
 
 
 def apply_Tomato_slice(character):
@@ -163,8 +160,9 @@ def shop(screen, character):
                     return  # Exit the shop
 
                 # Check if a shop item is clicked
-                for i, item in enumerate(shop_items):
-                    item_rect = pygame.Rect(100, 100 + i * 110, 800, 90)
+                index = 0  # Initialize the index manually
+                for item in shop_items:
+                    item_rect = pygame.Rect(100, 100 + index * 110, 800, 90)
                     if item_rect.collidepoint(mouse):
                         if item["currency"] == "coins":
                             if character.coins >= item["cost"]:
@@ -184,6 +182,7 @@ def shop(screen, character):
                             else:
                                 purchase_message = "Not enough diamonds!"
                                 message_displayed = True
+                    index += 1  # Increment the index manually
 
 
 

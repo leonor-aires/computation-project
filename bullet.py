@@ -1,7 +1,6 @@
-from utils import*
+import pygame
 from config import*
 import math
-from enemy import Enemy
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x: int, y: int, direction: float, weapon_type="default"):

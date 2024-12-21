@@ -1,6 +1,5 @@
 import pygame
 from interface import interface
-from config import resolution
 import options
 
 def main():

@@ -2,7 +2,7 @@ import pygame
 from character import Character  # Main character class
 from enemy import Enemy  # Enemy class
 from powerups import *  # Power-ups used in the game
-from chest import Chest, spawn_chests
+from chest import spawn_chests
 from shop import *
 
 width, height = resolution
@@ -132,7 +132,7 @@ def update_moving_platforms(moving_platforms):
 
 def game_loop(screen, character=None):
     """
-    Main game loop for managing the levels and states.
+    Main game loop for managing the levels and states and memory system.
 
     Parameters
     ----------
@@ -141,7 +141,6 @@ def game_loop(screen, character=None):
     character : Character
         The main character object. If None, a new character is created.
     """
-
     if character is None:
         character = Character(image="characters images/Tomátio.png", x=10, y=height - 50)  # Start at bottom-left corner
 
@@ -160,28 +159,23 @@ def game_loop(screen, character=None):
                     character.current_level = current_level  # Update the character's current level
                     character.health = character.max_health
                     character.rect.topleft = (10, height - 50)  # Reset character position
-                    print(f"[DEBUG] Avançando para o nível {current_level}.")
                     character.save_player_data("save_file.json")  # Save progress after advancing
                 else:
                     # Final level completed
-                    print("[DEBUG] Último nível concluído.")
                     current_state = "last_level"
 
             elif result == "retry":
                 # Retry resets character position but does not save progress
                 character.health = character.max_health
                 character.rect.topleft = (10, height - 50)  # Reset position on retry
-                print("[DEBUG] Reiniciando o nível.")
 
             elif result == "break":
                 # Save progress before breaking the game loop
-                print("[DEBUG] Saindo do jogo e salvando progresso.")
                 character.save_player_data("save_file.json")
                 break
 
             elif result == "main_menu":
                 # Save progress before returning to the main menu
-                print("[DEBUG] Retornando ao menu principal e salvando progresso.")
                 character.save_player_data("save_file.json")
                 return
 
@@ -248,8 +242,6 @@ def play_level(screen, character, level, platforms, moving_platforms):
     powerup = random.choice([InvincibilityPowerUp, TomatoCoinPowerUp, RapidBlasterPowerUp, DespawnerPowerUp])
     powerup_instance = powerup(platform.centerx, platform.top - 15)
     powerups.add(powerup_instance)
-    #despawner_powerup = DespawnerPowerUp(platform.centerx, platform.top - 15)
-    #powerups.add(despawner_powerup)
 
     running = True
     level_complete = False
