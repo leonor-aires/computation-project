@@ -89,11 +89,11 @@ class InvincibilityPowerUp(PowerUp):
 
         # Save original player appearance and replace with the invincible image
         player.original_image = player.image  # Save the original image
+        player.original_y = player.rect.y # Save the original y-position of the rect and move the player higher
         player.image = self.invincible_image  # Replace with invincible image
 
-        # Save the original y-position of the rect and move the player higher
-        player.original_y = player.rect.y  # Store the original position
         player.rect.y -= 15  # Move the rect up by 15 pixels
+        # player.image_offset_y =- 20
 
     def affect_game(self, game_state):
         """
@@ -110,7 +110,7 @@ class InvincibilityPowerUp(PowerUp):
         if self.player:
             self.player.invincible = False
             self.player.image = self.player.original_image
-            self.player.image_offset_y = 0
+            #self.player.image_offset_y = 0
 
             # Reset the rect.y to the original stored position
             self.player.rect.y = self.player.original_y  # Restore the original position
@@ -145,11 +145,10 @@ class TomatoCoinPowerUp(PowerUp):
         self.player = player
 
         player.original_image = player.image
+        player.original_y = player.rect.y  # Store the original position
         player.image = self.golden_image
         player.coin_reward = 10
-        player.original_y = player.rect.y  # Store the original position
         player.rect.y -= 15
-        # Set coin reward to 10 coins
         print(f"[DEBUG] Tomato Coin Power-Up activated! Duration: {self.timer / fps} seconds")
 
     def affect_game(self, game_state):
@@ -166,7 +165,7 @@ class TomatoCoinPowerUp(PowerUp):
             self.player.coin_powerup_active = False
             self.player.image = self.player.original_image
             self.player.coin_reward = 5
-            self.player.image_offset_y = 0
+            #self.player.image_offset_y = 0
 
             # Reset the rect.y to the original stored position
             self.player.rect.y = self.player.original_y  # Restore the original position
