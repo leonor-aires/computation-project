@@ -131,18 +131,6 @@ class Character(pygame.sprite.Sprite):
             if self.rapid_blaster_timer <= 0:
                 self.rapid_blaster_active = False
 
-    def shoot_backwards(self, bullets_group):
-        """
-       Shoot bullets backward.
-
-       Parameters
-       ----------
-       bullets_group : pygame.sprite.Group
-           The group to which the new bullet will be added.
-        """
-        angle = math.pi  # Angle facing backward
-        new_bullet = Bullet(self.rect.centerx, self.rect.centery, angle, weapon_type=self.weapon)
-        bullets_group.add(new_bullet)
 
     def shoot_automatic(self):
         """
