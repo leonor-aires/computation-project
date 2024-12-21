@@ -21,7 +21,6 @@ class Character(pygame.sprite.Sprite):
        """
         super().__init__()
         # Load and scale the image
-        self.current_skin = "Tomatio"
         self.image = pygame.image.load("characters images/Tomátio.png")  # Load player sprite
         self.original_image = self.image
         self.original_y = y
@@ -246,7 +245,6 @@ class Character(pygame.sprite.Sprite):
             'coins': self.coins,
             'diamonds': self.diamond_count,
             'level': self.current_level,
-            'skin': self.current_skin,
         }
         with open(save_file, 'w') as file:
             json.dump(player_data, file)
@@ -258,4 +256,27 @@ class Character(pygame.sprite.Sprite):
             self.coins = player_data.get('coins', 0)
             self.diamond_count = player_data['diamonds']
             self.current_level = player_data['level']
-            self.current_skin = player_data.get('skin', 'Tomatio')
+
+    def reset_player_data(self, save_file):
+        """
+        Reset the player's progress to the initial state and save it.
+
+        Parameters
+        ----------
+        save_file : str
+            The path to the save file.
+        """
+        self.weapon = "default"
+        self.coins = 0
+        self.diamond_count = 0
+        self.current_level = 1
+        self.health = self.max_health
+        with open(save_file, 'w') as file:
+            json.dump({
+                'weapon_power': self.weapon,
+                'coins': self.coins,
+                'diamonds': self.diamond_count,
+                'level': self.current_level,
+            }, file)
+
+

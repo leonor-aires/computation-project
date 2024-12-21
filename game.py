@@ -185,16 +185,12 @@ def game_loop(screen, character=None):
                 character.save_player_data("save_file.json")
                 return
 
-        elif current_state == "last_level":
-            if current_level > last_level:
-                # Save progress after completing all levels
-                print("[DEBUG] Todos os níveis completados.")
-                character.save_player_data("save_file.json")
-                return "all_levels_completed"
+        if current_state == "last_level":
+            if current_level >= last_level:
+                character.reset_player_data("save_file.json")  # Reset progress
+                return last_level_screen(screen)
             result = last_level_screen(screen)
             if result == "main_menu":
-                print("[DEBUG] Retornando ao menu principal após último nível.")
-                character.save_player_data("save_file.json")
                 return
 
 

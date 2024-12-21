@@ -1,6 +1,4 @@
-import pygame
 from abc import ABC, abstractmethod
-from config import *
 from character import *
 import random
 
@@ -298,4 +296,3 @@ class DespawnerPowerUp(PowerUp):
         Expire the power-up.
         """
         pass
-
