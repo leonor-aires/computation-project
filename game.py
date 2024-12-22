@@ -264,9 +264,15 @@ def play_level(screen, character, level, platforms, moving_platforms):
 
     # Add a random power-up to a random platform
     platform = random.choice(platforms)
-    powerup_classes = [InvincibilityPowerUp, TomatoCoinPowerUp, RapidBlasterPowerUp, DespawnerPowerUp]
-    powerup_weights = [50, 30, 30, 5]
-    # Select a power-up based on weighted probabilities
+    if level == 1:
+        # Exclude DespawnerPowerUp in level 1
+        powerup_classes = [InvincibilityPowerUp, TomatoCoinPowerUp, RapidBlasterPowerUp]
+        powerup_weights = [50, 30, 30]
+    else:
+        powerup_classes = [InvincibilityPowerUp, TomatoCoinPowerUp, RapidBlasterPowerUp, DespawnerPowerUp]
+        powerup_weights = [50, 30, 30, 10]
+
+    # Select and create the power-up
     powerup = random.choices(powerup_classes, weights=powerup_weights, k=1)[0]
     powerup_instance = powerup(platform.centerx, platform.top - 15)
     powerups.add(powerup_instance)
