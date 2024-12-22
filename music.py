@@ -64,3 +64,17 @@ def is_sound_enabled():
     """Return the current state of sound_enabled."""
     print(f"[DEBUG] is_sound_enabled: {sound_enabled}")
     return sound_enabled
+
+def play_background_music(music_file):
+    """
+    Play background music for the story.
+
+    Parameters
+    ----------
+    music_file : str
+        The music file to be played.
+    """
+    pygame.mixer.init()
+    pygame.mixer.music.load(music_file)
+    pygame.mixer.music.set_volume(0.5)  # Adjust volume as needed
+    pygame.mixer.music.play(-1)  # Loop indefinitely

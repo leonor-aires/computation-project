@@ -188,7 +188,7 @@ def game_loop(screen, character=None):
                 character.rect.topleft = (10, height - 50)  # Reset position on retry
                 print("[DEBUG] Reiniciando o nível.")
 
-                if sound_enabled:
+                if is_sound_enabled:
                     play_music("Music/Background Game Music.mp3", volume=0.5)
 
             elif result == "break":

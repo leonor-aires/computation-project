@@ -1,5 +1,6 @@
 import pygame
 from config import *
+from music import play_background_music
 
 def typewriter_effect_wrapped(screen, text, font, color, rect, speed=25):
     """
@@ -76,19 +77,6 @@ def typewriter_effect_wrapped(screen, text, font, color, rect, speed=25):
     pygame.display.flip()
     return displayed_text  # Return the full text to keep it visible
 
-def play_background_music(music_file):
-    """
-    Play background music for the story.
-
-    Parameters
-    ----------
-    music_file : str
-        The music file to be played.
-    """
-    pygame.mixer.init()
-    pygame.mixer.music.load(music_file)
-    pygame.mixer.music.set_volume(0.5)  # Adjust volume as needed
-    pygame.mixer.music.play(-1)  # Loop indefinitely
 
 def display_story_with_buttons(screen, return_to_menu):
     """
