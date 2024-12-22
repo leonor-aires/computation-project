@@ -1,11 +1,10 @@
 import pygame
-from character import Character  # Main character class
-from enemy import Enemy  # Enemy class
-from powerups import *  # Power-ups used in the game
+from character import Character
+from enemy import Enemy
+from powerups import *
 from chest import spawn_chests
 from shop import *
-from music import (toggle_sound, load_sound, play_music, stop_music, play_menu_music, stop_menu_music, play_sound,
-                   stop_sound, is_sound_enabled)
+from music import (toggle_sound, load_sound, play_music, stop_music, play_menu_music, play_sound, is_sound_enabled)
 
 
 pygame.mixer.init()
@@ -18,21 +17,20 @@ width, height = resolution
 # Function to create platforms for each level
 def create_platforms(level):
     """
-    Create platforms for the specified level.
+    Create platforms for each level.
 
-    Parameters
+    Parameters:
     ----------
     level : int
         The current level number.
-
-    Returns
+    Returns:
     -------
-    list of pygame.Rect
-        A list of platforms for the given level.
+        - platforms (list of pygame.Rect): A list of static platform rectangles for the level.
+        - moving_platforms (list of dict): A list of dictionaries representing moving platforms.
     """
     platforms = []
     moving_platforms = []
-    last_platform = pygame.Rect(width - 150, 100, 150, 10)  # Always the final platform
+    last_platform = pygame.Rect(width - 150, 100, 150, 10)
 
     if level == 1:
         platforms = [
@@ -106,7 +104,6 @@ def create_platforms(level):
         ]
         moving_platforms = [{"rect": pygame.Rect(50, height - 200, 200, 10), "direction": "vertical", "speed": 1, "range": 100},
                             {"rect": pygame.Rect(600, height - 450, 200, 10), "direction": "horizontal", "speed": 2, "range": 200}]
-
     elif level == 10:
         platforms = [
             pygame.Rect(20, height-50, 200, 10),
@@ -124,8 +121,15 @@ def create_platforms(level):
 
     return platforms, moving_platforms
 
-
 def update_moving_platforms(moving_platforms):
+    """
+    Update the positions of moving platforms based on their direction, speed, and range.
+
+    Parameters
+    ----------
+    moving_platforms : list of dict
+        A list of dictionaries where each dictionary represents a moving platform.
+    """
     for platform in moving_platforms:
         if platform["direction"] == "horizontal":
             platform["rect"].x += platform["speed"]
@@ -150,7 +154,6 @@ def game_loop(screen, character=None):
         The main character object. If None, a new character is created.
     """
     global sound_enabled
-    #if sound_enabled:
     play_music("Music/Background Game Music.mp3", volume=0.5)
 
     if character is None:
@@ -158,7 +161,7 @@ def game_loop(screen, character=None):
 
     current_level = character.current_level  # Continue from saved level
     current_state = "main"
-    last_level = 10  # Define the last level
+    last_level = 10
 
     while True:
         if current_state == "main":
@@ -168,19 +171,17 @@ def game_loop(screen, character=None):
             if result == "next_level":
                 if current_level < last_level:
                     current_level += 1
-                    character.current_level = current_level  # Update the character's current level
+                    character.current_level = current_level
                     character.health = character.max_health
                     character.rect.topleft = (10, height - 50)  # Reset character position
                     character.save_player_data("save_file.json")  # Save progress after advancing
                 else:
-                    # Final level completed
                     current_state = "last_level"
 
             elif result == "retry":
                 # Retry resets character position but does not save progress
                 character.health = character.max_health
-                character.rect.topleft = (10, height - 50)  # Reset position on retry
-                print("[DEBUG] Reiniciando o nível.")
+                character.rect.topleft = (10, height - 50)
 
                 if is_sound_enabled:
                     play_music("Music/Background Game Music.mp3", volume=0.5)
@@ -199,10 +200,7 @@ def game_loop(screen, character=None):
         elif current_state == "last_level":
             if current_level > last_level:
                 # Save progress after completing all levels
-                print("[DEBUG] Todos os níveis completados.")
                 character.save_player_data("save_file.json")
-                #stop_all_music()
-                #pygame.mixer.music.stop()
                 return "all_levels_completed"
         if current_state == "last_level":
             if current_level >= last_level:
@@ -211,18 +209,14 @@ def game_loop(screen, character=None):
             result = last_level_screen(screen)
 
             if result == "main_menu":
-                print("[DEBUG] Retornando ao menu principal após último nível.")
                 character.save_player_data("save_file.json")
-                #stop_all_music()
-                #pygame.mixer.music.stop()
                 return
-
 
 def execute_game(screen, character=None):
     """
-    Execute the game loop.
+    Executes the game loop.
 
-    Parameters
+    Parameters:
     ----------
     screen : pygame.Surface
         The game screen surface.
@@ -230,26 +224,23 @@ def execute_game(screen, character=None):
         The main character object. If None, a new character is created.
     """
     game_loop(screen, character)
-    print("[DEBUG] Resuming main menu music after game loop")
-    #play_game_music("Music/game-music.mp3")
-
 
 def play_level(screen, character, level, platforms, moving_platforms):
     """
     Play the current level of the game.
 
-    Parameters
+    Parameters:
     ----------
     screen : pygame.Surface
         The game screen surface.
     character : Character
-        The main character.
+        The character.
     level : int
         The current level number.
     platforms : list of pygame.Rect
-        A list of platform rectangles for the level.
+        A list of platform for the level.
 
-    Returns
+    Returns:
     -------
     The result of the level ("next_level", "retry", "shed", "break", or "main_menu").
     """
@@ -262,7 +253,6 @@ def play_level(screen, character, level, platforms, moving_platforms):
 
     bullets = pygame.sprite.Group()
     character.bullets = bullets  # Attach the bullets group to the character
-
     enemies = pygame.sprite.Group()
     chests = pygame.sprite.Group()
     spawn_enemies(enemies, platforms)
@@ -289,7 +279,7 @@ def play_level(screen, character, level, platforms, moving_platforms):
         clock.tick(fps)
         update_moving_platforms(moving_platforms)
 
-        # Check collisions with platforms
+        # Check if it's in a platform
         on_platform = False
         for platform in platforms + [mp["rect"] for mp in moving_platforms]:
             if character.rect.colliderect(platform):
@@ -303,7 +293,7 @@ def play_level(screen, character, level, platforms, moving_platforms):
             character.rect.y += character.y_velocity
             character.y_velocity += character.gravity
 
-        # Check level completion
+        # Check if level is complete
         if (character.rect.right >= platforms[-1].right and
                 character.rect.bottom == platforms[-1].top and
                 len(enemies) == 0):
@@ -324,7 +314,6 @@ def play_level(screen, character, level, platforms, moving_platforms):
                     character.save_player_data("save_file.json")
                     stop_music()
                     play_menu_music("Music/game-music.mp3")
-                    #pygame.mixer.music.stop()
                     return "break"
                 # Detect click on the "Shop" button
                 elif shop_rect.collidepoint(mouse):
@@ -338,7 +327,6 @@ def play_level(screen, character, level, platforms, moving_platforms):
         bullets.update()
         enemies.update(character)
         chests.update()
-
         # Update active power-up timers
         for powerup in powerups:
             powerup.update()
@@ -351,7 +339,7 @@ def play_level(screen, character, level, platforms, moving_platforms):
         # Collecting power-ups
         collected_powerups = pygame.sprite.spritecollide(character, powerups, True)
         for powerup in collected_powerups:
-            if powerup.requires_game_state:  # Check the flag
+            if powerup.requires_game_state:
                 powerup.affect_player(character, game_state)
             else:
                 powerup.affect_player(character)
@@ -364,7 +352,7 @@ def play_level(screen, character, level, platforms, moving_platforms):
 
         # Define a rectangle at the bottom of the screen
         ground_rect = pygame.Rect(0, height - 1, width, 1)
-        # Check if the character's rectangle touches the ground rectangle
+        # Check if the character's image touches the ground rectangle
         if character.rect.colliderect(ground_rect):
             return game_over_screen(screen)
 
@@ -467,8 +455,8 @@ def handle_collisions(character, bullets, enemies):
             enemy.health -= character.bullet_damage
             bullet.kill()
             if enemy.health <= 0:
-                # Apply coin multiplier when earning coins
-                character.earn_coins(character.coin_reward)  # Earn coins for defeated enemies
+                # Earn coins for defeated enemies
+                character.earn_coins(character.coin_reward)
                 enemy.kill()
 
     for enemy in enemies:
@@ -478,20 +466,20 @@ def handle_collisions(character, bullets, enemies):
 
 def level_end_screen(screen, level, character):
     """
-    Display the level-end screen and handle user interactions.
+    Display the level-end screen.
 
-    Parameters
+    Parameters:
     ----------
     screen : pygame.Surface
-        The game screen surface to render the UI elements on.
+        The game screen surface.
     level : int
         The current level that the player has completed.
-    character : object
-        The main character, which is used to update coins.
+    character : Character
+        The main character.
 
-    Returns
+    Returns:
     -------
-    The next action based on user selection: "next_level" or "main_menu".
+    Depends on what the user selects: "next_level" or "main_menu".
     """
     # Load background image
     background_image = pygame.image.load("backgrounds/game.webp")
@@ -507,7 +495,7 @@ def level_end_screen(screen, level, character):
 
     # Button Styling
     def draw_button(rect, text, color):
-        pygame.draw.rect(screen, color, rect, border_radius=10)  # Rounded corners
+        pygame.draw.rect(screen, color, rect, border_radius=10)
         text_surf = font.render(text, True, white)
         text_rect = text_surf.get_rect(center=rect.center)
         screen.blit(text_surf, text_rect)
@@ -515,8 +503,8 @@ def level_end_screen(screen, level, character):
     next_level_button = pygame.Rect(150, 400, 260, 60)
     menu_button = pygame.Rect(600, 400, 260, 60)
 
-    draw_button(next_level_button, "Next Level", dark_red)  # Green button for retry
-    draw_button(menu_button, "Main Menu", dark_red)  # Dark red button for main menu
+    draw_button(next_level_button, "Next Level", dark_red)
+    draw_button(menu_button, "Main Menu", dark_red)
 
     pygame.display.flip()
 
@@ -533,18 +521,19 @@ def level_end_screen(screen, level, character):
                 elif menu_button.collidepoint(mouse):
                     character.save_player_data("save_file.json")
                     return "main_menu"
+
 def game_over_screen(screen):
     """
-    Display the game-over screen and handle user interactions.
+    Display the game-over screen.
 
     Parameters
     ----------
     screen : pygame.Surface
-        The game screen surface to render the UI elements on.
+        The game screen surface.
 
     Returns
     -------
-    The next action based on user selection: "retry" or "main_menu".
+    Depends on the user selection: "retry" or "main_menu".
     """
 
     # Load background image
@@ -552,7 +541,6 @@ def game_over_screen(screen):
     background_image = pygame.transform.scale(background_image, resolution)
     screen.blit(background_image, (0, 0))  # Draw the background image
 
-    # UI elements
     font = pygame.font.SysFont("Corbel", 50, bold=True)
 
     # Game Over Text
@@ -572,14 +560,12 @@ def game_over_screen(screen):
         text_rect = text_surf.get_rect(center=rect.center)
         screen.blit(text_surf, text_rect)
 
-    # Buttons
     retry_button = pygame.Rect(200, 400, 200, 60)
     menu_button = pygame.Rect(600, 400, 260, 60)
 
     draw_button(retry_button, "Retry", green)  # Green button for retry
     draw_button(menu_button, "Main Menu", dark_red)  # Dark red button for main menu
 
-    # Update display
     pygame.display.flip()
 
     while True:
@@ -593,28 +579,25 @@ def game_over_screen(screen):
                     return "retry"
                 elif menu_button.collidepoint(mouse):
                     return "main_menu"
-                elif sound_button_rect.collidepoint(mouse):
-                    toggle_sound()
 
 def last_level_screen(screen):
     """
-    Display the last-level completion screen and handle user interactions.
+    Display the last-level screen.
 
     Parameters
     ----------
     screen : pygame.Surface
-        The game screen surface to render the UI elements on.
+        The game screen surface.
 
     Returns
     -------
-    The next action based on user selection: "main_menu".
+    Returns to the main menu if the "main_menu" button is clicked.
     """
     # Load background image
     background_image = pygame.image.load("backgrounds/game.webp")
     background_image = pygame.transform.scale(background_image, resolution)
     screen.blit(background_image, (0, 0))  # Draw the background image
 
-    #Font that will be use in the text
     font = pygame.font.SysFont("Corbel", 50, bold=True)
 
     message_text = font.render("Amazing work! More adventures coming soon!", True, deep_black)
@@ -643,9 +626,10 @@ def last_level_screen(screen):
                 if menu_button.collidepoint(mouse):
                     stop_music()
                     return "main_menu"
+
 def draw_ui(screen, character):
     """
-    Draw the in-game UI elements showing the player's status.
+    Draw the in-game User Interface elements showing the player's status.
 
     Parameters
     ----------

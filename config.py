@@ -1,4 +1,3 @@
-# Config file used to set global variables and other settings
 
 # COLORS
 dark_red = (138, 0, 0)  # Dark red for buttons
@@ -16,7 +15,7 @@ light_purple=((100, 100, 255))
 
 # SCREEN RESOLUTION
 resolution = (1000, 600)
-width, height = resolution[0], resolution[1] #for calcultation
+width, height = resolution[0], resolution[1] #f or calcultation
 fps= 60 # frames per second
 
 #SIZES

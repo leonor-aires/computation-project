@@ -1,8 +1,6 @@
-#from utils import*
 import pygame
 from config import*
 import math
-from enemy import Enemy
 from music import shooting, is_sound_enabled
 
 class Bullet(pygame.sprite.Sprite):
@@ -49,30 +47,25 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         """
-        Update the bullet's position and check if it goes offscreen.
-
-        Notes
-        -----
-        - Only the horizontal coordinate (x) is updated based on the bullet's speed and direction.
-        - The bullet is removed if it goes offscreen or exceeds a certain range.
+        Update the bullet's position and check if it goes off-screen.
         """
         # Update only the horizontal coordinate
         self.rect.x += int(self.speed * math.copysign(1, math.cos(self.direction)))
 
-        # Remove the bullet if it goes offscreen or exceeds a certain range
+        # Remove the bullet if it goes off-screen or exceeds a certain range
         if self.rect.x < 0 or self.rect.x > width or self.exceeds_range():
             self.kill()
 
     def exceeds_range(self):
         """
-        Check if the bullet exceeds a certain range from its starting position.
+        Check if the bullet exceeds a certain range based on its starting position.
 
         Returns: boolean
             True if the bullet exceeds the predefined range, False otherwise.
         """
         # Calculate the distance from the starting position
         distance = math.sqrt((self.rect.x - self.start_x) ** 2 + (self.rect.y - self.start_y) ** 2)
-        return distance > 150  # Arbitrary range limit, adjust as needed
+        return distance > 150
 
     def draw(self, screen: pygame.Surface):
         """

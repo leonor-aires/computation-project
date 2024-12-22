@@ -62,7 +62,7 @@ def shooting(sound_file, volume=0.5):
 
 def is_sound_enabled():
     """Return the current state of sound_enabled."""
-    print(f"[DEBUG] is_sound_enabled: {sound_enabled}")
+    # print(f"[DEBUG] is_sound_enabled: {sound_enabled}")
     return sound_enabled
 
 def play_background_music(music_file):
