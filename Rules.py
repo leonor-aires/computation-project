@@ -7,7 +7,7 @@ def draw_controls(screen, font):
     spacing = 10
 
     # W Key Position (Top Center)
-    w_x, w_y = 500, 375
+    w_x, w_y = 600, 435
 
     # A, D Key Positions (Bottom Left and Right)
     a_x, a_y = w_x - key_width - spacing, w_y + key_height + spacing
@@ -16,13 +16,16 @@ def draw_controls(screen, font):
     # Fonts for labels
     small_font = pygame.font.SysFont("Arial", 25, bold = True)
     title_font = pygame.font.Font(None, 60)
+
     # Controls Text
-    controls_text = title_font.render("Controls", True, deep_black)
-    screen.blit(controls_text, (445, 300))
+    controls_text = title_font.render("Controls", True, white)
+    controls_text_rect = controls_text.get_rect(topleft=(555, 360))
+    pygame.draw.rect(screen, grey, controls_text_rect.inflate(20, 10), border_radius=10)
+    screen.blit(controls_text, controls_text_rect.topleft)
+
 
     # Draw W Key
     pygame.draw.rect(screen, light_grey, (w_x, w_y, key_width, key_height))
-    #pygame.draw.rect(screen, deep_black, (w_x, w_y, key_width, key_height), 2)
     w_text = font.render("W", True, deep_black)
     screen.blit(w_text, (w_x + 5, w_y +3))
     jump_text = small_font.render("Jump", True, deep_black)
@@ -30,7 +33,6 @@ def draw_controls(screen, font):
 
     # Draw A Key
     pygame.draw.rect(screen, light_grey, (a_x, a_y, key_width, key_height))
-    #pygame.draw.rect(screen, deep_black, (a_x, a_y, key_width, key_height), 2)
     a_text = font.render("A", True, deep_black)
     screen.blit(a_text, (a_x + 10, a_y + 3))
     left_text = small_font.render("Left", True, deep_black)
@@ -38,20 +40,20 @@ def draw_controls(screen, font):
 
     # Draw D Key
     pygame.draw.rect(screen, light_grey, (d_x, d_y, key_width, key_height))
-    #pygame.draw.rect(screen, deep_black, (d_x, d_y, key_width, key_height), 2)
     d_text = font.render("D", True, deep_black)
     screen.blit(d_text, (d_x + 10, d_y + 3))
     right_text = small_font.render("Right", True,deep_black)
     screen.blit(right_text, (d_x + 3, d_y + key_height + 2))
 
+    # Mouse control
     mouse_image = pygame.image.load("characters images/right click (1).png")
     mouse_image = pygame.transform.scale(mouse_image, (80, 90))
-    screen.blit(mouse_image, (640, 410))
+    screen.blit(mouse_image, (740, 470))
     mouse_text = small_font.render("Shoot", True, deep_black)
-    screen.blit(mouse_text, (653, 388))
+    screen.blit(mouse_text, (753, 440))
 
 def draw_popup(screen, title, explanation):
-    popup_width, popup_height = 500, 300
+    popup_width, popup_height = 600, 275
     popup_x = (resolution[0] - popup_width) // 2
     popup_y = (resolution[1] - popup_height) // 2
 
@@ -86,6 +88,7 @@ def show_rules(screen, font, images, invencibility=None):
     popup_open = None  # Tracks which popup is active
     clock = pygame.time.Clock()
 
+
     while running:
         # Event handling
         for event in pygame.event.get():
@@ -97,15 +100,29 @@ def show_rules(screen, font, images, invencibility=None):
                 if 20 <= mouse[0] <= 160 and 20 <= mouse[1] <= 80:  # Back button area
                     running = False
                 # Clicks on power-ups
-                elif 135 <= mouse[0] <= 400 and 175 <= mouse[1] <= 210:
+                # Invincibility
+                invincibility_rect = pygame.Rect(135, 175, 265, 40)  # Adjusted for hover area
+                if invincibility_rect.collidepoint(mouse):
                     popup_open = ("Invincibility", "Tomátio doesn't lose health for 5 seconds")
-                elif 135 <= mouse[0] <= 400 and 275 <= mouse[1] <= 310:
+
+                # Despawner
+                despawner_rect = pygame.Rect(135, 275, 265, 40)  # Adjusted for hover area
+                if despawner_rect.collidepoint(mouse):
                     popup_open = ("Despawner", "A random number of enemies disappears")
-                elif 135 <= mouse[0] <= 400 and 375 <= mouse[1] <= 410:
+
+
+                # Tomato Coin
+                tomato_coin_rect = pygame.Rect(135, 375, 265, 40)  # Adjusted for hover area
+                if tomato_coin_rect.collidepoint(mouse):
                     popup_open = ("Tomato Coin", "2x the amount of coins you receive when an enemy is killed")
-                elif 135 <= mouse[0] <= 400 and 475 <= mouse[1] <= 510:
-                    popup_open = ("Rapid Blast", "Constant shooting")
-                elif 535 <= mouse[0] <= 830 and 165 <= mouse[1] <= 195:
+
+                # Rapid Blast
+                rapid_blast_rect = pygame.Rect(135, 475, 265, 40)  # Adjusted for hover area
+                if rapid_blast_rect.collidepoint(mouse):
+                    popup_open = ("Rapid Blast", "Constant shooting in both directions")
+                # Chests
+                chests_rect = pygame.Rect(535, 165, 265, 40)  # Adjusted for hover area
+                if chests_rect.collidepoint(mouse):
                     popup_open = ("Treasure Chests", "Choose 1 of 3 rewards available")
 
                 # Close popup
@@ -136,11 +153,10 @@ def show_rules(screen, font, images, invencibility=None):
         # Chests
         chest_image = pygame.image.load("Chest Images/chest.png")
         chest_image = pygame.transform.scale(chest_image, (100, 100))
-        screen.blit(chest_image, (450, 135))
+        screen.blit(chest_image, (650, 230))
         chest_text = corbel_font.render("Treasure Chests", True, white)
         chest_text_rect = chest_text.get_rect(topleft=(555, 175))
-        #pygame.draw.rect(screen, grey, chest_text_rect.inflate(20, 10), border_radius=10)
-        chest_hover = 535<= mouse[0] <= 735 and 165 <= mouse[1] <= 215
+        chest_hover = chest_text_rect.inflate(20, 10).collidepoint(mouse)
         chest_color = light_grey if chest_hover else grey
         pygame.draw.rect(screen, chest_color, chest_text_rect.inflate(20, 10), border_radius=10)
         screen.blit(chest_text, chest_text_rect.topleft)
@@ -150,43 +166,46 @@ def show_rules(screen, font, images, invencibility=None):
         powerups_text = title_font.render("Power-Ups", True, deep_black)
         screen.blit(powerups_text, (40, 100))
 
+        # Invincibility
         invincibility = pygame.image.load("characters images/Shield 1.png")
         invincibility = pygame.transform.scale(invincibility, (80, 80))
         screen.blit(invincibility, (30, 150))
         invincibility_text = corbel_font.render("Invincibility", True, white)
         invincibility_text_rect = invincibility_text.get_rect(topleft=(135, 175))
-        invincibility_hover = 115 <= mouse[0] <= 255 and 165 <= mouse[1] <= 205  # Adjust based on inflated rect
+        invincibility_hover = invincibility_text_rect.inflate(20, 10).collidepoint(mouse)
         invincibility_color = light_grey if invincibility_hover else grey
         pygame.draw.rect(screen, invincibility_color, invincibility_text_rect.inflate(20, 10), border_radius=10)
         screen.blit(invincibility_text, invincibility_text_rect.topleft)
 
+        # Despawner
         despawner = pygame.image.load("characters images/despawner.png")
         despawner = pygame.transform.scale(despawner, (80, 80))
         screen.blit(despawner, (30, 250))
         despawner_text = corbel_font.render("Despawner", True, white)
         despawner_text_rect = despawner_text.get_rect(topleft=(135, 275))
-        despawner_hover = 115 <= mouse[0] <= 255 and 265 <= mouse[1] <= 305
+        despawner_hover = despawner_text_rect.inflate(20, 10).collidepoint(mouse)
         despawner_color = light_grey if despawner_hover else grey
         pygame.draw.rect(screen, despawner_color, despawner_text_rect.inflate(20, 10), border_radius=10)
         screen.blit(despawner_text, despawner_text_rect.topleft)
 
-
+        # Tomato Coin
         tomato_coin = pygame.image.load("characters images/Tomato coin.png")
         tomato_coin = pygame.transform.scale(tomato_coin, (80, 80))
         screen.blit(tomato_coin, (30, 350))
         tomato_coin_text = corbel_font.render("Tomato Coin", True, white)
         tomato_coin_text_rect = tomato_coin_text.get_rect(topleft=(135, 375))
-        tomato_coin_hover = 115 <= mouse[0] <= 255 and 365 <= mouse[1] <= 405
+        tomato_coin_hover = tomato_coin_text_rect.inflate(20, 10).collidepoint(mouse)
         tomato_coin_color = light_grey if tomato_coin_hover else grey
         pygame.draw.rect(screen, tomato_coin_color, tomato_coin_text_rect.inflate(20, 10), border_radius=10)
         screen.blit(tomato_coin_text, tomato_coin_text_rect.topleft)
 
+        # Rapid Blast
         rapid_blast = pygame.image.load("characters images/rapid_blaster1.png")
         rapid_blast = pygame.transform.scale(rapid_blast, (100, 100))
         screen.blit(rapid_blast, (20, 450))
         rapid_blast_text = corbel_font.render("Rapid Blast", True, white)
         rapid_blast_text_rect = rapid_blast_text.get_rect(topleft=(135, 475))
-        rapid_blast_hover = 115 <= mouse[0] <= 255 and 465 <= mouse[1] <= 505
+        rapid_blast_hover = rapid_blast_text_rect.inflate(20, 10).collidepoint(mouse)
         rapid_blast_color = light_grey if rapid_blast_hover else grey
         pygame.draw.rect(screen, rapid_blast_color, rapid_blast_text_rect.inflate(20, 10), border_radius=10)
         screen.blit(rapid_blast_text, rapid_blast_text_rect.topleft)
