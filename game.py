@@ -430,7 +430,7 @@ def play_level(screen, character, level, platforms, moving_platforms):
         draw_button(shop_rect, "Shop", default_color, hover_color)
 
         # Sound Toggle Button
-        sound_button_rect = pygame.Rect(225, 8, 240, 48)
+        sound_button_rect = pygame.Rect(750, 545, 240, 48)
         sound_button_text = "Sound: ON" if is_sound_enabled() else "Sound: OFF"
         draw_button(sound_button_rect, sound_button_text, default_color, hover_color)
 
