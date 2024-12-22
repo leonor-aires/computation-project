@@ -1,10 +1,10 @@
-from character import * # import player
-from game import execute_game, game_loop
+from character import *
+from game import execute_game
 from Rules import show_rules
 from options import show_options
 from credits import credits_
 from config import light_grey, grey, dark_red
-from story import start_game_with_story
+from story import start_story
 
 def interface(screen):
     """
@@ -24,19 +24,16 @@ def interface(screen):
     except FileNotFoundError:
         character.save_player_data(save_file)
 
-    # initiating pygame
+    # Initiating pygame
     pygame.init()
     pygame.mixer.music.load('Music/game-music.mp3')
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
 
-    # creating the screen at the set resolution
     screen = pygame.display.set_mode(resolution)
-
-    # fonts
     corbel_font = pygame.font.SysFont("Corbel", 50)
 
-    # Load and scale the background image once
+    # Load and scale the background image
     image = pygame.image.load("backstory images/main page.png")
     image_width, image_height = 1000, 600
     image = pygame.transform.scale(image, (image_width, image_height))
@@ -44,7 +41,6 @@ def interface(screen):
     # Create a clock object to control the frame rate
     clock = pygame.time.Clock()
 
-    # Button definitions and text rendering
     buttons = {
         "play": {"rect": pygame.Rect(200, 470, 600, 60), "text": corbel_font.render("Play", True, white)},
         "rules": {"rect": pygame.Rect(10, 60, 180, 60), "text": corbel_font.render("Rules", True, white)},
@@ -54,14 +50,11 @@ def interface(screen):
         "quit": {"rect": pygame.Rect(805, 60, 180, 60), "text": corbel_font.render("Quit", True, white)},
     }
 
-    # main game loop
     while True:
-        # Get the mouse position
         mouse = pygame.mouse.get_pos()
-
         # Event handling
         for ev in pygame.event.get():
-            # quitting the game with the close button on the window (X)
+            # Quitting the game with the close button on the window (X)
             if ev.type == pygame.QUIT:
                 pygame.quit()
                 exit()
@@ -73,9 +66,9 @@ def interface(screen):
                     character.load_player_data(save_file)
                     execute_game(screen, character)
                 elif buttons["story"]["rect"].collidepoint(mouse):
-                    start_game_with_story(screen, interface)
+                    start_story(screen, interface)
                 elif buttons["rules"]["rect"].collidepoint(mouse):
-                    show_rules(screen, corbel_font, {})
+                    show_rules(screen, corbel_font)
                 elif buttons["options"]["rect"].collidepoint(mouse):
                     show_options(screen)
                 elif buttons["credits"]["rect"].collidepoint(mouse):
@@ -85,7 +78,6 @@ def interface(screen):
                     pygame.quit()
                     exit()
 
-        # Draw the background image
         screen.blit(image, (0, 0))
 
         # Define hover colors
@@ -98,11 +90,10 @@ def interface(screen):
         for button_key, button in buttons.items():
             is_hover = button["rect"].collidepoint(mouse)
 
-            # Determine the color based on hover state
             if button_key == "play":
-                color = hover_color_play if is_hover else default_color_play  # Red for default Play button
+                color = hover_color_play if is_hover else default_color_play
             else:
-                color = hover_colors if is_hover else default_color  # Other buttons
+                color = hover_colors if is_hover else default_color
 
             pygame.draw.rect(screen, color, button["rect"], border_radius=10)
 
@@ -110,19 +101,5 @@ def interface(screen):
             text_rect = button["text"].get_rect(center=button["rect"].center)
             screen.blit(button["text"], text_rect)
 
-        # Update the display
         pygame.display.update()
-        clock.tick(60)  # Limit the frame rate to 60 FPS
-
-def rules_():
-    """
-    Displays the rules screen.
-    Calls the `show_rules` function to render the rules.
-    """
-    show_rules()
-
-def wilderness_explorer():
-    """
-    Starts the main game. This function executes the game and returns the user to the main interface once complete.
-    """
-    execute_game()
+        clock.tick(60)

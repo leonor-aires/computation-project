@@ -3,6 +3,16 @@ from config import resolution, white, grey, light_grey, deep_black
 
 
 def draw_controls(screen, font):
+    """
+    Render the control instructions for the game, including keys (W, A, D) and mouse input for shooting.
+
+    Parameters
+    ----------
+    screen : pygame.Surface
+        The Pygame display surface where the controls will be drawn.
+    font : pygame.Font
+        The font used for the key labels.
+    """
     key_width, key_height = 50, 50
     spacing = 10
 
@@ -15,14 +25,13 @@ def draw_controls(screen, font):
 
     # Fonts for labels
     small_font = pygame.font.SysFont("Arial", 25, bold = True)
-    title_font = pygame.font.Font(None, 60)
+    corbel_font = pygame.font.SysFont("Corbel", 40, bold=True)
 
     # Controls Text
-    controls_text = title_font.render("Controls", True, white)
+    controls_text = corbel_font.render("Controls", True, white)
     controls_text_rect = controls_text.get_rect(topleft=(555, 360))
     pygame.draw.rect(screen, grey, controls_text_rect.inflate(20, 10), border_radius=10)
     screen.blit(controls_text, controls_text_rect.topleft)
-
 
     # Draw W Key
     pygame.draw.rect(screen, light_grey, (w_x, w_y, key_width, key_height))
@@ -53,7 +62,25 @@ def draw_controls(screen, font):
     screen.blit(mouse_text, (753, 440))
 
 def draw_popup(screen, title, explanation):
-    popup_width, popup_height = 600, 275
+    """
+    Display a popup window with a title and explanation text.
+
+    Parameters:
+    ----------
+    screen : pygame.Surface
+        The Pygame display surface where the popup will appear.
+    title : str
+        The title of the popup.
+    explanation : str
+        The description of each popup.
+
+    Returns:
+    -------
+    pygame.Rect
+        The "Back" button to close the popup.
+    """
+
+    popup_width, popup_height = 700, 275
     popup_x = (resolution[0] - popup_width) // 2
     popup_y = (resolution[1] - popup_height) // 2
 
@@ -80,48 +107,53 @@ def draw_popup(screen, title, explanation):
 
     return close_rect
 
-def show_rules(screen, font, images, invencibility=None):
-    """Displays the game rules on the screen."""
+def show_rules(screen, font):
+    """
+    Display the game rules and information about power-ups and controls.
 
-    # Main loop for Rules screen
-    running = True
-    popup_open = None  # Tracks which popup is active
+    Parameters:
+    ----------
+    screen : pygame.Surface
+        The Pygame display surface where the rules screen will appear.
+    font : pygame.Font
+        The font used for the text on the rules screen.
+    """
+    popup_open = None
     clock = pygame.time.Clock()
 
-
+    running = True
     while running:
-        # Event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Back button coordinates
                 mouse = pygame.mouse.get_pos()
-                if 20 <= mouse[0] <= 160 and 20 <= mouse[1] <= 80:  # Back button area
+                if 20 <= mouse[0] <= 160 and 20 <= mouse[1] <= 80:
                     running = False
-                # Clicks on power-ups
+
                 # Invincibility
-                invincibility_rect = pygame.Rect(135, 175, 265, 40)  # Adjusted for hover area
+                invincibility_rect = pygame.Rect(135, 175, 265, 40)
                 if invincibility_rect.collidepoint(mouse):
                     popup_open = ("Invincibility", "Tomátio doesn't lose health for 5 seconds")
 
                 # Despawner
-                despawner_rect = pygame.Rect(135, 275, 265, 40)  # Adjusted for hover area
+                despawner_rect = pygame.Rect(135, 275, 265, 40)
                 if despawner_rect.collidepoint(mouse):
                     popup_open = ("Despawner", "A random number of enemies disappears")
 
-
                 # Tomato Coin
-                tomato_coin_rect = pygame.Rect(135, 375, 265, 40)  # Adjusted for hover area
+                tomato_coin_rect = pygame.Rect(135, 375, 265, 40)
                 if tomato_coin_rect.collidepoint(mouse):
                     popup_open = ("Tomato Coin", "2x the amount of coins you receive when an enemy is killed")
 
-                # Rapid Blast
-                rapid_blast_rect = pygame.Rect(135, 475, 265, 40)  # Adjusted for hover area
+                # Rapid Blaster
+                rapid_blast_rect = pygame.Rect(135, 475, 265, 40)
                 if rapid_blast_rect.collidepoint(mouse):
-                    popup_open = ("Rapid Blast", "Constant shooting in both directions")
+                    popup_open = ("Rapid Blaster", "Constant shooting in both directions")
+
                 # Chests
-                chests_rect = pygame.Rect(535, 165, 265, 40)  # Adjusted for hover area
+                chests_rect = pygame.Rect(535, 165, 265, 40)
                 if chests_rect.collidepoint(mouse):
                     popup_open = ("Treasure Chests", "Choose 1 of 3 rewards available")
 
@@ -131,24 +163,17 @@ def show_rules(screen, font, images, invencibility=None):
                     if close_rect.collidepoint(mouse):
                         popup_open = None
 
-        # Capture mouse position for hover effect
         mouse = pygame.mouse.get_pos()
-
         screen.fill((0, 0, 0))
 
-        # Fonts
-        small_font = pygame.font.SysFont("Arial", 25, bold=True)
         title_font = pygame.font.Font(None, 60)
         title_font_else = pygame.font.Font(None, 90)
-        explain_font = pygame.font.Font(None, 20)
         corbel_font = pygame.font.SysFont("Corbel", 40, bold=True)
 
         # Images
         background_image = pygame.image.load("backgrounds/game.webp")
         background_image = pygame.transform.scale(background_image, resolution)
         screen.blit(background_image, (0, 0))
-
-
 
         # Chests
         chest_image = pygame.image.load("Chest Images/chest.png")
@@ -161,8 +186,7 @@ def show_rules(screen, font, images, invencibility=None):
         pygame.draw.rect(screen, chest_color, chest_text_rect.inflate(20, 10), border_radius=10)
         screen.blit(chest_text, chest_text_rect.topleft)
 
-
-        # POWER UPS
+        # PowerUps
         powerups_text = title_font.render("Power-Ups", True, deep_black)
         screen.blit(powerups_text, (40, 100))
 
@@ -212,22 +236,19 @@ def show_rules(screen, font, images, invencibility=None):
 
         draw_controls(screen, font)
 
-        # Render the rules text
         rules_title = title_font_else.render("Game Rules", True, (255, 255, 255))
         screen.blit(rules_title, (320, 25))
 
         # Back Button
         back_hover = 20 <= mouse[0] <= 160 and 20 <= mouse[1] <= 80
-        button_color = light_grey if back_hover else grey  # Change color on hover
-        pygame.draw.rect(screen, button_color, pygame.Rect(20, 20, 140, 60),
-                         border_radius=10)  # Rectangle for the button
+        button_color = light_grey if back_hover else grey
+        pygame.draw.rect(screen, button_color, pygame.Rect(20, 20, 140, 60),border_radius=10)
         back_text = corbel_font.render("Back", True, white)
-        back_rect = back_text.get_rect(center=(90, 50))  # Centered within the rectangle
+        back_rect = back_text.get_rect(center=(90, 50))
         screen.blit(back_text, back_rect)
 
         if popup_open:
             draw_popup(screen, *popup_open)
 
-        # Update the display
         pygame.display.update()
         clock.tick(60)

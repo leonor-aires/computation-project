@@ -7,10 +7,8 @@ def apply_Ketchup_Kannon(character):
 
     Parameters
     ----------
-    character (object)
+    character:  Character
     The character to whom the Ketchup Kannon will be applied.
-
-
     """
     character.weapon = 'Ketchup Kannon'
     character.bullet_damage = 6
@@ -21,7 +19,7 @@ def apply_Knife_of_Justice(character):
 
     Parameters
     ----------
-    character : object
+    character : Character
         The character to whom the Knife of Justice will be applied.
     """
     character.weapon = 'Knife of Justice'
@@ -33,13 +31,13 @@ def apply_fridge_style(character):
 
     Parameters
     ----------
-    character : object
+    character : Character
         The character to whom the Fridge Style will be applied.
     """
     character.image = pygame.image.load("characters images/fridge_style.png")
     character.image = pygame.transform.scale(character.image, (100, 100))
     character.rect = character.image.get_rect(topleft=(character.rect.x, character.rect.y))
-    character.weapon = "egg"  # Set the weapon type for gameplay bullets
+    character.weapon = "egg"
     character.original_image = character.image
 
 def apply_Tomato_slice(character):
@@ -48,7 +46,7 @@ def apply_Tomato_slice(character):
 
     Parameters
     ----------
-    character : object
+    character : Character
         The character to whom the Tomato Slice will be applied.
     """
     character.weapon = 'Tomato Slice'
@@ -62,7 +60,7 @@ def shop(screen, character):
     ----------
     screen : pygame.Surface
         The Pygame screen on which the shop interface will be drawn.
-    character : object
+    character : Character
         The character interacting with the shop.
     """
     pygame.init()
@@ -79,27 +77,22 @@ def shop(screen, character):
     ]
 
     # Colors
-    card_color = (70, 70, 120)  # Card background
-    card_highlight = (90, 140, 200)  # Highlight for hover
     back_color = dark_red
     back_hover = (220, 70, 70)
 
     # Back button setup
     back_text = font.render("Back", True, white)
-    back_rect = pygame.Rect(450, 550, 100, 46)  # Position the button
+    back_rect = pygame.Rect(450, 550, 100, 46)
 
     # Message setup
     purchase_message = ""
     message_displayed = False
 
-    # Running flag
     running = True
-
     while running:
-        screen.fill((0, 0, 0))  # Clear the screen with a black background
-        mouse = pygame.mouse.get_pos()  # Get the current mouse position
+        screen.fill((0, 0, 0))
+        mouse = pygame.mouse.get_pos()
 
-        # Render title
         title_text = title_font.render("SHOP", True, (255, 255, 0))
         screen.blit(title_text, (430, 20))
 
@@ -107,17 +100,16 @@ def shop(screen, character):
         i = 0  # Initialize index manually
         for item in shop_items:
             card_rect = pygame.Rect(100, 100 + i * 110, 800, 90)
-            # Highlight the card if hovered over
             if card_rect.collidepoint(mouse):
-                pygame.draw.rect(screen, card_highlight, card_rect, border_radius=10)
+                pygame.draw.rect(screen, light_purple, card_rect, border_radius=10)
             else:
-                pygame.draw.rect(screen, card_color, card_rect, border_radius=10)
+                pygame.draw.rect(screen, purple, card_rect, border_radius=10)
 
             # Determine the currency type (coins or diamonds)
             currency_type = "coins" if item["currency"] == "coins" else "diamonds"
             # Render item text with name, cost, and currency
             item_text = font.render(f"{item['name']} - {item['cost']} {currency_type}", True, white)
-            screen.blit(item_text, (120, 120 + i * 110))  # Render item text with spacing
+            screen.blit(item_text, (120, 120 + i * 110))
 
             i += 1  # Increment index manually
 
@@ -129,7 +121,7 @@ def shop(screen, character):
         back_text_rect = back_text.get_rect(center=back_rect.center)
         screen.blit(back_text, back_text_rect)
 
-        # Show purchase message if any
+        # Show purchase message there are purchases
         if message_displayed:
             pygame.draw.rect(screen, green, (100, 300, 800, 100), border_radius=10)
             purchase_text = font.render(purchase_message, True, white)
@@ -138,14 +130,14 @@ def shop(screen, character):
 
         # Render coins
         coin_text = font.render(f"Coins: {character.coins}", True, yellow)
-        screen.blit(coin_text, (10, 550))  # Ensure coins are rendered continuously
+        screen.blit(coin_text, (10, 550))
 
-        # Render diamantes
-        diamond_text = font.render(f"Diamonds: {character.diamond_count}", True, blue)  # Cor azul clara
+        # Render diamonds
+        diamond_text = font.render(f"Diamonds: {character.diamond_count}", True, blue)
         screen.blit(diamond_text, (750, 550))
 
-        pygame.display.flip()  # Update the display
-        clock.tick(60)  # Maintain a frame rate of 60 FPS
+        pygame.display.flip()
+        clock.tick(60)
 
         # Handle events
         for event in pygame.event.get():
@@ -154,10 +146,8 @@ def shop(screen, character):
                 exit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # Check if "back" button is clicked
                 if back_rect.collidepoint(mouse):
                     return  # Exit the shop
-
                 # Check if a shop item is clicked
                 index = 0  # Initialize the index manually
                 for item in shop_items:
