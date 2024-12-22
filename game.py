@@ -137,11 +137,6 @@ def update_moving_platforms(moving_platforms):
                 platform["speed"] *= -1
 
 
-sound_on_image = pygame.image.load("characters images/sound.png")
-sound_off_image = pygame.image.load("characters images/no sound.png")
-sound_on = True
-sound_button_rect = sound_on_image.get_rect(topleft=(20, 20))
-
 
 def game_loop(screen, character=None):
     """
@@ -177,7 +172,6 @@ def game_loop(screen, character=None):
                     character.health = character.max_health
                     character.rect.topleft = (10, height - 50)  # Reset character position
                     character.save_player_data("save_file.json")  # Save progress after advancing
-                    #play_game_music("Music/Background Game Music.mp3")
                 else:
                     # Final level completed
                     current_state = "last_level"

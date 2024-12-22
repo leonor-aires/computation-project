@@ -30,7 +30,7 @@ def main():
                     running = False
 
                 # Pass a signal to check for an "Options" click
-                user_action = interface(screen)  # Assume 'interface' returns actions, e.g., "OPTIONS"
+                user_action = interface(screen)  # Asddddddddddasume 'interface' returns actions, e.g., "OPTIONS"
                 if user_action == "OPTIONS":
                     options.show_options(screen)  # Show the Options menu
 
