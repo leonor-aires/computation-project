@@ -26,7 +26,7 @@ def interface(screen):
 
     # initiating pygame
     pygame.init()
-    pygame.mixer.music.load('Music/music.mp3')
+    pygame.mixer.music.load('Music/game-music.mp3')
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
 
@@ -66,6 +66,7 @@ def interface(screen):
             # Detect clicks on buttons
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 if 200 <= mouse[0] <= 800 and 470 <= mouse[1] <= 550:  # Play button
+                    pygame.mixer.music.stop()
                     character.load_player_data(save_file)
                     execute_game(screen, character)
                 elif 410 <= mouse[0] <= 500 and 60 <= mouse[1] <= 120:
@@ -149,7 +150,3 @@ def wilderness_explorer():
     Starts the main game. This function executes the game and returns the user to the main interface once complete.
     """
     execute_game()
-
-
-
-

@@ -1,6 +1,9 @@
+#from utils import*
 import pygame
 from config import*
 import math
+from enemy import Enemy
+from music import shooting, is_sound_enabled
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x: int, y: int, direction: float, weapon_type="default"):
@@ -24,6 +27,10 @@ class Bullet(pygame.sprite.Sprite):
         self.weapon_type = weapon_type
         self.start_x = x
         self.start_y = y
+
+
+        if is_sound_enabled():
+            shooting(("Music/Shooting sfx.mp3"), volume=0.5)
 
         # Load different bullet images based on weapon type
         if self.weapon_type == "Ketchup Kannon":

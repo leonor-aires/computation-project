@@ -1,7 +1,8 @@
 import pygame
 from interface import interface
 import options
-
+from config import resolution
+#ffrom music import play_game_music
 def main():
     """
     Main entry point for the Tomatio's escape game.
@@ -13,7 +14,11 @@ def main():
     such as the Options menu.
 
     """
-    pygame.init()  # Initialize Pygame systems
+   # pygame.init()  # Initialize Pygame systems
+    screen = pygame.display.set_mode(resolution)
+   # pygame.display.set_caption("Platformer Game")
+   # play_game_music("Music/game-music.mp3")
+   # game_loop(screen)
     try:
         screen = pygame.display.set_mode((1000, 600))  # Set up the display once
         pygame.display.set_caption("Tomatio's Escape")

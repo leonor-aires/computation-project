@@ -4,9 +4,16 @@ from enemy import Enemy  # Enemy class
 from powerups import *  # Power-ups used in the game
 from chest import spawn_chests
 from shop import *
+from music import (toggle_sound, load_sound, play_music, stop_music, play_menu_music, stop_menu_music, play_sound,
+                   stop_sound, is_sound_enabled)
+
+
+pygame.mixer.init()
+load_sound("game_music", "Music/Background Game Music.mp3")
+load_sound("game_over", "Music/Game_over_sfx.mp3")
+
 
 width, height = resolution
-
 
 # Function to create platforms for each level
 def create_platforms(level):
@@ -130,6 +137,12 @@ def update_moving_platforms(moving_platforms):
                 platform["speed"] *= -1
 
 
+sound_on_image = pygame.image.load("characters images/sound.png")
+sound_off_image = pygame.image.load("characters images/no sound.png")
+sound_on = True
+sound_button_rect = sound_on_image.get_rect(topleft=(20, 20))
+
+
 def game_loop(screen, character=None):
     """
     Main game loop for managing the levels and states and memory system.
@@ -141,6 +154,10 @@ def game_loop(screen, character=None):
     character : Character
         The main character object. If None, a new character is created.
     """
+    global sound_enabled
+    #if sound_enabled:
+    play_music("Music/Background Game Music.mp3", volume=0.5)
+
     if character is None:
         character = Character(image="characters images/Tomátio.png", x=10, y=height - 50)  # Start at bottom-left corner
 
@@ -160,6 +177,7 @@ def game_loop(screen, character=None):
                     character.health = character.max_health
                     character.rect.topleft = (10, height - 50)  # Reset character position
                     character.save_player_data("save_file.json")  # Save progress after advancing
+                    #play_game_music("Music/Background Game Music.mp3")
                 else:
                     # Final level completed
                     current_state = "last_level"
@@ -168,6 +186,10 @@ def game_loop(screen, character=None):
                 # Retry resets character position but does not save progress
                 character.health = character.max_health
                 character.rect.topleft = (10, height - 50)  # Reset position on retry
+                print("[DEBUG] Reiniciando o nível.")
+
+                if sound_enabled:
+                    play_music("Music/Background Game Music.mp3", volume=0.5)
 
             elif result == "break":
                 # Save progress before breaking the game loop
@@ -177,14 +199,28 @@ def game_loop(screen, character=None):
             elif result == "main_menu":
                 # Save progress before returning to the main menu
                 character.save_player_data("save_file.json")
+                play_menu_music("Music/game-music.mp3")
                 return
 
+        elif current_state == "last_level":
+            if current_level > last_level:
+                # Save progress after completing all levels
+                print("[DEBUG] Todos os níveis completados.")
+                character.save_player_data("save_file.json")
+                #stop_all_music()
+                #pygame.mixer.music.stop()
+                return "all_levels_completed"
         if current_state == "last_level":
             if current_level >= last_level:
                 character.reset_player_data("save_file.json")  # Reset progress
                 return last_level_screen(screen)
             result = last_level_screen(screen)
+
             if result == "main_menu":
+                print("[DEBUG] Retornando ao menu principal após último nível.")
+                character.save_player_data("save_file.json")
+                #stop_all_music()
+                #pygame.mixer.music.stop()
                 return
 
 
@@ -200,6 +236,8 @@ def execute_game(screen, character=None):
         The main character object. If None, a new character is created.
     """
     game_loop(screen, character)
+    print("[DEBUG] Resuming main menu music after game loop")
+    #play_game_music("Music/game-music.mp3")
 
 
 def play_level(screen, character, level, platforms, moving_platforms):
@@ -224,6 +262,9 @@ def play_level(screen, character, level, platforms, moving_platforms):
     clock = pygame.time.Clock()
     background_image = pygame.image.load("backgrounds/game.webp")
     background_image = pygame.transform.scale(background_image, resolution)
+
+    if is_sound_enabled():
+        play_music("Music/Background Game Music.mp3", volume=0.5)
 
     bullets = pygame.sprite.Group()
     character.bullets = bullets  # Attach the bullets group to the character
@@ -252,7 +293,6 @@ def play_level(screen, character, level, platforms, moving_platforms):
     while running:
         screen.blit(background_image, (0, 0))
         clock.tick(fps)
-
         update_moving_platforms(moving_platforms)
 
         # Check collisions with platforms
@@ -288,11 +328,16 @@ def play_level(screen, character, level, platforms, moving_platforms):
                 # Detect click on the "Back" button
                 if back_rect.collidepoint(mouse):
                     character.save_player_data("save_file.json")
+                    stop_music()
+                    play_menu_music("Music/game-music.mp3")
+                    #pygame.mixer.music.stop()
                     return "break"
                 # Detect click on the "Shop" button
                 elif shop_rect.collidepoint(mouse):
                     character.save_player_data("save_file.json")
                     shop(screen, character)
+                elif sound_button_rect.collidepoint(mouse):
+                    toggle_sound()
 
         # Update game components
         character.update()
@@ -355,6 +400,7 @@ def play_level(screen, character, level, platforms, moving_platforms):
             return level_end_screen(screen, level, character)
 
         if character.health <= 0:
+            play_sound("Music/Game_over_sfx.mp3")
             return game_over_screen(screen)
 
         # Draw buttons
@@ -382,6 +428,11 @@ def play_level(screen, character, level, platforms, moving_platforms):
         # Shop button (below the Back button)
         shop_rect = pygame.Rect(15, 190, 120, 50)
         draw_button(shop_rect, "Shop", default_color, hover_color)
+
+        # Sound Toggle Button
+        sound_button_rect = pygame.Rect(15, 250, 200, 60)
+        sound_button_text = "Sound: ON" if is_sound_enabled() else "Sound: OFF"
+        draw_button(sound_button_rect, sound_button_text, default_color, hover_color)
 
         pygame.display.flip()
 
@@ -501,16 +552,24 @@ def game_over_screen(screen):
     -------
     The next action based on user selection: "retry" or "main_menu".
     """
+
     # Load background image
     background_image = pygame.image.load("backgrounds/game.webp")
     background_image = pygame.transform.scale(background_image, resolution)
     screen.blit(background_image, (0, 0))  # Draw the background image
+
     # UI elements
     font = pygame.font.SysFont("Corbel", 50, bold=True)
+
     # Game Over Text
     game_over_text = font.render("Game Over", True, deep_black)
     game_over_rect = game_over_text.get_rect(center=(width // 2, height // 3))
     screen.blit(game_over_text, game_over_rect)
+
+    # Game Over Sfx
+    stop_music()
+    if is_sound_enabled:
+        play_sound("Music/Game_over_sfx.mp3", volume=1.0)
 
     # Button Styling
     def draw_button(rect, text, color):
@@ -540,6 +599,8 @@ def game_over_screen(screen):
                     return "retry"
                 elif menu_button.collidepoint(mouse):
                     return "main_menu"
+                elif sound_button_rect.collidepoint(mouse):
+                    toggle_sound()
 
 def last_level_screen(screen):
     """
@@ -586,6 +647,7 @@ def last_level_screen(screen):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
                 if menu_button.collidepoint(mouse):
+                    stop_music()
                     return "main_menu"
 def draw_ui(screen, character):
     """
