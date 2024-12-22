@@ -270,7 +270,7 @@ def play_level(screen, character, level, platforms, moving_platforms):
         powerup_weights = [50, 30, 30]
     else:
         powerup_classes = [InvincibilityPowerUp, TomatoCoinPowerUp, RapidBlasterPowerUp, DespawnerPowerUp]
-        powerup_weights = [50, 30, 30, 10]
+        powerup_weights = [50, 30, 30, 5]
 
     # Select and create the power-up
     powerup = random.choices(powerup_classes, weights=powerup_weights, k=1)[0]
@@ -388,6 +388,12 @@ def play_level(screen, character, level, platforms, moving_platforms):
             return level_end_screen(screen, level, character)
 
         if character.health <= 0:
+            # Expire all active power-ups
+            for powerup in powerups:
+                powerup.expire()
+            powerups.empty()  # Clear all power-ups
+            character.image = character.original_image  # Restore to true original image
+            character.rect.y = character.original_y  # Reset position
             play_sound("Music/Game_over_sfx.mp3")
             return game_over_screen(screen)
 
