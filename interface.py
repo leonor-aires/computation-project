@@ -3,7 +3,7 @@ from game import execute_game, game_loop
 from Rules import show_rules
 from options import show_options
 from credits import credits_
-from config import light_grey, grey
+from config import light_grey, grey, dark_red
 from story import start_game_with_story
 
 def interface(screen):
@@ -36,13 +36,6 @@ def interface(screen):
     # fonts
     corbel_font = pygame.font.SysFont("Corbel", 50)
 
-    play_text = corbel_font.render("Play", True, white)
-    story_text = corbel_font.render("Story", True, white)
-    rules_text = corbel_font.render("Rules", True, white)
-    options_text = corbel_font.render("Options", True, white)
-    credits_text = corbel_font.render("Credits", True, white)
-    quit_text = corbel_font.render("Quit", True, white)
-
     # Load and scale the background image once
     image = pygame.image.load("backstory images/main page.png")
     image_width, image_height = 1000, 600
@@ -51,92 +44,75 @@ def interface(screen):
     # Create a clock object to control the frame rate
     clock = pygame.time.Clock()
 
+    # Button definitions and text rendering
+    buttons = {
+        "play": {"rect": pygame.Rect(200, 470, 600, 60), "text": corbel_font.render("Play", True, white)},
+        "rules": {"rect": pygame.Rect(10, 60, 180, 60), "text": corbel_font.render("Rules", True, white)},
+        "options": {"rect": pygame.Rect(205, 60, 180, 60), "text": corbel_font.render("Options", True, white)},
+        "story": {"rect": pygame.Rect(400, 60, 180, 60), "text": corbel_font.render("Story", True, white)},
+        "credits": {"rect": pygame.Rect(605, 60, 180, 60), "text": corbel_font.render("Credits", True, white)},
+        "quit": {"rect": pygame.Rect(805, 60, 180, 60), "text": corbel_font.render("Quit", True, white)},
+    }
+
     # main game loop
     while True:
         # Get the mouse position
         mouse = pygame.mouse.get_pos()
 
-        # event handling
+        # Event handling
         for ev in pygame.event.get():
             # quitting the game with the close button on the window (X)
             if ev.type == pygame.QUIT:
                 pygame.quit()
                 exit()
 
-            # Detect clicks on buttons
+            # Mouse click events
             if ev.type == pygame.MOUSEBUTTONDOWN:
-                if 200 <= mouse[0] <= 800 and 470 <= mouse[1] <= 550:  # Play button
+                if buttons["play"]["rect"].collidepoint(mouse):
                     pygame.mixer.music.stop()
                     character.load_player_data(save_file)
                     execute_game(screen, character)
-                elif 410 <= mouse[0] <= 500 and 60 <= mouse[1] <= 120:
-                    start_game_with_story(screen, interface)  # Show the story with transitions
-                elif 50 <= mouse[0] <= 150 and 60 <= mouse[1] <= 120:  # Rules button
+                elif buttons["story"]["rect"].collidepoint(mouse):
+                    start_game_with_story(screen, interface)
+                elif buttons["rules"]["rect"].collidepoint(mouse):
                     show_rules(screen, corbel_font, {})
-                elif 210 <= mouse[0] <= 390 and 60 <= mouse[1] <= 120:  # Options button
-                    show_options(screen)  # Open options menu
-                elif 610 <= mouse[0] <= 770 and 60 <= mouse[1] <= 120:  # Credits button
-                    credits_(screen)  # Placeholder function for credits
-                elif 850 <= mouse[0] <= 950 and 60 <= mouse[1] <= 120:# Quit button
-                    character.save_player_data("save_file.json")  # Save player data before quitting
+                elif buttons["options"]["rect"].collidepoint(mouse):
+                    show_options(screen)
+                elif buttons["credits"]["rect"].collidepoint(mouse):
+                    credits_(screen)
+                elif buttons["quit"]["rect"].collidepoint(mouse):
+                    character.save_player_data("save_file.json")
                     pygame.quit()
                     exit()
 
         # Draw the background image
         screen.blit(image, (0, 0))
 
-        # Drawing the buttons with hover effect
-        play_hover = 200 <= mouse[0] <= 800 and 470 <= mouse[1] <= 550
-        story_hover = 410 <= mouse[0] <= 500 and 60 <= mouse[1] <= 120
-        rules_hover = 50 <= mouse[0] <= 160 and 60 <= mouse[1] <= 100
-        options_hover = 210 <= mouse[0] <= 390 and 60 <= mouse[1] <= 100
-        credits_hover = 610 <= mouse[0] <= 770 and 60 <= mouse[1] <= 100
-        quit_hover = 850 <= mouse[0] <= 950 and 60 <= mouse[1] <= 100
-
-        # Define Hover Colors
+        # Define hover colors
         hover_colors = light_grey
         default_color = grey
+        default_color_play = dark_red
         hover_color_play = glowing_light_red
 
-        # Draw buttons with hover effect
-        pygame.draw.rect(screen, hover_color_play if play_hover else dark_red, pygame.Rect(200, 470, 600, 60), border_radius=10)
-        pygame.draw.rect(screen, hover_colors if story_hover else default_color, pygame.Rect(410, 60, 180, 60), border_radius=10)
-        pygame.draw.rect(screen, hover_colors if rules_hover else default_color, pygame.Rect(40, 60, 120, 60), border_radius=10)
-        pygame.draw.rect(screen, hover_colors if options_hover else default_color, pygame.Rect(210, 60, 180, 60), border_radius=10)
-        pygame.draw.rect(screen, hover_colors if credits_hover else default_color, pygame.Rect(610, 60, 160, 60), border_radius=10)
-        pygame.draw.rect(screen, hover_colors if quit_hover else default_color, pygame.Rect(850, 60, 100, 60), border_radius=10)
+        # Draw buttons with hover effect and text
+        for button_key, button in buttons.items():
+            is_hover = button["rect"].collidepoint(mouse)
 
-        # Drawing the buttons
+            # Determine the color based on hover state
+            if button_key == "play":
+                color = hover_color_play if is_hover else default_color_play  # Red for default Play button
+            else:
+                color = hover_colors if is_hover else default_color  # Other buttons
 
-        # Play button-appearance
-        tile_rect = play_text.get_rect(center=(500, 500))
-        screen.blit(play_text, tile_rect)
+            pygame.draw.rect(screen, color, button["rect"], border_radius=10)
 
-        # get the mouse information
-        #mouse = pygame.mouse.get_pos()  # locates where the mouse is
+            # Draw the button text centered
+            text_rect = button["text"].get_rect(center=button["rect"].center)
+            screen.blit(button["text"], text_rect)
 
-
-        # Draw the buttons
-        wilderness_rect = play_text.get_rect(center=(500, 500))
-        story_rect = story_text.get_rect(center=(500, 90))
-        rules_rect = rules_text.get_rect(center=(100, 90))
-        options_rect = options_text.get_rect(center=(300, 90))
-        credits_rect = credits_text.get_rect(center=(690, 90))
-        quit_rect = quit_text.get_rect(center=(900, 90))
-
-        # Display the buttons
-        screen.blit(play_text, wilderness_rect)
-        screen.blit(story_text, story_rect)
-        screen.blit(rules_text, rules_rect)
-        screen.blit(options_text, options_rect)
-        screen.blit(credits_text, credits_rect)
-        screen.blit(quit_text, quit_rect)
-
-        # at the end
+        # Update the display
         pygame.display.update()
-
-        # Limit the frame rate to 60 FPS
-        clock.tick(60)
+        clock.tick(60)  # Limit the frame rate to 60 FPS
 
 def rules_():
     """
