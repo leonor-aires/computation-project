@@ -42,7 +42,6 @@ def apply_fridge_style(character):
     character.weapon = "egg"  # Set the weapon type for gameplay bullets
     character.original_image = character.image
 
-
 def apply_Tomato_slice(character):
     """
     Apply the Tomato Slice weapon to the character.

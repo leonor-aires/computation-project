@@ -26,6 +26,7 @@ class Character(pygame.sprite.Sprite):
         self.original_y = y
         self.image = pygame.transform.scale(self.image, (80, 80))
         self.original_color = self.image.copy()  # Save original appearance
+        self.current_skin = 'Tomátio'
 
         # Set initial position
         self.rect = self.image.get_rect()
@@ -197,11 +198,8 @@ class Character(pygame.sprite.Sprite):
         screen : pygame.Surface
             The screen on which the character will be drawn.
         """
-        # Apply an optional image offset for invincibility
-        offset_y = getattr(self, "image_offset_y", 0)  # Default to 0 if not set
-
         # Draw the character with the offset applied
-        screen.blit(self.image, (self.rect.x, self.rect.y + offset_y))
+        screen.blit(self.image, (self.rect.x, self.rect.y))
 
         # Draw the health bar above the character
         health_bar_width = self.rect.width
@@ -252,6 +250,8 @@ class Character(pygame.sprite.Sprite):
         self.diamond_count = 0
         self.current_level = 1
         self.health = self.max_health
+        self.rect.x = 0
+        self.rect.y = height - self.rect.height
         with open(save_file, 'w') as file:
             json.dump({
                 'weapon_power': self.weapon,
